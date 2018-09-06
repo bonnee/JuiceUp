@@ -1,0 +1,26 @@
+{
+  "name": "juiceup",
+  "version": "1.0.0",
+  "description": "Keba KeContact wallbox manager",
+  "main": "juiceup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bonnee/JuiceUp.git"
+  },
+  "keywords": [
+    "keba",
+    "kecontact",
+    "ev",
+    "charge",
+    "wallbox"
+  ],
+  "author": "Matteo Bonora",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Bonnee/JuiceUp/issues"
+  },
+  "homepage": "https://github.com/Bonnee/JuiceUp#readme"
+}
