@@ -1,55 +1,79 @@
 let dgram = require('dgram');
-let defaultSize = 16;
-let port = 7090;
+const PORT = 7090;
+
+var data = {}
 
 class KeContact {
-	constructor(remoteIP, callback) {
-		this.socket = dgram.createSocket('udp4');
-		this.server = dgram.createSocket('udp4');
-		this.address = remoteIP
+	constructor(remoteIP) {
+		this.txSock = dgram.createSocket('udp4');
+		this.rxSock = dgram.createSocket('udp4');
+		this.address = remoteIP;
 
-		this.server.bind(port);
+		this.sendQueue = [];
 
-		this.server.on('listening', () => {
-			callback();
-		});
-	}
+		this.rxSock.bind(PORT);
 
-	send(msg) {
-		this.socket.send(Buffer.from(msg), port, this.address, (err) => {
-			if (err) {
-				console.error(err);
-				socket.close();
+		this.rxSock.on('message', (message, rinfo) => {
+			console.log(rinfo.address + " returned");
+
+			let msg = message.toString().trim();
+
+			if (msg.length == 0)
+				return;
+
+			if (msg.startsWith('TCH-OK'))
+				return;
+
+			if (msg[0] == '"') {
+				msg = '{' + msg + '}';
 			}
+
+			this.decode(JSON.parse(msg));
 		});
 
-		return new Promise((resolve, reject) => {
-			this.server.on('message', (msg, rinfo) => {
-				resolve(msg.toString())
+		this.send('report 1');
+		this.send('report 2');
+	}
+
+	send(message) {
+		this.sendQueue.push(message);
+
+		if (!this.sendDelay) {
+			this.sendNext();
+			this.sendDelay = setInterval(this.sendNext.bind(this), 100);
+		}
+	}
+
+	sendNext() {
+		if (this.sendQueue.length == 0) {
+			clearInterval(this.sendDelay);
+			return;
+		} else {
+			let message = this.sendQueue.shift();
+			this.txSock.send(Buffer.from(message), PORT, this.address, (err) => {
+				if (err) {
+					console.error(err);
+					return;
+				}
+				console.log('Sent "' + message + '"');
 			});
-		});
-
+		}
 	}
 
-	getFirmware(callback) {
-		this.send('report 1').then((result) => {
-			callback(JSON.parse(result).Firmware);
-		});
+	decode(msg) {
+		for (let key in msg) {
+			data[key] = msg[key];
+		}
 	}
 
-	getModel(callback) {
-		this.send('report 1').then((result) => {
-			callback(JSON.parse(result).Product);
-		});
-	}
+	getFirmware() {
+		if (typeof data['Firmware'] == undefined) {
+			this.send('report 1');
+			return '';
+		}
 
-	getSerial(callback) {
-		this.send('report 1').then((result) => {
-			callback(JSON.parse(result).Serial);
-		});
+		return data["Firmware"];
 	}
 }
-
-
 
 module.exports = KeContact;
