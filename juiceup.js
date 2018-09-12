@@ -1,25 +1,21 @@
 var PORT = 7090;
 var HOST = '192.168.1.211';
 
-/*let KeContact = require('./kebaudp.js');
-let keba = new KeContact(HOST);
+const Client = require('./kebaudp.js')
+const express = require('express');
 
-keba.getFirmware();*/
+var app = express();
 
-Client = require('./kebaudp.js')
+const c = new Client(HOST)
 
-const c = new Client(HOST, () => {
-
-	console.log("Address:\t" + HOST);
-
-	c.getModel((model) => {
-		console.log("Model:\t\t" + model);
-	})
-	c.getSerial((sn) => {
-		console.log("Serial:\t\t" + sn);
-	})
-
-	c.getFirmware((fw) => {
-		console.log("Firmware:\t" + fw);
-	})
+app.listen(3000, function () {
+	console.log('JuiceUp 3000!');
 });
+
+app.get('/', function (req, res) {
+	c.getDevice((dev) => {
+		res.send(`Device data:<br>Model: ${dev.Product}<br>Serial #: ${dev.Serial}<br>FW Version: ${dev.Firmware}`);
+	});
+});
+
+console.log("Address:\t" + HOST);

@@ -1,17 +1,18 @@
-let dgram = require('dgram');
-let defaultSize = 16;
+const dgram = require('dgram');
+
 let port = 7090;
 
 class KeContact {
-	constructor(remoteIP, callback) {
+	constructor(remoteIP) {
 		this.socket = dgram.createSocket('udp4');
 		this.server = dgram.createSocket('udp4');
 		this.address = remoteIP
 
 		this.server.bind(port);
 
-		this.server.on('listening', () => {
-			callback();
+		this.server.on('error', (err) => {
+			console.error(err);
+			process.exit(1);
 		});
 	}
 
@@ -29,6 +30,12 @@ class KeContact {
 			});
 		});
 
+	}
+
+	getDevice(callback) {
+		this.send('report 1').then((res) => {
+			callback(JSON.parse(res));
+		});
 	}
 
 	getFirmware(callback) {
