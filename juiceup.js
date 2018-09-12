@@ -1,9 +1,25 @@
-const HOST = '192.168.1.211';
+var PORT = 7090;
+var HOST = '192.168.1.211';
 
-Keba = require('./kebaudp.js')
+/*let KeContact = require('./kebaudp.js');
+let keba = new KeContact(HOST);
 
-const c = new Keba(HOST);
+keba.getFirmware();*/
 
-setInterval(() => {
-	console.log(c.data)
-}, 1000);
+Client = require('./kebaudp.js')
+
+const c = new Client(HOST, () => {
+
+	console.log("Address:\t" + HOST);
+
+	c.getModel((model) => {
+		console.log("Model:\t\t" + model);
+	})
+	c.getSerial((sn) => {
+		console.log("Serial:\t\t" + sn);
+	})
+
+	c.getFirmware((fw) => {
+		console.log("Firmware:\t" + fw);
+	})
+});
