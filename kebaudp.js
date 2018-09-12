@@ -29,7 +29,6 @@ class KeContact {
 				resolve(msg.toString())
 			});
 		});
-
 	}
 
 	getDevice(callback) {
@@ -38,21 +37,9 @@ class KeContact {
 		});
 	}
 
-	getFirmware(callback) {
-		this.send('report 1').then((result) => {
-			callback(JSON.parse(result).Firmware);
-		});
-	}
-
-	getModel(callback) {
-		this.send('report 1').then((result) => {
-			callback(JSON.parse(result).Product);
-		});
-	}
-
-	getSerial(callback) {
-		this.send('report 1').then((result) => {
-			callback(JSON.parse(result).Serial);
+	getChgSettings(callback) {
+		this.send('report 2').then((res) => {
+			callback(JSON.parse(res));
 		});
 	}
 }
