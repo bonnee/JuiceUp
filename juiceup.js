@@ -1,6 +1,5 @@
-const PORT = 7090;
 const HOST = '192.168.1.211';
-
+const WEBPORT = 3000;
 const Client = require('./kebaudp.js')
 const express = require('express');
 
@@ -8,21 +7,14 @@ var app = express();
 
 const c = new Client(HOST)
 
-app.listen(3000, function () {
-	console.log('JuiceUp 3000!');
+app.listen(WEBPORT, function () {
+	console.log('JuiceUp online on port ' + WEBPORT);
 });
 
 app.get('/', function (req, res) {
-	c.getDevice((dev) => {
-		c.getChgSettings((chg) => {
-			let ret = `Device data:<br>Model: ${dev.Product}<br>Serial No: ${dev.Serial}<br>FW Version: ${dev.Firmware}<br><br>`;
-			ret += `Charge data:<br>State: ${chg.State}<br>Plug status: ${chg.Plug}<br>HW Current: ${chg["Curr HW"]}<br>Max Current: ${chg["Max curr"]}`
-
-			res.send(ret);
-		});
-	});
-
-
+	let data = c.getData();
+	let ret = `Device data:<br>Model: ${data.Product}<br>Serial No: ${data.Serial}<br>FW Version: ${data.Firmware}<br>Seconds: ${data.Sec}<br><br>`;
+	ret += `Charge data:<br>State: ${data.State}<br>Plug status: ${data.Plug}<br>HW Current: ${data["Curr HW"]}<br>Max Current: ${data["Max curr"]}<br><br>`
+	ret += `Charge stats:<br>Session energy ${data['E pres']} Wh<br>Total Energy ${data['E total']} Wh<br>`
+	res.send(ret);
 });
-
-console.log("Address:\t" + HOST);
