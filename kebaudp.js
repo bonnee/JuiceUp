@@ -10,6 +10,7 @@ class KeContact {
 
 		this.sendQueue = [];
 		this.data = {};
+		this.history = [];
 
 		this.server.bind(PORT);
 
@@ -21,6 +22,8 @@ class KeContact {
 		this.server.on('listening', () => {
 			this.send('report 1');
 			this.updateReports();
+			this.updateHistory();
+
 			setInterval(() => {
 				console.log('Updating data...')
 				this.updateReports();
@@ -48,12 +51,18 @@ class KeContact {
 		}
 	}
 
-	updateCache(newData) {
+	saveData(newData) {
 		for (let key in newData) {
 			if (key != 'ID')
 				this.data[key] = newData[key];
 		}
 	}
+	saveHistory(newHistory) {
+		let id = newHistory.ID;
+
+		this.history[id] = newHistory;
+	}
+
 
 	send(sendMsg) {
 		this.sendQueue.push(sendMsg);
@@ -75,7 +84,13 @@ class KeContact {
 		});
 		this.server.once('message', (message, rinfo) => {
 			console.log('Received response to ' + sendMsg);
-			this.updateCache(this.parseMessage(message));
+
+			let parsedMessage = this.parseMessage(message);
+
+			if (parsedMessage.ID >= 10)
+				this.saveHistory(parsedMessage);
+			else
+				this.saveData(parsedMessage);
 
 			this.sendQueue.shift();
 			this.handleQueue();
@@ -87,8 +102,18 @@ class KeContact {
 		this.send('report 3');
 	}
 
+	updateHistory() {
+		for (let i = 101; i < 131; i++) {
+			this.send('report ' + i)
+		}
+	}
+
 	getData() {
 		return this.data;
+	}
+
+	getHistory() {
+		return this.history;
 	}
 }
 
