@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 
 	let start = moment.duration(data.Sec, 'seconds');
 
-	let ret = `Device data:<br>Model: ${data.Product}<br>Serial No: ${data.Serial}<br>FW Version: ${data.Firmware}<br>Uptime: ${start.humanize()}<br><br>`;
+	let ret = `Device data:<br>Model: ${data.Product}<br>Serial No: ${data.Serial}<br>FW Version: ${data.Firmware}<br>Uptime: ${start.days()+'d '+start.hours()+'h '+start.minutes()}m<br><br>`;
 	ret += `Charge data:<br>State: ${data.State}<br>Plug status: ${data.Plug}<br>HW Current: ${data["Curr HW"]}<br>Max Current: ${data["Max curr"]}<br><br>`
 	ret += `Charge stats:<br>Session energy ${data['E pres']} Wh<br>Total Energy ${data['E total']/10000}kWh<br>`
 	res.send(ret);

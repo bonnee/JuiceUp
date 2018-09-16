@@ -1,34 +1,68 @@
 const dgram = require('dgram');
 const PORT = 7090;
+const BRD_PORT = 7092
 const POLL_INTERVAL = 30000;
 
 class KeContact {
-	constructor(remoteIP) {
+	constructor(address) {
 		this.socket = dgram.createSocket('udp4');
 		this.server = dgram.createSocket('udp4');
-		this.address = remoteIP;
+		this.broadServer = dgram.createSocket('udp4');
+
+		this.address = address;
 
 		this.sendQueue = [];
 		this.data = {};
 		this.history = [];
 
-		this.server.bind(PORT);
+		this.timer;
 
 		this.server.on('error', (err) => {
 			console.error(err);
 			process.exit(1);
 		});
 
+		this.broadServer.on('message', (message, remote) => {
+			adapter.log.debug('UDP broadcast datagram from ' + remote.address + ':' + remote.port + ': "' + message + '"');
+			try {
+				this.resetTimer();
+				this.requestReports();
+
+				this.parseMessage(message);
+			} catch (e) {
+				adapter.log.warn('Error handling message: ' + e);
+			}
+		});
+
+		this.broadServer.on('listening', () => {
+			console.log('Broadcast server listening');
+
+			this.broadServer.setBroadcast(true);
+			this.broadServer.setMulticastLoopback(true);
+		});
+
 		this.server.on('listening', () => {
+			console.log('Server listening');
+
 			this.send('report 1');
 			this.updateReports();
 			this.updateHistory();
 
-			setInterval(() => {
-				console.log('Updating data...')
-				this.updateReports();
-			}, POLL_INTERVAL);
+			this.resetTimer();
 		});
+
+		this.server.bind(PORT);
+		this.broadServer.bind(BRD_PORT, '0.0.0.0');
+	}
+
+	resetTimer() {
+		if (this.timer)
+			clearInterval(this.timer);
+
+		this.timer = setInterval(() => {
+			console.log('Updating data...')
+			this.updateReports();
+		}, POLL_INTERVAL);
 	}
 
 	parseMessage(message) {
@@ -38,9 +72,11 @@ class KeContact {
 			if (msg.length == 0)
 				return;
 
-			if (msg.startsWith('TCH-OK'))
-				// TODO: Handle report update
+			if (msg.startsWith('TCH-OK')) {
+				this.resetTimer();
+				this.updateReports();
 				return;
+			}
 
 			if (msg[0] == '"')
 				msg = '{' + msg + '}';
