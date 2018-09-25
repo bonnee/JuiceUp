@@ -4,28 +4,29 @@ const BRD_PORT = 7092;
 
 const POLL_FREQ = 30000;
 const REQ_FREQ = 10;
+const TIMEOUT = 2000;
 
 class KeContact {
 	constructor(address) {
-		this.txSocket = dgram.createSocket('udp4');
-		this.rxSocket = dgram.createSocket('udp4');
-		this.brdSocket = dgram.createSocket('udp4');
+		this._txSocket = dgram.createSocket('udp4');
+		this._rxSocket = dgram.createSocket('udp4');
+		this._brdSocket = dgram.createSocket('udp4');
 
-		this.address = address;
+		this._address = address;
 
-		this.sendQueue = [];
+		this._sendQueue = [];
 
-		this.data = {};
-		this.history = [];
+		this._data = {};
+		this._history = [];
 
-		this.timer;
+		this._timer;
 
-		this.rxSocket.on('error', (err) => {
+		this._rxSocket.on('error', (err) => {
 			console.error(err);
 			process.exit(1);
 		});
 
-		this.brdSocket.on('message', (message, remote) => {
+		this._brdSocket.on('message', (message, remote) => {
 			try {
 				this._resetTimer();
 				this._updateHistory();
@@ -36,14 +37,14 @@ class KeContact {
 			}
 		});
 
-		this.brdSocket.on('listening', () => {
+		this._brdSocket.on('listening', () => {
 			console.log('Broadcast server listening');
 
-			this.brdSocket.setBroadcast(true);
-			this.brdSocket.setMulticastLoopback(true);
+			this._brdSocket.setBroadcast(true);
+			this._brdSocket.setMulticastLoopback(true);
 		});
 
-		this.rxSocket.on('listening', () => {
+		this._rxSocket.on('listening', () => {
 			console.log('Server listening');
 
 			this._send('report 1');
@@ -53,15 +54,15 @@ class KeContact {
 			this._resetTimer();
 		});
 
-		this.rxSocket.bind(PORT);
-		this.brdSocket.bind(BRD_PORT, '0.0.0.0');
+		this._rxSocket.bind(PORT);
+		this._brdSocket.bind(BRD_PORT, '0.0.0.0');
 	}
 
 	_resetTimer() {
-		if (this.timer)
-			clearInterval(this.timer);
+		if (this._timer)
+			clearInterval(this._timer);
 
-		this.timer = setInterval(() => {
+		this._timer = setInterval(() => {
 			console.log('Update data');
 			this._updateReports();
 		}, POLL_FREQ);
@@ -92,34 +93,41 @@ class KeContact {
 	_saveData(newData) {
 		for (let key in newData) {
 			if (key != 'ID')
-				this.data[key] = newData[key];
+				this._data[key] = newData[key];
 		}
 	}
 	_saveHistory(newHistory) {
 		let id = newHistory.ID;
 
-		this.history[id] = newHistory;
+		this._history[id] = newHistory;
 	}
 
 
 	_send(sendMsg) {
-		this.sendQueue.push(sendMsg);
+		this._sendQueue.push(sendMsg);
 
-		if (this.sendQueue.length == 1)
+		if (this._sendQueue.length == 1)
 			this._handleQueue();
 	}
 
 	_handleQueue() {
-		if (this.sendQueue.length == 0)
+		if (this._sendQueue.length == 0)
 			return;
 
-		let sendMsg = this.sendQueue[0];
-		this.txSocket.send(Buffer.from(sendMsg), PORT, this.address, (err) => {
+		let sendMsg = this._sendQueue[0];
+
+		let timeout = setTimeout(() => {
+			console.error('Wallbox not responding. Exiting');
+			process.exit(1);
+		}, TIMEOUT);
+
+		this._txSocket.send(Buffer.from(sendMsg), PORT, this._address, (err) => {
 			if (err)
 				console.error(err);
-
 		});
-		this.rxSocket.once('message', (message, rinfo) => {
+
+		this._rxSocket.once('message', (message, rinfo) => {
+			clearTimeout(timeout);
 			let parsedMessage = this._parseMessage(message);
 
 			if (parsedMessage.ID >= 10)
@@ -127,7 +135,7 @@ class KeContact {
 			else
 				this._saveData(parsedMessage);
 
-			this.sendQueue.shift();
+			this._sendQueue.shift();
 			setTimeout(this._handleQueue.bind(this), REQ_FREQ);
 		});
 	}
@@ -144,11 +152,11 @@ class KeContact {
 	}
 
 	getData() {
-		return this.data;
+		return this._data;
 	}
 
 	getHistory() {
-		return this.history;
+		return this._history;
 	}
 }
 
