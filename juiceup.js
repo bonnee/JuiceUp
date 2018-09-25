@@ -1,12 +1,17 @@
-const HOST = '192.168.1.211';
-const WEBPORT = 3000;
-const Client = require('./kebaudp.js')
+const client = require('./kecontact.js')
 const express = require('express');
 const moment = require('moment');
 
-var app = express();
+const HOST = '192.168.1.211';
+const WEBPORT = 3000;
 
-const c = new Client(HOST)
+const PRICE_KWH = 0.2;
+
+var app = express();
+app.set('view engine', 'pug');
+app.use(express.static('public'));
+
+const c = new client(HOST);
 
 app.listen(WEBPORT, function () {
 	console.log('JuiceUp online on port ' + WEBPORT);
@@ -14,13 +19,25 @@ app.listen(WEBPORT, function () {
 
 app.get('/', (req, res) => {
 	let data = c.getData();
-
 	let start = moment.duration(data.Sec, 'seconds');
 
-	let ret = `Device data:<br>Model: ${data.Product}<br>Serial No: ${data.Serial}<br>FW Version: ${data.Firmware}<br>Uptime: ${start.days()+'d '+start.hours()+'h '+start.minutes()}m<br><br>`;
-	ret += `Charge data:<br>State: ${data.State}<br>Plug status: ${data.Plug}<br>HW Current: ${data["Curr HW"]}<br>Max Current: ${data["Max curr"]}<br><br>`
-	ret += `Charge stats:<br>Session energy ${data['E pres']} Wh<br>Total Energy ${data['E total']/10000}kWh<br>`
-	res.send(ret);
+	res.render('index', {
+		data: data,
+		uptime: {
+			d: start.days(),
+			m: start.minutes(),
+			s: start.seconds()
+		}
+	});
+});
+
+app.get('/meter', (req, res) => {
+	let data = c.getHistory();
+
+	res.render('meter', {
+		data: data[101],
+		price: PRICE_KWH
+	});
 });
 
 app.get('/history', (req, res) => {

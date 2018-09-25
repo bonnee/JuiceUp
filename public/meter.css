@@ -1,0 +1,19 @@
+@font-face {
+	font-family: '7Seg';
+	src: url(/Segment7Standard.otf);
+}
+
+.display {
+	padding-top: 7px;
+	line-height: 1;
+	background-color: black;
+	color: white;
+	font-size: 56px;
+	font-family: '7Seg',
+		monospace;
+}
+
+.unit {
+	margin-left: 5px;
+	font-size: 24px;
+}

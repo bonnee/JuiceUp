@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    title= "KeContact"
+  body
+    h1= data.Product
+    h2= "Wallbox status"
+    p
+        |Firmware Version: #{data.Firmware}<br/>
+        |Uptime: #{uptime.d}d #{uptime.m}h #{uptime.s}s<br/>
+        |Total Energy: #{(parseInt(data['E total']) /10000).toFixed(1)}KWh

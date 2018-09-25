@@ -1,0 +1,23 @@
+- var kwh=(parseInt(data['E pres'])/10000).toFixed(2)
+
+doctype html
+html
+  head
+    link(rel="stylesheet" href="/meter.css")
+    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous")
+    title= "KeContact"
+  body(class="container")
+    h2= "Wallbox status"
+    div(class="d-flex")
+      div(class="d-flex flex-column")
+        div
+          span(class="display")| #{(kwh*price).toFixed(2).padStart(6,'0')}
+          span(class="unit")|€
+        div
+          span(class="display")| #{kwh.padStart(6,'0')}
+          span(class="unit")|KWh
+        div
+          span(class="display")| #{price.toFixed(2).padStart(6,'0')}
+          span(class="unit")|€/KWh
+          
