@@ -31,11 +31,15 @@ app.get('/', (req, res) => {
 	});
 });
 
-app.get('/meter', (req, res) => {
-	let data = c.getHistory();
+app.get('/meter/:session', (req, res) => {
+	session = req.params.session;
+	let data = c.getData();
+	let hist = c.getHistory();
+	console.log(data);
 
 	res.render('meter', {
-		data: data[101],
+		data: data,
+		hist: hist[session],
 		price: PRICE_KWH
 	});
 });
@@ -45,7 +49,8 @@ app.get('/history', (req, res) => {
 	let ret = '';
 
 	for (var session in history) {
-		ret += '<div><h1>Session ' + parseInt(session - 100) + '</h1>' + parseInt(history[session]['E pres'] / 10000) + ' kWh</div>';
+		ret += '<div><h1>Session ' + parseInt(session - 100) + '</h1>' + parseInt(history[session]['E pres'] / 10000) + ' kWh<br/>';
+		ret += 'Sec: ' + history[session]['started[s]'] + '</div>';
 	}
 	res.send(ret);
 });
