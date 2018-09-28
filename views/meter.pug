@@ -1,23 +1,58 @@
-- var kwh=(parseInt(data['E pres'])/10000).toFixed(2)
+- var kwh=(Math.abs(parseInt(hist['E pres'])/10000)).toFixed(2)
+- var cur=hist.ID==100
 
 doctype html
 html
   head
     link(rel="stylesheet" href="/meter.css")
     link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css")
-    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous")
+    link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js")
     title= "KeContact"
-  body(class="container")
-    h2= "Wallbox status"
-    div(class="d-flex")
-      div(class="d-flex flex-column")
-        div
-          span(class="display")| #{(kwh*price).toFixed(2).padStart(6,'0')}
-          span(class="unit")|€
-        div
-          span(class="display")| #{kwh.padStart(6,'0')}
-          span(class="unit")|KWh
-        div
-          span(class="display")| #{price.toFixed(2).padStart(6,'0')}
-          span(class="unit")|€/KWh
-          
+  body.container
+    h1= "Wallbox meter for session "+hist.ID
+
+    div.card-deck
+      div.card
+        h4.card-header| Meters
+        div.card-body.text-center.d-flex.flex-column
+          div.d-flex.flex-row
+            div
+              h5.mb-0.text-right| Price
+              div.display.px-2.text-light.bg-dark| #{(kwh*price).toFixed(2).padStart(6,'0')}
+            span.unit.align-self-end|€
+
+          div.d-flex.flex-row
+            div
+              h5.mb-0.mt-2.text-right| Energy
+              div.display.px-2.text-light.bg-dark| #{kwh.padStart(6,'0')}
+            span.unit.align-self-end| kWh
+
+          div.d-flex.flex-row
+            div
+              h5.mb-0.mt-2.text-right| Price per kWh
+              div.display.px-2.text-light.bg-dark| #{price.toFixed(2).padStart(6,'0')}
+            span.unit.align-self-end| €/kWh
+
+      if(cur)
+        div.card
+          h4.card-header| Status
+          div.card-body.text-center.align-middle
+            div.fa-3x
+              if data.State==1
+                //- Disabled
+                i.fas.fa-charging-station.p-1.text-primary(data-toggle="tooltip" title="Wallbox is idle")
+              else if data.State==2 || data.State==3
+                //- Charging/ready
+                i.fas.fa-charging-station.p-1.text-success(data-toggle="tooltip" title="Wallbox is charging/ready")
+              else
+                //- Error/Unauthorized
+                i.fas.fa-charging-station.p-1.text-danger(data-toggle="tooltip" title="Charging unauthorized or error")
+
+              if data.Plug==7
+                i.fas.fa-long-arrow-alt-right.p-1
+                i.fas.fa-car.p-1
+                i.fas.fa-long-arrow-alt-right.p-1
+                i.fas.fa-car-battery.p-1
+                
+

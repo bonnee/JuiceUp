@@ -4,13 +4,10 @@
 }
 
 .display {
-	padding-top: 7px;
+	padding-top: .17em;
 	line-height: 1;
-	background-color: black;
-	color: white;
 	font-size: 56px;
-	font-family: '7Seg',
-		monospace;
+	font-family: '7Seg', monospace;
 }
 
 .unit {
