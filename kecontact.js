@@ -4,7 +4,7 @@ const BRD_PORT = 7092;
 
 const POLL_FREQ = 30000;
 const REQ_FREQ = 10;
-const TIMEOUT = 2000;
+const TIMEOUT = 5000;
 
 class KeContact {
 	constructor(address) {
@@ -114,17 +114,15 @@ class KeContact {
 		if (this._sendQueue.length == 0)
 			return;
 
-		let sendMsg = this._sendQueue[0];
-
-		let timeout = setTimeout(() => {
-			console.error('Wallbox not responding. Exiting');
-			process.exit(1);
-		}, TIMEOUT);
-
-		this._txSocket.send(Buffer.from(sendMsg), PORT, this._address, (err) => {
+		this._txSocket.send(Buffer.from(this._sendQueue[0]), PORT, this._address, (err) => {
 			if (err)
 				console.error(err);
 		});
+
+		let timeout = setTimeout(() => {
+			console.error('Wallbox not responding. Retrying...');
+			this._handleQueue();
+		}, TIMEOUT);
 
 		this._rxSocket.once('message', (message, rinfo) => {
 			clearTimeout(timeout);
@@ -146,7 +144,7 @@ class KeContact {
 	}
 
 	_updateHistory() {
-		for (let i = 101; i < 131; i++) {
+		for (let i = 100; i < 131; i++) {
 			this._send('report ' + i)
 		}
 	}
