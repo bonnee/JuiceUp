@@ -35,11 +35,10 @@ app.get('/meter/:session', (req, res) => {
 	session = req.params.session;
 	let data = c.getData();
 	let hist = c.getHistory();
-	console.log(data);
 
 	res.render('meter', {
 		data: data,
-		hist: hist[session],
+		hist: hist[parseInt(session) + 100],
 		price: PRICE_KWH
 	});
 });
@@ -53,4 +52,13 @@ app.get('/history', (req, res) => {
 		ret += 'Sec: ' + history[session]['started[s]'] + '</div>';
 	}
 	res.send(ret);
+});
+
+app.get('/start/:token', (req, res) => {
+	c.start(req.params.token);
+	res.send('Sent');
+});
+app.get('/stop/:token', (req, res) => {
+	c.stop(req.params.token);
+	res.send('Sent');
 });

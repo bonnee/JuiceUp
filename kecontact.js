@@ -70,15 +70,24 @@ class KeContact {
 
 	_parseMessage(message) {
 		try {
+			let str = '';
+			for (let i in message) {
+				str += String.fromCharCode(message[i])
+			}
+			console.log(String(str));
+
 			let msg = message.toString().trim();
 
 			if (msg.length == 0)
-				return;
+				return false;
 
-			if (msg.startsWith('TCH-OK')) {
-				this._resetTimer();
-				this._updateReports();
-				return;
+			if (msg.startsWith('TCH')) {
+				console.log(msg)
+				setTimeout(() => { // Give time to values to update
+					this._resetTimer();
+					this._updateReports();
+				}, 1000);
+				return false;
 			}
 
 			if (msg[0] == '"')
@@ -128,10 +137,12 @@ class KeContact {
 			clearTimeout(timeout);
 			let parsedMessage = this._parseMessage(message);
 
-			if (parsedMessage.ID >= 10)
-				this._saveHistory(parsedMessage);
-			else
-				this._saveData(parsedMessage);
+			if (parsedMessage) {
+				if (parsedMessage.ID >= 10)
+					this._saveHistory(parsedMessage);
+				else
+					this._saveData(parsedMessage);
+			}
 
 			this._sendQueue.shift();
 			setTimeout(this._handleQueue.bind(this), REQ_FREQ);
@@ -143,9 +154,13 @@ class KeContact {
 		this._send('report 3');
 	}
 
-	_updateHistory() {
-		for (let i = 100; i < 131; i++) {
-			this._send('report ' + i)
+	_updateHistory(firstOnly = false) {
+		if (firstOnly) {
+			this._send('report 100');
+		} else {
+			for (let i = 100; i < 131; i++) {
+				this._send('report ' + i)
+			}
 		}
 	}
 
@@ -155,6 +170,16 @@ class KeContact {
 
 	getHistory() {
 		return this._history;
+	}
+
+	start(token) {
+		this._send('start ' + token);
+		this._updateHistory(true);
+	}
+
+	stop(token) {
+		this._send('stop ' + token);
+		this._updateHistory(true);
 	}
 }
 
