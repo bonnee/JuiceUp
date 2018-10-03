@@ -25,6 +25,7 @@ app.get('/', (req, res) => {
 		data: data,
 		uptime: {
 			d: start.days(),
+			h: start.hours(),
 			m: start.minutes(),
 			s: start.seconds()
 		}

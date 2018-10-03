@@ -8,26 +8,38 @@ html
     title= "KeContact"
   body.container
     h1|Charging history
-    table.table
+    table.table.table-striped
       thead
         tr
-          th|#
-          th|Started
-          th|Ended
-          th|Energy
-          th|Price
-          th|Auth
+          th(scope="col")|#
+          th(scope="col")|Duration
+          th(scope="col")|Energy
+          th(scope="col")|Cost
+          th(scope="col")|Auth
       tbody
+        - var totalSec=0
+        - var totalKwh=0
+
         each item in history
           if item && item['Session ID']>0
             - var kwh=item['E pres']/10000;
-            tr(scope="row")
-              td=item.ID-100
-              td=item['started[s]']
-              td=item['ended[s]']
+            - var duration=item['ended[s]']-item['started[s]']
+            - totalSec+=duration
+            - totalKwh+=kwh
+
+            tr
+              th(scope="row")=item['Session ID']
+              td=duration +"s"
               td=kwh.toFixed(2)+" kWh"
+              //- TODO: Add per-session price
               td="€ "+(price*kwh).toFixed(2)
               td=item['RFID tag']
+
+        tr.table-info(scope="row")
+          th|Total
+          th=totalSec +"s"
+          th=totalKwh.toFixed(2)+" kWh"
+          th="€ "+(price*totalKwh).toFixed(2)
       
                 
 
