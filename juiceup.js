@@ -45,13 +45,11 @@ app.get('/meter/:session', (req, res) => {
 
 app.get('/history', (req, res) => {
 	let history = c.getHistory();
-	let ret = '';
 
-	for (var session in history) {
-		ret += '<div><h1>Session ' + parseInt(session - 100) + '</h1>' + parseInt(history[session]['E pres'] / 10000) + ' kWh<br/>';
-		ret += 'Sec: ' + history[session]['started[s]'] + '</div>';
-	}
-	res.send(ret);
+	res.render('history', {
+		history: history,
+		price: PRICE_KWH
+	});
 });
 
 app.get('/start/:token', (req, res) => {

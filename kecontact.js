@@ -70,11 +70,11 @@ class KeContact {
 
 	_parseMessage(message) {
 		try {
-			let str = '';
+			/*let str = '';
 			for (let i in message) {
 				str += String.fromCharCode(message[i])
 			}
-			console.log(String(str));
+			console.log(String(str));*/
 
 			let msg = message.toString().trim();
 

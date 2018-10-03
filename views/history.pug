@@ -1,0 +1,33 @@
+doctype html
+html
+  head
+    link(rel="stylesheet" href="/meter.css")
+    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css")
+    link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js")
+    title= "KeContact"
+  body.container
+    h1|Charging history
+    table.table
+      thead
+        tr
+          th|#
+          th|Started
+          th|Ended
+          th|Energy
+          th|Price
+          th|Auth
+      tbody
+        each item in history
+          if item && item['Session ID']>0
+            - var kwh=item['E pres']/10000;
+            tr(scope="row")
+              td=item.ID-100
+              td=item['started[s]']
+              td=item['ended[s]']
+              td=kwh.toFixed(2)+" kWh"
+              td="€ "+(price*kwh).toFixed(2)
+              td=item['RFID tag']
+      
+                
+
