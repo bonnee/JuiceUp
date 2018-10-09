@@ -1,86 +1,92 @@
-- var kwh=(Math.abs(parseInt(data['E pres'])/10000)).toFixed(2)
+extends layout.pug
 
-doctype html
-html
-  head
-    title= "KeContact"
-    link(rel="stylesheet" href="/meter.css")
-    include includes/scripts.pug
-  
-  body.container
-    div.d-flex.justify-content-between.align-items-center
-      h1|Wallbox meter
-      if(data['Enable sys']==1)
-        button.btn.btn-danger(id="stopBtn")|Stop
-      else
-        button.btn.btn-success(id="startBtn")|Start
+block head
+  - var kwh=(Math.abs(parseInt(data['E pres'])/10000)).toFixed(2)
+  title= "KeContact"
+  link(rel="stylesheet" href="/meter.css")
 
+block scripts
+  include includes/scripts.pug  
 
-    div.card-deck
-      div.card
-        h4.card-header| Meters
-        div.card-body.text-center.d-flex.flex-column
-          div.d-flex.flex-row
-            div
-              h5.mb-0.text-right| Price
-              div.display.px-2.text-light.bg-dark| #{(kwh*price).toFixed(2).padStart(6,'0')}
-            span.unit.align-self-end|€
+block header
+  nav.navbar.navbar-dark.bg-dark.justify-content-between
+    a.navbar-brand(href="#")|KeContact
+    div.navbar-text|Meter
+    div.navbar-text
+      span.pr-1|Auth
+      input(type="text" value="bbbf74bd00000000")
 
-          div.d-flex.flex-row
-            div
-              h5.mb-0.mt-2.text-right| Energy
-              div.display.px-2.text-light.bg-dark| #{kwh.padStart(6,'0')}
-            span.unit.align-self-end| kWh
+block content
+  div.d-flex.justify-content-between.align-items-center
+    h1|Wallbox meter
+    if(data['Enable sys']==1)
+      button.btn.btn-danger(id="stopBtn")|Stop
+    else
+      button.btn.btn-success(id="startBtn")|Start
 
-          div.d-flex.flex-row
-            div
-              h5.mb-0.mt-2.text-right| Price per kWh
-              div.display.px-2.text-light.bg-dark| #{price.toFixed(2).padStart(6,'0')}
-            span.unit.align-self-end| €/kWh
+  div.card-deck
+    div.card
+      h4.card-header| Meters
+      div.card-body.text-center.d-flex.flex-column
+        div.d-flex.flex-row
+          div
+            h5.mb-0.text-right| Price
+            div.display.px-2.text-light.bg-dark| #{(kwh*price).toFixed(2).padStart(6,'0')}
+          span.unit.align-self-end|€
+        div.d-flex.flex-row
+          div
+            h5.mb-0.mt-2.text-right| Energy
+            div.display.px-2.text-light.bg-dark| #{kwh.padStart(6,'0')}
+          span.unit.align-self-end| kWh
 
-      div.card
-        h4.card-header| Status
-        div.card-body.text-center.align-middle
-          div.fa-3x
-            if data.State==1
-              //- Not ready
-              if data['Enable sys']==1
-                //- Unplugged
-                i.fas.fa-charging-station.p-1.text-primary(data-toggle="tooltip" title="Wallbox is enabled")
-              else
-                i.fas.fa-charging-station.p-1(data-toggle="tooltip" title="Wallbox is disabled")
-            else if data.State==2 || data.State==3
-              //- Charging/ready
-              i.fas.fa-charging-station.p-1.text-success(data-toggle="tooltip" title="Wallbox is charging")
+        div.d-flex.flex-row
+          div
+            h5.mb-0.mt-2.text-right| Price per kWh
+            div.display.px-2.text-light.bg-dark| #{price.toFixed(2).padStart(6,'0')}
+          span.unit.align-self-end| €/kWh
+
+    div.card
+      h4.card-header| Status
+      div.card-body.text-center.align-middle
+        div.fa-3x
+          if data.State==1
+            //- Not ready
+            if data['Enable sys']==1
+              //- Unplugged
+              i.fas.fa-charging-station.p-1.text-primary(data-toggle="tooltip" title="Wallbox is enabled")
             else
-              //- Error/Unauthorized
-              i.fas.fa-charging-station.p-1.text-danger(data-toggle="tooltip" title="Charging unauthorized or error")
+              i.fas.fa-charging-station.p-1(data-toggle="tooltip" title="Wallbox is disabled")
+          else if data.State==2 || data.State==3
+            //- Charging/ready
+            i.fas.fa-charging-station.p-1.text-success(data-toggle="tooltip" title="Wallbox is charging")
+          else
+            //- Error/Unauthorized
+            i.fas.fa-charging-station.p-1.text-danger(data-toggle="tooltip" title="Charging unauthorized or error")
+          if data.Plug<5
+            span.text-muted(data-toggle="tooltip" title="Car unplugged")
+              i.fas.fa-long-arrow-alt-right.p-1
+              i.fas.fa-car.p-1
+              i.fas.fa-long-arrow-alt-right.p-1
+              i.fas.fa-car-battery.p-1
+          else
+            span(data-toggle="tooltip" title="Car plugged")
+              i.fas.fa-long-arrow-alt-right.p-1
+              i.fas.fa-car.p-1
+              i.fas.fa-long-arrow-alt-right.p-1
+              i.fas.fa-car-battery.p-1
 
-            if data.Plug<5
-              span.text-muted(data-toggle="tooltip" title="Car unplugged")
-                i.fas.fa-long-arrow-alt-right.p-1
-                i.fas.fa-car.p-1
-                i.fas.fa-long-arrow-alt-right.p-1
-                i.fas.fa-car-battery.p-1
-            else
-              span(data-toggle="tooltip" title="Car plugged")
-                i.fas.fa-long-arrow-alt-right.p-1
-                i.fas.fa-car.p-1
-                i.fas.fa-long-arrow-alt-right.p-1
-                i.fas.fa-car-battery.p-1
+      div.card-footer.py-2.px-3
+        p.card-text.text-muted.align-middle
+          i.fas.fa-info-circle.mr-2.align-middle
+          small.align-middle| Hover the pictures to get info
 
-        div.card-footer.py-2.px-3
-          p.card-text.text-muted.align-middle
-            i.fas.fa-info-circle.mr-2.align-middle
-            small.align-middle| Hover the pictures to get info
+block footer
+  script.
+      $("#startBtn").click(function(){
+        $.get("/start/bbbf74bd00000000", (data) => {console.log("Start command sent")});
+      });
 
-    script.
-        $("#startBtn").click(function(){
-          $.get("/start/bbbf74bd00000000", (data) => {console.log("Start command sent")});
-        });
-
-        $("#stopBtn").click(function(){
-          $.get("/stop/bbbf74bd00000000", (data) => {console.log("Stop command sent")});
-        });
-                
+      $("#stopBtn").click(function(){
+        $.get("/stop/bbbf74bd00000000", (data) => {console.log("Stop command sent")});
+      });         
 
