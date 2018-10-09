@@ -9,9 +9,14 @@ block scripts
   include includes/scripts.pug  
 
 block header
-  nav.navbar.navbar-dark.bg-dark.justify-content-between
-    a.navbar-brand(href="#")|KeContact
-    div.navbar-text|Meter
+  nav.navbar.navbar-dark.bg-dark.navbar-expand-md.justify-content-between
+    a.navbar-brand(href="/")|KeContact
+    div.collapse.navbar-collapse
+      ul.navbar-nav
+        li.nav-item
+          a.nav-link.active(href="/meter")|Meter
+        li.nav-item
+          a.nav-link(href="/history")|History
     div.navbar-text
       span.pr-1|Auth
       input(type="text" value="bbbf74bd00000000")
