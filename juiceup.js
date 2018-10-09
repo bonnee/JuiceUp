@@ -36,6 +36,7 @@ app.get('/meter', (req, res) => {
 	let data = c.getData();
 
 	res.render('meter', {
+		page: 'meter',
 		data: data,
 		price: PRICE_KWH
 	});
@@ -45,6 +46,7 @@ app.get('/history', (req, res) => {
 	let history = c.getHistory();
 
 	res.render('history', {
+		page: 'history',
 		history: history,
 		price: PRICE_KWH
 	});

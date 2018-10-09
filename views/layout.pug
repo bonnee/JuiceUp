@@ -4,7 +4,15 @@ html
     block head
     block scripts
   body
-    block header
+    nav.navbar.navbar-dark.bg-dark.navbar-expand-md.justify-content-between
+      a.navbar-brand(href="/")|KeContact
+      div.collapse.navbar-collapse
+        ul.navbar-nav
+          li.nav-item
+            a.nav-link(href="/meter" class={'active': page === 'meter'})|Meter
+          li.nav-item
+            a.nav-link(href="/history" class={'active': page === 'history'})|History
+      block nav
     main.container
       block content
     block footer
