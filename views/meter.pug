@@ -1,24 +1,19 @@
-- var kwh=(Math.abs(parseInt(hist['E pres'])/10000)).toFixed(2)
-- var cur=hist.ID==100
+- var kwh=(Math.abs(parseInt(data['E pres'])/10000)).toFixed(2)
 
 doctype html
 html
   head
-    link(rel="stylesheet" href="/meter.css")
-    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css")
-    link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css")
-    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js")
     title= "KeContact"
+    link(rel="stylesheet" href="/meter.css")
+    include includes/scripts.pug
+  
   body.container
     div.d-flex.justify-content-between.align-items-center
-      h1|Wallbox meter for session #{hist.ID-100}
-      if(cur)
-        if(data['Enable sys']==1)
-          form(action="/stop/bbbf74bd00000000" method="get")
-            input.btn.btn-danger(type='submit' value='Stop')
-        else
-          form(action="/start/bbbf74bd00000000" method="get")
-            input.btn.btn-success(type="submit" value="Start")
+      h1|Wallbox meter
+      if(data['Enable sys']==1)
+        button.btn.btn-danger(id="stopBtn")|Stop
+      else
+        button.btn.btn-success(id="startBtn")|Start
 
 
     div.card-deck
@@ -43,41 +38,49 @@ html
               div.display.px-2.text-light.bg-dark| #{price.toFixed(2).padStart(6,'0')}
             span.unit.align-self-end| €/kWh
 
-      if cur
-        div.card
-          h4.card-header| Status
-          div.card-body.text-center.align-middle
-            div.fa-3x
-              if data.State==1
-                //- Not ready
-                if data['Enable sys']==1
-                  //- Unplugged
-                  i.fas.fa-charging-station.p-1.text-primary(data-toggle="tooltip" title="Wallbox is enabled")
-                else
-                  i.fas.fa-charging-station.p-1(data-toggle="tooltip" title="Wallbox is disabled")
-              else if data.State==2 || data.State==3
-                //- Charging/ready
-                i.fas.fa-charging-station.p-1.text-success(data-toggle="tooltip" title="Wallbox is charging")
+      div.card
+        h4.card-header| Status
+        div.card-body.text-center.align-middle
+          div.fa-3x
+            if data.State==1
+              //- Not ready
+              if data['Enable sys']==1
+                //- Unplugged
+                i.fas.fa-charging-station.p-1.text-primary(data-toggle="tooltip" title="Wallbox is enabled")
               else
-                //- Error/Unauthorized
-                i.fas.fa-charging-station.p-1.text-danger(data-toggle="tooltip" title="Charging unauthorized or error")
+                i.fas.fa-charging-station.p-1(data-toggle="tooltip" title="Wallbox is disabled")
+            else if data.State==2 || data.State==3
+              //- Charging/ready
+              i.fas.fa-charging-station.p-1.text-success(data-toggle="tooltip" title="Wallbox is charging")
+            else
+              //- Error/Unauthorized
+              i.fas.fa-charging-station.p-1.text-danger(data-toggle="tooltip" title="Charging unauthorized or error")
 
-              if data.Plug<5
-                span.text-muted(data-toggle="tooltip" title="Car unplugged")
-                  i.fas.fa-long-arrow-alt-right.p-1
-                  i.fas.fa-car.p-1
-                  i.fas.fa-long-arrow-alt-right.p-1
-                  i.fas.fa-car-battery.p-1
-              else
-                span(data-toggle="tooltip" title="Car plugged")
-                  i.fas.fa-long-arrow-alt-right.p-1
-                  i.fas.fa-car.p-1
-                  i.fas.fa-long-arrow-alt-right.p-1
-                  i.fas.fa-car-battery.p-1
+            if data.Plug<5
+              span.text-muted(data-toggle="tooltip" title="Car unplugged")
+                i.fas.fa-long-arrow-alt-right.p-1
+                i.fas.fa-car.p-1
+                i.fas.fa-long-arrow-alt-right.p-1
+                i.fas.fa-car-battery.p-1
+            else
+              span(data-toggle="tooltip" title="Car plugged")
+                i.fas.fa-long-arrow-alt-right.p-1
+                i.fas.fa-car.p-1
+                i.fas.fa-long-arrow-alt-right.p-1
+                i.fas.fa-car-battery.p-1
 
-          div.card-footer.py-2.px-3
-            p.card-text.text-muted.align-middle
-              i.fas.fa-info-circle.mr-2.align-middle
-              small.align-middle| Hover the pictures to get info
+        div.card-footer.py-2.px-3
+          p.card-text.text-muted.align-middle
+            i.fas.fa-info-circle.mr-2.align-middle
+            small.align-middle| Hover the pictures to get info
+
+    script.
+        $("#startBtn").click(function(){
+          $.get("/start/bbbf74bd00000000", (data) => {console.log("Start command sent")});
+        });
+
+        $("#stopBtn").click(function(){
+          $.get("/stop/bbbf74bd00000000", (data) => {console.log("Stop command sent")});
+        });
                 
 

@@ -32,14 +32,11 @@ app.get('/', (req, res) => {
 	});
 });
 
-app.get('/meter/:session', (req, res) => {
-	session = req.params.session;
+app.get('/meter', (req, res) => {
 	let data = c.getData();
-	let hist = c.getHistory();
 
 	res.render('meter', {
 		data: data,
-		hist: hist[parseInt(session) + 100],
 		price: PRICE_KWH
 	});
 });
