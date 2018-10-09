@@ -1,9 +1,11 @@
-doctype html
-html
-  head
+extends layout.pug
+
+block head
     title= "KeContact"
-    include includes/scripts.pug
-  body.container
+block scripts
+  include includes/scripts.pug
+
+block content
     h1|Charging history
     table.table.table-striped
       thead
