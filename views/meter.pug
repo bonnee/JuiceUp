@@ -3,20 +3,12 @@ extends layout.pug
 block head
   - var kwh=(Math.abs(parseInt(data['E pres'])/10000)).toFixed(2)
   title= "KeContact"
-  link(rel="stylesheet" href="/meter.css")
 
 block scripts
+  link(rel="stylesheet" href="/meter.css")
   include includes/scripts.pug  
 
-block header
-  nav.navbar.navbar-dark.bg-dark.navbar-expand-md.justify-content-between
-    a.navbar-brand(href="/")|KeContact
-    div.collapse.navbar-collapse
-      ul.navbar-nav
-        li.nav-item
-          a.nav-link.active(href="/meter")|Meter
-        li.nav-item
-          a.nav-link(href="/history")|History
+block nav
     div.navbar-text
       span.pr-1|Auth
       input(type="text" value="bbbf74bd00000000")
@@ -25,9 +17,9 @@ block content
   div.d-flex.justify-content-between.align-items-center
     h1|Wallbox meter
     if(data['Enable sys']==1)
-      button.btn.btn-danger(id="stopBtn")|Stop
+      button.btn.btn-danger#stopBtn|Stop
     else
-      button.btn.btn-success(id="startBtn")|Start
+      button.btn.btn-success#startBtn|Start
 
   div.card-deck
     div.card
@@ -54,31 +46,34 @@ block content
       h4.card-header| Status
       div.card-body.text-center.align-middle
         div.fa-3x
-          if data.State==1
-            //- Not ready
-            if data['Enable sys']==1
-              //- Unplugged
-              i.fas.fa-charging-station.p-1.text-primary(data-toggle="tooltip" title="Wallbox is enabled")
-            else
-              i.fas.fa-charging-station.p-1(data-toggle="tooltip" title="Wallbox is disabled")
-          else if data.State==2 || data.State==3
-            //- Charging/ready
-            i.fas.fa-charging-station.p-1.text-success(data-toggle="tooltip" title="Wallbox is charging")
-          else
-            //- Error/Unauthorized
-            i.fas.fa-charging-station.p-1.text-danger(data-toggle="tooltip" title="Charging unauthorized or error")
-          if data.Plug<5
-            span.text-muted(data-toggle="tooltip" title="Car unplugged")
-              i.fas.fa-long-arrow-alt-right.p-1
-              i.fas.fa-car.p-1
-              i.fas.fa-long-arrow-alt-right.p-1
-              i.fas.fa-car-battery.p-1
-          else
-            span(data-toggle="tooltip" title="Car plugged")
-              i.fas.fa-long-arrow-alt-right.p-1
-              i.fas.fa-car.p-1
-              i.fas.fa-long-arrow-alt-right.p-1
-              i.fas.fa-car-battery.p-1
+          - var msg
+          - var state
+          case data.State
+            when 1
+              if data['Enable sys']==1
+                - state=1
+                - msg='Wallbox is enabled'
+              else
+                - state=0
+                - msg='Wallbox is disabled'
+            when 2
+            when 3
+              - state=2
+              - msg='Wallbox is charging'
+            default
+              state=5
+              msg='Charging unauthorized or error'
+
+          i.fas.fa-charging-station.p-1(data-toggle="tooltip" title=msg class={'text-primary': state==1,
+                                                                               ''            : state==0,
+                                                                               'text-success': state==2,
+                                                                               'text-danger' : state==5})
+
+          span(data-toggle="tooltip" title="Car unplugged" class={'text-muted':data.Plug<5})
+            i.fas.fa-long-arrow-alt-right.p-1
+            i.fas.fa-car.p-1
+            i.fas.fa-long-arrow-alt-right.p-1
+            i.fas.fa-car-battery.p-1
 
       div.card-footer.py-2.px-3
         p.card-text.text-muted.align-middle
