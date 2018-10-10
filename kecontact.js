@@ -65,6 +65,7 @@ class KeContact {
 		this._timer = setInterval(() => {
 			console.log('Update data');
 			this._updateReports();
+			this._updateHistory();
 		}, POLL_FREQ);
 	}
 

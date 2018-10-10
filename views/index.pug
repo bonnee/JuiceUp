@@ -4,22 +4,14 @@ block head
   title= "KeContact"
 
 block content
-  div.card-deck
+  div.card-deck.mt-3
     div.card(style='max-width:30%')
       img.card-img-top(src='/p20.png')
       div.card-body
-        h5.card-title=data.Product
+        h5.card-title|KeContact #{data.Firmware.split(' ')[0]}
         div.card-text
-          |Uptime: #{uptime.d}d #{uptime.m}h #{uptime.s}s<br/>
-          |Total Energy: #{(parseInt(data['E total']) /10000).toFixed(1)}kWh
-        div.card-text
-          small.text-muted|Firmware Version: #{data.Firmware}<br/>
-    div.card(style='max-width:30%')
-      img.card-img-top(src='/p20.png')
-      div.card-body
-        h5.card-title=data.Product
-        div.card-text
-          |Uptime: #{uptime.d}d #{uptime.m}h #{uptime.s}s<br/>
-          |Total Energy: #{(parseInt(data['E total']) /10000).toFixed(1)}kWh
-        div.card-text
-          small.text-muted|Firmware Version: #{data.Firmware}<br/>
+          |Serial #: #{data.Serial}<br/>
+          |Uptime: #{(data.Sec/60/60/24).toFixed(0)}d<br/>
+          div.card-text
+            small.text-muted|Firmware Version: #{data.Firmware}<br/>
+    

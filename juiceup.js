@@ -19,16 +19,9 @@ app.listen(WEBPORT, function () {
 
 app.get('/', (req, res) => {
 	let data = c.getData();
-	let start = moment.duration(data.Sec, 'seconds');
 
 	res.render('index', {
 		data: data,
-		uptime: {
-			d: start.days(),
-			h: start.hours(),
-			m: start.minutes(),
-			s: start.seconds()
-		}
 	});
 });
 
