@@ -1,11 +1,25 @@
-doctype html
-html
-  head
-    title= "KeContact"
-  body
-    h1= data.Product
-    h2= "Wallbox status"
-    p
-        |Firmware Version: #{data.Firmware}<br/>
-        |Uptime: #{uptime.d}d #{uptime.m}h #{uptime.s}s<br/>
-        |Total Energy: #{(parseInt(data['E total']) /10000).toFixed(1)}KWh
+extends layout.pug
+
+block head
+  title= "KeContact"
+
+block content
+  div.card-deck
+    div.card(style='max-width:30%')
+      img.card-img-top(src='/p20.png')
+      div.card-body
+        h5.card-title=data.Product
+        div.card-text
+          |Uptime: #{uptime.d}d #{uptime.m}h #{uptime.s}s<br/>
+          |Total Energy: #{(parseInt(data['E total']) /10000).toFixed(1)}kWh
+        div.card-text
+          small.text-muted|Firmware Version: #{data.Firmware}<br/>
+    div.card(style='max-width:30%')
+      img.card-img-top(src='/p20.png')
+      div.card-body
+        h5.card-title=data.Product
+        div.card-text
+          |Uptime: #{uptime.d}d #{uptime.m}h #{uptime.s}s<br/>
+          |Total Energy: #{(parseInt(data['E total']) /10000).toFixed(1)}kWh
+        div.card-text
+          small.text-muted|Firmware Version: #{data.Firmware}<br/>
