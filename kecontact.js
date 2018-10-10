@@ -130,11 +130,13 @@ class KeContact {
 
 		let timeout = setTimeout(() => {
 			console.error('Wallbox not responding. Retrying...');
+			this._resetTimer();
 			this._handleQueue();
 		}, TIMEOUT);
 
 		this._rxSocket.once('message', (message, rinfo) => {
 			clearTimeout(timeout);
+
 			let parsedMessage = this._parseMessage(message);
 
 			if (parsedMessage) {
