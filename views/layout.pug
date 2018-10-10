@@ -1,18 +1,22 @@
 doctype html
 html
   head
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
     block head
+    include includes/scripts.pug
     block scripts
   body
     nav.navbar.navbar-dark.bg-dark.navbar-expand-md.justify-content-between
       a.navbar-brand(href="/")|KeContact
-      div.collapse.navbar-collapse
+      button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation")
+        span.navbar-toggler-icon
+      div#navMenu.collapse.navbar-collapse.justify-content-between
         ul.navbar-nav
           li.nav-item
             a.nav-link(href="/meter" class={'active': page === 'meter'})|Meter
           li.nav-item
             a.nav-link(href="/history" class={'active': page === 'history'})|History
-      block nav
-    main.container
+        block nav
+    main.container.mt-2
       block content
     block footer
