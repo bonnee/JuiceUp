@@ -2,16 +2,17 @@ extends layout.pug
 
 block head
   - var kwh=(Math.abs(parseInt(data['E pres'])/10000)).toFixed(2)
+  - var auth="bbbf74bd00000000"
   title= "KeContact"
 
 block scripts
   link(rel="stylesheet" href="/meter.css")
-  include includes/scripts.pug  
 
 block nav
-    div.navbar-text
-      span.pr-1|Auth
-      input(type="text" value="bbbf74bd00000000")
+  form.form-inline.my-2.my-lg-0
+    div.form-group.row
+      label.navbar-text.pr-1(for='authIn')|Auth
+      input#authIn.form-control.mr-sm-2(type="text" placeholder="Auth" aria-label="Auth" value=auth)
 
 block content
   div.d-flex.justify-content-between.align-items-center
@@ -83,10 +84,10 @@ block content
 block footer
   script.
       $("#startBtn").click(function(){
-        $.get("/start/bbbf74bd00000000", (data) => {console.log("Start command sent")});
+        $.get("/start/#{auth}", (data) => {console.log("Start command sent")});
       });
 
       $("#stopBtn").click(function(){
-        $.get("/stop/bbbf74bd00000000", (data) => {console.log("Stop command sent")});
+        $.get("/stop/#{auth}", (data) => {console.log("Stop command sent")});
       });         
 
