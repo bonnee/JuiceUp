@@ -17,13 +17,19 @@ block nav
 
 block content
   div.card-deck.mt-3
-    div.card(style='max-width:30%')
-      img.card-img-top(src='/p20.png')
-      div.card-body
-        h5.card-title|KeContact #{data.Firmware.split(' ')[0]}
-        div.card-text
-          |Serial #: #{data.Serial}<br/>
-          |Uptime: #{(data.Sec/60/60/24).toFixed(0)}d<br/>
-          div.card-text
-            small.text-muted|Firmware Version: #{data.Firmware}<br/>
+    each box in boxes
+        div.card(style='max-width:30%')
+          img.card-img-top(src='/p20.png')
+          div.card-body
+            h5.card-title=box.name+' '
+              span.badge.badge-primary.float-right=box.product.split('-')[1]
+            div.card-text|Address #{box.address}
+            div.card-text
+              a(href='/'+box.serial+'/meter')|Meter
+              a(href='/'+box.serial+'/history')|History
+
+            div.card-text
+              small.text-muted|Serial No. #{box.serial}<br/>
     
+block footer
+  include includes/addWallboxModal.pug

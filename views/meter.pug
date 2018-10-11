@@ -40,7 +40,7 @@ block content
         div.d-flex.flex-row
           div
             h5.mb-0.mt-2.text-right| Price per kWh
-            div.display.px-2.text-light.bg-dark| #{price.toFixed(2).padStart(6,'0')}
+            div.display.px-2.text-light.bg-dark| #{parseFloat(price).toFixed(2).padStart(6,'0')}
           span.unit.align-self-end| €/kWh
 
     div.card
@@ -84,10 +84,10 @@ block content
 block footer
   script.
       $("#startBtn").click(function(){
-        $.get("/start/#{auth}", (data) => {console.log("Start command sent")});
+        $.get("/#{data.Serial}/start/#{auth}", (data) => {console.log("Start command sent")});
       });
 
       $("#stopBtn").click(function(){
-        $.get("/stop/#{auth}", (data) => {console.log("Stop command sent")});
+        $.get("/#{data.Serial}/stop/#{auth}", (data) => {console.log("Stop command sent")});
       });         
 
