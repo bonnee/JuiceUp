@@ -1,4 +1,7 @@
 const dgram = require('dgram');
+const EventEmitter = require('events');
+class Emitter extends EventEmitter {}
+
 const PORT = 7090;
 const BRD_PORT = 7092;
 
@@ -12,6 +15,8 @@ class KeContact {
 		this._rxSocket = dgram.createSocket('udp4');
 		this._brdSocket = dgram.createSocket('udp4');
 
+		this._emitter = new Emitter();
+
 		this._address = address;
 
 		this._sendQueue = [];
@@ -20,6 +25,8 @@ class KeContact {
 		this._history = [];
 
 		this._timer;
+
+		console.log('Address: ' + address);
 
 		this._rxSocket.on('error', (err) => {
 			console.error(err);
@@ -43,7 +50,9 @@ class KeContact {
 			this._brdSocket.setBroadcast(true);
 			this._brdSocket.setMulticastLoopback(true);
 		});
+	}
 
+	init(callback = () => {}) {
 		this._rxSocket.on('listening', () => {
 			console.log('Server listening');
 
@@ -54,8 +63,12 @@ class KeContact {
 			this._resetTimer();
 		});
 
+		this._emitter.once('queue', () => {
+			callback();
+		})
+
 		this._rxSocket.bind(PORT);
-		this._brdSocket.bind(BRD_PORT, '0.0.0.0');
+		//this._brdSocket.bind(BRD_PORT, '0.0.0.0');
 	}
 
 	_resetTimer() {
@@ -96,7 +109,7 @@ class KeContact {
 
 			return JSON.parse(msg);
 		} catch (e) {
-			console.error('Error checking message: ' + e);
+			console.error(this._address + ': Error checking message ' + message + ': ' + e);
 		}
 	}
 
@@ -116,21 +129,24 @@ class KeContact {
 	_send(sendMsg) {
 		this._sendQueue.push(sendMsg);
 
-		if (this._sendQueue.length == 1)
+		if (this._sendQueue.length == 1) {
 			this._handleQueue();
+		}
 	}
 
 	_handleQueue() {
-		if (this._sendQueue.length == 0)
+		if (this._sendQueue.length == 0) {
+			this._emitter.emit('queue')
 			return;
+		}
 
 		this._txSocket.send(Buffer.from(this._sendQueue[0]), PORT, this._address, (err) => {
 			if (err)
-				console.error(err);
+				console.error(this._address + ': ' + err);
 		});
 
 		let timeout = setTimeout(() => {
-			console.error('Wallbox not responding. Retrying...');
+			console.error(this._address + ': Wallbox not responding. Retrying...');
 			this._resetTimer();
 			this._handleQueue();
 		}, TIMEOUT);
