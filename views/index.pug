@@ -3,6 +3,18 @@ extends layout.pug
 block head
   title= "KeContact"
 
+block nav
+  div.d-flex.flex-row
+    form.mx-2(action="/price/" method="post")
+      div.input-group
+        div.input-group-prepend
+          span.input-group-text|€/kWh
+        input.form-control(type="number" step="0.01" name="price" aria-label="Amount (to the nearest dollar)" value=price)
+        div.input-group-append
+          input.btn.btn-primary(type="submit" value="Set")
+      
+    button.btn.btn-primary(data-toggle="modal" data-target="#addWallbox")|New Wallbox
+
 block content
   div.card-deck.mt-3
     div.card(style='max-width:30%')

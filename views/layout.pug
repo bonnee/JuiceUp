@@ -8,14 +8,18 @@ html
   body
     nav.navbar.navbar-dark.bg-dark.navbar-expand-md.justify-content-between
       a.navbar-brand(href="/")|KeContact
-      button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation")
+      button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navContent" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation")
         span.navbar-toggler-icon
-      div#navMenu.collapse.navbar-collapse.justify-content-between
-        ul.navbar-nav
-          li.nav-item
-            a.nav-link(href="/meter" class={'active': page === 'meter'})|Meter
-          li.nav-item
-            a.nav-link(href="/history" class={'active': page === 'history'})|History
+      
+      div#navContent.collapse.navbar-collapse.justify-content-between
+        if page!='index'
+          ul.navbar-nav
+            li.nav-item
+              a.nav-link(href="/"+data.Serial+"/meter" class={'active': page === 'meter'})|Meter
+            li.nav-item
+              a.nav-link(href="/"+data.Serial+"/history" class={'active': page === 'history'})|History
+        else
+          div
         block nav
     main.container.mt-2
       block content
