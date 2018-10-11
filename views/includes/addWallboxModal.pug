@@ -1,0 +1,19 @@
+
+div#addWallbox.modal.fade(tabindex="-1" role="dialog")
+  div.modal-dialog(role="document")
+    div.modal-content
+      div.modal-header
+        h5.modal-title|Add new wallbox
+        button.close(data-dismiss="modal" aria-label="Close")
+          span(aria-hidden="true")|&times;
+      form(action="/addWallbox" method="get")
+        div.modal-body
+          div.form-group
+            label(for="nameInput" )|Name
+            input#nameInput.form-control( name="name" type="text" placeholder="Name")
+          div.form-group
+            label(for="addressInput" name="address")|IP address
+            input#addressInput.form-control(name="address" type="text" placeholder="xxx.xxx.xxx.xxx")
+        div.modal-footer
+          button.btn.btn-secondary(data-dismiss="modal")|Cancel
+          input.btn.btn-primary(type="submit" value="Add")
