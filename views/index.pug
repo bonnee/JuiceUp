@@ -32,7 +32,7 @@ block content
               small.text-muted|Serial No. #{box.serial}<br/>
     
 block footer
-  include includes/addWallboxModal.pug 
+  include includes/addWallboxModal.pug
   script.
       $("#setPrice").click(() => {
         $.post("/price", { price: $("#priceIn").val() }, (data) => {

@@ -57,37 +57,35 @@ app.get('/:serial/history', (req, res) => {
 	});
 });
 
-app.get('/addWallbox', (req, res) => {
-	let tmp = new kecontact(req.query.address);
+app.post('/addWallbox', (req, res) => {
+	let tmpConn = new kecontact(req.body.address);
 
 	let del = () => {
-		tmp.close();
-		delete tmp;
+		tmpConn.close();
+		delete tmpConn;
 	}
 
-	tmp.init((err) => {
-		console.log(err);
+	tmpConn.init((err) => {
 		if (err) {
 			console.log('Error polling device.');
 			res.send('Timeout');
 		} else {
-			data = tmp.getData();
+			data = tmpConn.getData();
 			if (data == {}) {
 				res.send('Fail');
 			} else {
 				dbase.addWallbox({
 					serial: data.Serial,
-					name: req.query.name,
-					address: req.query.address,
+					name: req.body.name,
+					address: req.body.address,
 					product: data.Product
 				});
-				conns[data.Serial] = tmp;
+				conns[data.Serial] = tmpConn;
 				res.send('Ok');
 			}
 		}
 		del();
 	});
-
 
 	req.on('close', (err) => {
 		console.log('Connection closed');

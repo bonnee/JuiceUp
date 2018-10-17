@@ -6,44 +6,71 @@ div#addWallbox.modal.fade(tabindex="-1" role="dialog")
         h5.modal-title|Add new wallbox
         button.close(data-dismiss="modal" aria-label="Close")
           span(aria-hidden="true")|&times;
-      div.modal-body
-        div.form-group
-          label(for="nameInput")|Name
-          input#nameInput.form-control(name="name" type="text" placeholder="Name")
-        div.form-group
-          label(for="addressInput" name="address")|IP address
-          input#addressInput.form-control(name="address" type="text" placeholder="xxx.xxx.xxx.xxx")
-      div.modal-footer
-        button.btn.btn-secondary(data-dismiss="modal")|Cancel
-        input#add.btn.btn-primary(type="button" value="Add" data-toggle="modal" data-target="#loading")
+      form(onsubmit="return false")
+        div.modal-body
+          div#addAlert.alert.alert-danger.d-none|
+          div.form-group
+            label(for="nameInput")|Name
+            input#nameInput.form-control(name="name" type="text" placeholder="Name")
+          div.form-group
+            label(for="addressInput" name="address")|IP address
+            input#addressInput.form-control(name="address" type="text" placeholder="xxx.xxx.xxx.xxx")
+        div.modal-footer
+          button.btn.btn-secondary(data-dismiss="modal")|Cancel
+          input#add.btn.btn-primary(type="submit" value="Add" data-toggle="modal" data-target="#loading")
 
 div#loading.modal.fade
-  div.modal-dialog.modal-sm.modal-dialog-centered
+  div.modal-dialog.modal-sm.modal-dialog-centered.d-flex.justify-content-center
     div.modal-content(style="width: 90px;")
       div.modal-body.text-center
-        h1
+        h1.m-0
           i.fas.fa-sync.fa-spin
 
+div#alert.modal.fade
+  div.modal-dialog.modal-dialog-centered
+    div.modal-content
+      div.modal-header
+        h5#alertTitle.modal-title|Message
+        button.close(data-dismiss="modal" aria-label="Close")
+          span(aria-hidden="true")|&times;
+      div.modal-body
+        p#alertMessage.modal-text|Message body
+
 script.
-  $("#add").click(function(){
-    $("#addWallbox").modal("hide");
-    $("#loading").modal("show");
+  $("#add").click(() => {
+    let addWallbox=    $("#addWallbox");
+    $("#loading").modal({backdrop:'static',keyboard:false});
+
+    addWallbox.modal("hide");
 
     let name=$("#nameInput").val()
     let address=$("#addressInput").val()
 
-    var req=$.get("/addWallbox?name="+name+"&address="+address, (data) => {
+    var req=$.post("/addWallbox",{ name: name, address: address }, (data) => {
       $("#loading").modal("hide");
 
+      let alert = $("#alert");
       switch (data) {
         case 'Ok':
-          alert('Item added successfully');
+          alert.find('#alertTitle').text('Success');
+          alert.find('#alertMessage').text('Wallbox has been successfully added.');
+          alert.modal();
           break;
         case 'Timeout':
-          alert('Item did not respond in time. Check IP address');
+          alert.find('#alertTitle').text('Timeout');
+          alert.find('#alertMessage').text('Wallbox did not respond in time. Check the IP address of the wallbox');
+          alert.modal();
+          alert.one('hide.bs.modal',()=>{
+            $("#addWallbox").modal();
+          });
           break; 
         case 'Fail': 
-          alert('Generic error');
+          alert.find('#alertTitle').text('Error');
+          alert.find('#alertMessage').text('Server responded with a generic error.');
+          alert.modal();
+          alert.one('hide.bs.modal',()=>{
+            $("#addWallbox").modal();
+          });
           break;
       }
     });
