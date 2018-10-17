@@ -9,6 +9,41 @@ const POLL_FREQ = 30000;
 const REQ_FREQ = 10;
 const TIMEOUT = 5000;
 
+class Intervals {
+	constructor() {
+		this._intervals = [];
+	}
+
+	add(fun, delay) {
+		var newInterval = setInterval(fun, delay);
+
+		return this._intervals.push(newInterval) - 1;
+	}
+
+	addOnce(fun, timeout) {
+		var newTimeout = setTimeout(fun, timeout);
+
+		return this._intervals.push(newTimeout) - 1;
+	}
+
+	clear(id) {
+		if (id && this._intervals[id]) {
+			clearInterval(this._intervals[id]);
+			delete this._intervals[id];
+			return true;
+		}
+		console.log('id doesn\'t exist');
+		return false;
+	}
+
+	clearAll() {
+		for (let interval in this._intervals) {
+			this.clear(interval);
+		}
+		console.log(this._intervals);
+	}
+}
+
 class KeContact {
 	constructor(address) {
 		this._txSocket = dgram.createSocket('udp4');
@@ -16,6 +51,7 @@ class KeContact {
 		this._brdSocket = dgram.createSocket('udp4');
 
 		this._emitter = new Emitter();
+		this._intervals = new Intervals();
 
 		this._address = address;
 
@@ -53,6 +89,8 @@ class KeContact {
 	}
 
 	init(callback = () => {}) {
+		let err = false;
+
 		this._rxSocket.on('listening', () => {
 			console.log('Server listening');
 
@@ -64,18 +102,24 @@ class KeContact {
 		});
 
 		this._emitter.once('queue', () => {
-			callback();
-		})
+			if (!err) {
+				callback();
+			}
+		});
+
+		this._emitter.once('timeout', () => {
+			err = true;
+			callback('timeout');
+		});
 
 		this._rxSocket.bind(PORT);
 		//this._brdSocket.bind(BRD_PORT, '0.0.0.0');
 	}
 
 	_resetTimer() {
-		if (this._timer)
-			clearInterval(this._timer);
+		this._intervals.clear(this._timer);
 
-		this._timer = setInterval(() => {
+		this._timer = this._intervals.add(() => {
 			console.log('Update data');
 			this._updateReports();
 			this._updateHistory();
@@ -96,11 +140,10 @@ class KeContact {
 				return false;
 
 			if (msg.startsWith('TCH')) {
-				console.log(msg)
-				setTimeout(() => { // Give time to values to update
+				this._emitter.once('queue', () => { // UNTESTED: this was a timeout
 					this._resetTimer();
 					this._updateReports();
-				}, 1000);
+				});
 				return false;
 			}
 
@@ -134,25 +177,33 @@ class KeContact {
 		}
 	}
 
-	_handleQueue() {
+	_handleQueue(timeout_count = 0) {
 		if (this._sendQueue.length == 0) {
-			this._emitter.emit('queue')
+			this._emitter.emit('queue');
 			return;
 		}
+
+		let timeout = this._intervals.addOnce(() => {
+			if (timeout_count >= 3) {
+				this._emitter.emit('timeout');
+				console.error(this._address + ': Giving up.');
+
+				this._sendQueue.shift();
+				this._handleQueue(timeout_count + 1);
+			} else {
+				console.error(this._address + ': Wallbox not responding. Retrying...');
+				this._handleQueue(timeout_count + 1);
+				this._resetTimer();
+			}
+		}, TIMEOUT);
 
 		this._txSocket.send(Buffer.from(this._sendQueue[0]), PORT, this._address, (err) => {
 			if (err)
 				console.error(this._address + ': ' + err);
 		});
 
-		let timeout = setTimeout(() => {
-			console.error(this._address + ': Wallbox not responding. Retrying...');
-			this._resetTimer();
-			this._handleQueue();
-		}, TIMEOUT);
-
 		this._rxSocket.once('message', (message, rinfo) => {
-			clearTimeout(timeout);
+			this._intervals.clear(timeout);
 
 			let parsedMessage = this._parseMessage(message);
 
@@ -164,7 +215,7 @@ class KeContact {
 			}
 
 			this._sendQueue.shift();
-			setTimeout(this._handleQueue.bind(this), REQ_FREQ);
+			this._intervals.addOnce(this._handleQueue.bind(this), REQ_FREQ);
 		});
 	}
 
@@ -199,6 +250,14 @@ class KeContact {
 	stop(token) {
 		this._send('stop ' + token);
 		this._updateHistory(true);
+	}
+
+	close() {
+		this._sendQueue = [];
+		this._intervals.clearAll();
+		this._txSocket.close();
+		this._rxSocket.close();
+		this._brdSocket.close();
 	}
 }
 

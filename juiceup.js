@@ -4,8 +4,6 @@ const db = require('./db.js');
 const express = require('express');
 var bodyParser = require('body-parser');
 
-
-
 const WEBPORT = 3000;
 
 var conns = [];
@@ -62,19 +60,38 @@ app.get('/:serial/history', (req, res) => {
 app.get('/addWallbox', (req, res) => {
 	let tmp = new kecontact(req.query.address);
 
-	tmp.init(() => {
-		data = tmp.getData();
-		if (data == {}) {
-			res.send('Fail')
-		} else
-			dbase.addWallbox({
-				serial: data.Serial,
-				name: req.query.name,
-				address: req.query.address,
-				product: data.Product
-			});
-		conns[data.Serial] = tmp;
-		res.send('Success');
+	let del = () => {
+		tmp.close();
+		delete tmp;
+	}
+
+	tmp.init((err) => {
+		console.log(err);
+		if (err) {
+			console.log('Error polling device.');
+			res.send('Timeout');
+		} else {
+			data = tmp.getData();
+			if (data == {}) {
+				res.send('Fail');
+			} else {
+				dbase.addWallbox({
+					serial: data.Serial,
+					name: req.query.name,
+					address: req.query.address,
+					product: data.Product
+				});
+				conns[data.Serial] = tmp;
+				res.send('Ok');
+			}
+		}
+		del();
+	});
+
+
+	req.on('close', (err) => {
+		console.log('Connection closed');
+		del();
 	});
 });
 

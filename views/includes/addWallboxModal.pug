@@ -6,14 +6,45 @@ div#addWallbox.modal.fade(tabindex="-1" role="dialog")
         h5.modal-title|Add new wallbox
         button.close(data-dismiss="modal" aria-label="Close")
           span(aria-hidden="true")|&times;
-      form(action="/addWallbox" method="get")
-        div.modal-body
-          div.form-group
-            label(for="nameInput" )|Name
-            input#nameInput.form-control( name="name" type="text" placeholder="Name")
-          div.form-group
-            label(for="addressInput" name="address")|IP address
-            input#addressInput.form-control(name="address" type="text" placeholder="xxx.xxx.xxx.xxx")
-        div.modal-footer
-          button.btn.btn-secondary(data-dismiss="modal")|Cancel
-          input.btn.btn-primary(type="submit" value="Add")
+      div.modal-body
+        div.form-group
+          label(for="nameInput")|Name
+          input#nameInput.form-control(name="name" type="text" placeholder="Name")
+        div.form-group
+          label(for="addressInput" name="address")|IP address
+          input#addressInput.form-control(name="address" type="text" placeholder="xxx.xxx.xxx.xxx")
+      div.modal-footer
+        button.btn.btn-secondary(data-dismiss="modal")|Cancel
+        input#add.btn.btn-primary(type="button" value="Add" data-toggle="modal" data-target="#loading")
+
+div#loading.modal.fade
+  div.modal-dialog.modal-sm.modal-dialog-centered
+    div.modal-content(style="width: 90px;")
+      div.modal-body.text-center
+        h1
+          i.fas.fa-sync.fa-spin
+
+script.
+  $("#add").click(function(){
+    $("#addWallbox").modal("hide");
+    $("#loading").modal("show");
+
+    let name=$("#nameInput").val()
+    let address=$("#addressInput").val()
+
+    var req=$.get("/addWallbox?name="+name+"&address="+address, (data) => {
+      $("#loading").modal("hide");
+
+      switch (data) {
+        case 'Ok':
+          alert('Item added successfully');
+          break;
+        case 'Timeout':
+          alert('Item did not respond in time. Check IP address');
+          break; 
+        case 'Fail': 
+          alert('Generic error');
+          break;
+      }
+    });
+  });
