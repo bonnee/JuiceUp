@@ -32,7 +32,6 @@ class Intervals {
 			delete this._intervals[id];
 			return true;
 		}
-		console.log('id doesn\'t exist');
 		return false;
 	}
 
@@ -40,7 +39,6 @@ class Intervals {
 		for (let interval in this._intervals) {
 			this.clear(interval);
 		}
-		console.log(this._intervals);
 	}
 }
 
@@ -62,7 +60,7 @@ class KeContact {
 
 		this._timer;
 
-		console.log('Address: ' + address);
+		console.log(address + ': Started.');
 
 		this._rxSocket.on('error', (err) => {
 			console.error(err);
@@ -76,7 +74,7 @@ class KeContact {
 
 				this._saveData(this._parseMessage(message));
 			} catch (e) {
-				console.log('Error handling message: ' + e);
+				console.log(this._address + ': Error handling message: ' + e);
 			}
 		});
 
@@ -92,7 +90,7 @@ class KeContact {
 		let err = false;
 
 		this._rxSocket.on('listening', () => {
-			console.log('Server listening');
+			console.log(this._address + ': Server listening');
 
 			this._send('report 1');
 			this._updateReports();
@@ -120,7 +118,7 @@ class KeContact {
 		this._intervals.clear(this._timer);
 
 		this._timer = this._intervals.add(() => {
-			console.log('Update data');
+			console.log(this._address + ': Update data');
 			this._updateReports();
 			this._updateHistory();
 		}, POLL_FREQ);
@@ -128,12 +126,6 @@ class KeContact {
 
 	_parseMessage(message) {
 		try {
-			/*let str = '';
-			for (let i in message) {
-				str += String.fromCharCode(message[i])
-			}
-			console.log(String(str));*/
-
 			let msg = message.toString().trim();
 
 			if (msg.length == 0)
@@ -167,7 +159,6 @@ class KeContact {
 
 		this._history[id] = newHistory;
 	}
-
 
 	_send(sendMsg) {
 		this._sendQueue.push(sendMsg);
