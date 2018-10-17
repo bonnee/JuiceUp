@@ -23,6 +23,7 @@ class db {
 
 	setPrice(newPrice) {
 		this._db.set('price', parseFloat(newPrice)).write();
+		return true;
 	}
 
 	getPrice() {

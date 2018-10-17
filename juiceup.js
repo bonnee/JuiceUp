@@ -96,8 +96,8 @@ app.get('/addWallbox', (req, res) => {
 });
 
 app.post('/price', (req, res) => {
-	dbase.setPrice(req.body.price);
-	res.send('Ok');
+	if (dbase.setPrice(req.body.price))
+		res.send(req.body.price);
 });
 
 app.get('/:serial/start/:token', (req, res) => {
