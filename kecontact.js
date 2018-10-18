@@ -93,15 +93,18 @@ class KeContact {
 			console.log(this._address + ': Server listening');
 
 			this._send('report 1');
-			this._updateReports();
-			this._updateHistory();
-
-			this._resetTimer();
 		});
 
 		this._emitter.once('queue', () => {
 			if (!err) {
-				callback();
+				if (this._data.Firmware) {
+					this._updateReports();
+					this._updateHistory();
+					this._resetTimer();
+					callback('ok');
+				} else {
+					callback('wrong data');
+				}
 			}
 		});
 
@@ -129,14 +132,14 @@ class KeContact {
 			let msg = message.toString().trim();
 
 			if (msg.length == 0)
-				return false;
+				return;
 
 			if (msg.startsWith('TCH')) {
 				this._emitter.once('queue', () => { // UNTESTED: this was a timeout
 					this._resetTimer();
 					this._updateReports();
 				});
-				return false;
+				return;
 			}
 
 			if (msg[0] == '"')
@@ -145,6 +148,7 @@ class KeContact {
 			return JSON.parse(msg);
 		} catch (e) {
 			console.error(this._address + ': Error checking message ' + message + ': ' + e);
+			return;
 		}
 	}
 
