@@ -19,7 +19,7 @@ div#addWallbox.modal.fade(tabindex="-1" role="dialog")
           button.btn.btn-secondary(data-dismiss="modal")|Cancel
           input#add.btn.btn-primary(type="submit" value="Add" data-toggle="modal" data-target="#loading")
 
-div#loading.modal.fade
+div#loading.modal(tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false")
   div.modal-dialog.modal-sm.modal-dialog-centered.d-flex.justify-content-center
     div.modal-content(style="width: 90px;")
       div.modal-body.text-center
@@ -38,40 +38,50 @@ div#alert.modal.fade
 
 script.
   $("#add").click(() => {
-    let addWallbox=    $("#addWallbox");
-    $("#loading").modal({backdrop:'static',keyboard:false});
-
-    addWallbox.modal("hide");
+    let addWallbox= $("#addWallbox");
+    let alert = $("#alert");
+    let loading = $("#loading");
 
     let name=$("#nameInput").val()
     let address=$("#addressInput").val()
 
-    var req=$.post("/addWallbox",{ name: name, address: address }, (data) => {
-      $("#loading").modal("hide");
+    addWallbox.modal('hide');
+    addWallbox.one('hidden.bs.modal', () => {    
+      loading.modal('show');
 
-      let alert = $("#alert");
-      switch (data) {
-        case 'Ok':
-          alert.find('#alertTitle').text('Success');
-          alert.find('#alertMessage').text('Wallbox has been successfully added.');
-          alert.modal();
-          break;
-        case 'Timeout':
-          alert.find('#alertTitle').text('Timeout');
-          alert.find('#alertMessage').text('Wallbox did not respond in time. Check the IP address of the wallbox');
-          alert.modal();
-          alert.one('hide.bs.modal',()=>{
-            $("#addWallbox").modal();
-          });
-          break; 
-        case 'Fail': 
-          alert.find('#alertTitle').text('Error');
-          alert.find('#alertMessage').text('Server responded with a generic error.');
-          alert.modal();
-          alert.one('hide.bs.modal',()=>{
-            $("#addWallbox").modal();
-          });
-          break;
-      }
+      var req = $.post("/addWallbox",{ name: name, address: address }, (data) => {
+        loading.modal("hide");
+
+        loading.one('hidden.bs.modal', () => {
+        switch (data) {
+          case 'ok':
+            alert.find('#alertTitle').text('Success');
+            alert.find('#alertMessage').text('Wallbox has been successfully added.');
+            alert.modal();
+            addWallbox.modal('dispose');
+            break;
+          case 'timeout':
+            alert.find('#alertTitle').text('Timeout');
+            alert.find('#alertMessage').text('Wallbox did not respond in time. Check the IP address');
+            alert.modal();
+            alert.one('hidden.bs.modal', () => {
+              addWallbox.modal('show');
+            });
+            break; 
+          case 'wrong data': 
+            alert.find('#alertTitle').text('Error');
+            alert.find('#alertMessage').text('Server responded with wrong data. Check the IP address');
+            alert.modal();
+            alert.one('hidden.bs.modal', () => {
+              addWallbox.modal('show');
+            });
+            break;
+          default:
+            alert.find('#alertTitle').text('Error');
+            alert.find('#alertMessage').text('An error occurred: ' + data);
+            alert.modal();
+          }
+        });
+      });
     });
   });
