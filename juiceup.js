@@ -66,6 +66,8 @@ app.post('/addWallbox', (req, res) => {
 	}
 
 	tmpConn.init((msg) => {
+		let data = tmpConn.getData();
+
 		if (msg == 'ok') {
 			dbase.addWallbox({
 				serial: data.Serial,
