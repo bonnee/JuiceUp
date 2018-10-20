@@ -76,8 +76,9 @@ app.post('/addWallbox', (req, res) => {
 				product: data.Product
 			});
 			conns[data.Serial] = tmpConn;
+		} else {
+			del();
 		}
-		del();
 		res.send(msg);
 	});
 
