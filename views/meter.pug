@@ -62,8 +62,8 @@ block content
               - state=2
               - msg='Wallbox is charging'
             default
-              state=5
-              msg='Charging unauthorized or error'
+              - state=5
+              - msg='Charging unauthorized or error'
 
           i.fas.fa-charging-station.p-1(data-toggle="tooltip" title=msg class={'text-primary': state==1,
                                                                                ''            : state==0,
