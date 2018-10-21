@@ -3,6 +3,11 @@
 	src: url(/Segment7Standard.otf);
 }
 
+a.custom-card,
+a.custom-card:hover {
+	color: inherit;
+}
+
 .display {
 	padding-top: .17em;
 	line-height: 1;

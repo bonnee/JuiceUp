@@ -18,15 +18,18 @@ block nav
 block content
   div.row
     each box in boxes
-        div.card.col.col-sm-6.col-md-4.col-lg-3.mx-3.mx-sm-0
+      a.custom-card(href='/'+box.serial+'/meter')
+        div.card.col.col-sm-6.col-md-4.col-lg-3.mx-3.mx-sm-0.d-inline-block
           img.card-img-top(src='/p20.png')
           div.card-body
             h5.card-title=box.name+' '
               span.badge.badge-primary.float-right=box.product.split('-')[1]
             div.card-text|Address #{box.address}
             div.card-text
-              a(href='/'+box.serial+'/meter')|Meter
-              a(href='/'+box.serial+'/history')|History
+              a.btn.btn-sm.btn-primary(href='/'+box.serial+'/meter')
+                i.fas.fa-tachometer-alt
+              a.btn.btn-sm.btn-primary(href='/'+box.serial+'/history')
+                i.fas.fa-history
 
             div.card-text
               small.text-muted|Serial No. #{box.serial}<br/>

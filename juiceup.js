@@ -41,6 +41,7 @@ app.get('/:serial/meter', (req, res) => {
 	res.render('meter', {
 		page: 'meter',
 		data: data,
+		box: dbase.getWallbox(req.params.serial),
 		price: dbase.getPrice()
 	});
 });
@@ -52,6 +53,7 @@ app.get('/:serial/history', (req, res) => {
 	res.render('history', {
 		page: 'history',
 		data: data,
+		box: dbase.getWallbox(req.params.serial),
 		history: history,
 		price: dbase.getPrice()
 	});

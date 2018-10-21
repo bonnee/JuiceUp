@@ -34,6 +34,12 @@ class db {
 		return this._db.get('wallboxes').value();
 	}
 
+	getWallbox(serial) {
+		return this._db.get('wallboxes').find({
+			serial: serial
+		}).value()
+	}
+
 	removeWallbox(serial) {
 		this._db.get('wallboxes').remove({
 			serial: serial
