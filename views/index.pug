@@ -4,8 +4,8 @@ block head
   title= "KeContact"
 
 block nav
-  div.d-flex.flex-row
-    form.mx-2(onsubmit="return false")
+  div.d-flex.flex-row.mt-2.mt-sm-0
+    form.mr-0.mr-sm-2.w-100(onsubmit="return false")
       div.input-group
         div.input-group-prepend
           span.input-group-text|€/kWh
@@ -13,12 +13,12 @@ block nav
         div.input-group-append
           input#setPrice.btn.btn-primary(type="submit" value="Set")
       
-    button.btn.btn-primary(data-toggle="modal" data-target="#addWallbox")|New Wallbox
+    button.btn.btn-primary.d-none.d-sm-block(data-toggle="modal" data-target="#addWallbox")|New
 
 block content
-  div.card-deck.mt-3
+  div.row
     each box in boxes
-        div.card(style='max-width:30%')
+        div.card.col.col-sm-6.col-md-4.col-lg-3.mx-3.mx-sm-0
           img.card-img-top(src='/p20.png')
           div.card-body
             h5.card-title=box.name+' '
