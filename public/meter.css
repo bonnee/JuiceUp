@@ -14,3 +14,13 @@
 	margin-left: 5px;
 	font-size: 24px;
 }
+
+.blink {
+	animation: blinker 1.25s linear infinite;
+}
+
+@keyframes blinker {
+	50% {
+		opacity: .25;
+	}
+}

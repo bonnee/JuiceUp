@@ -24,64 +24,73 @@ block content
 
   div.row
     div.col-md-6.my-2.my-md-0
-    div.card
-      h4.card-header| Meters
-      div.card-body.text-center.d-flex.flex-column
-        div.d-flex.flex-row
-          div
-            h5.mb-0.text-right| Price
-            div.display.px-2.text-light.bg-dark| #{(kwh*price).toFixed(2).padStart(6,'0')}
-          span.unit.align-self-end|€
-        div.d-flex.flex-row
-          div
-            h5.mb-0.mt-2.text-right| Energy
-            div.display.px-2.text-light.bg-dark| #{kwh.padStart(6,'0')}
-          span.unit.align-self-end| kWh
+      div.card
+        h4.card-header| Meters
+        div.card-body.text-center.d-flex.flex-column
+          div.d-flex.flex-row
+            div
+              h5.mb-0.text-right| Price
+              div.display.px-2.text-light.bg-dark| #{(kwh*price).toFixed(2).padStart(6,'0')}
+            span.unit.align-self-end|€
+          div.d-flex.flex-row
+            div
+              h5.mb-0.mt-2.text-right| Energy
+              div.display.px-2.text-light.bg-dark| #{kwh.padStart(6,'0')}
+            span.unit.align-self-end| kWh
 
-        div.d-flex.flex-row
-          div
-            h5.mb-0.mt-2.text-right| Price per kWh
-            div.display.px-2.text-light.bg-dark| #{parseFloat(price).toFixed(2).padStart(6,'0')}
-          span.unit.align-self-end| €/kWh
+          div.d-flex.flex-row
+            div
+              h5.mb-0.mt-2.text-right| Price per kWh
+              div.display.px-2.text-light.bg-dark| #{parseFloat(price).toFixed(2).padStart(6,'0')}
+            span.unit.align-self-end| €/kWh
 
     div.col-md-6.my-2.my-md-0
-    div.card
-      h4.card-header| Status
-      div.card-body.text-center.align-middle
-        div.fa-3x
-          - var msg
-          - var state
-          case data.State
-            when 1
-              if data['Enable sys']==1
-                - state=1
-                - msg='Wallbox is enabled'
-              else
-                - state=0
-                - msg='Wallbox is disabled'
-            when 2
-            when 3
-              - state=2
-              - msg='Wallbox is charging'
-            default
-              - state=5
-              - msg='Charging unauthorized or error'
+      div.card
+        h4.card-header| Status
+        div.card-body.text-center.align-middle
+          div.fa-3x
+            - var boxMsg
+            - var boxCss
 
-          i.fas.fa-charging-station.p-1(data-toggle="tooltip" title=msg class={'text-primary': state==1,
-                                                                               ''            : state==0,
-                                                                               'text-success': state==2,
-                                                                               'text-danger' : state==5})
+            - var carMsg
+            - var carCss
+            case data.State
+              when 1
+                if data['Enable sys']==1
+                  - boxMsg='Wallbox is enabled'
+                  - boxCss='text-primary'
+                else
+                  - boxMsg='Wallbox is disabled'
+                  - boxCss='text-muted'
+              when 2
+              when 3
+                - boxMsg='Wallbox is charging'
+                - boxCss='text-success'
+              default
+                - boxMsg='Charging unauthorized or error'
+                - boxCss='text-danger'
 
-          span(data-toggle="tooltip" title="Car unplugged" class={'text-muted':data.Plug<5})
-            i.fas.fa-long-arrow-alt-right.p-1
-            i.fas.fa-car.p-1
-            i.fas.fa-long-arrow-alt-right.p-1
-            i.fas.fa-car-battery.p-1
+            case data.Plug
+              when 5
+                - carMsg='Cable plugged'
+                - carCss='text-warning'
+              when 7
+                - carMsg='Cable locked'
+                - carCss='text-success'
+              default
+                - carMsg='Cable unplugged'
+                - carCss='text-muted'
 
-      div.card-footer.py-2.px-3
-        p.card-text.text-muted.align-middle
-          i.fas.fa-info-circle.mr-2.align-middle
-          small.align-middle| Hover the pictures to get info
+            i.fas.fa-charging-station.p-1(data-toggle="tooltip" title=boxMsg class=boxCss)
+
+            span(data-toggle="tooltip" title=carMsg class=carCss class={'blink': data.State == 3})
+              i.fas.fa-long-arrow-alt-right.p-1
+              i.fas.fa-car.p-1
+
+        div.card-footer.py-2.px-3
+          p.card-text.text-muted.align-middle
+            i.fas.fa-info-circle.mr-2.align-middle
+            small.align-middle| Hover the pictures to get info
 
 block footer
   script.
@@ -91,5 +100,9 @@ block footer
 
       $("#stopBtn").click(function(){
         $.get("/#{data.Serial}/stop/#{auth}", (data) => {console.log("Stop command sent")});
-      });         
+      });
+
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })       
 
