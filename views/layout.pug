@@ -6,10 +6,14 @@ html
     include includes/scripts.pug
     block scripts
   body.pr-0
-    nav.navbar.navbar-dark.bg-dark.navbar-expand-md.justify-content-between
-      a.navbar-brand(href="/")|KeContact
-      button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navContent" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation")
-        span.navbar-toggler-icon
+    nav.navbar.navbar-dark.bg-dark.navbar-expand-sm.justify-content-between
+      div
+        button.navbar-toggler.mr-2(type="button" data-toggle="collapse" data-target="#navContent" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation")
+          span.navbar-toggler-icon
+        a.navbar-brand(href="/")|KeContact
+
+      if page=='index'
+        button.btn.btn-primary.d-block.d-sm-none(data-toggle="modal" data-target="#addWallbox")|New
       
       div#navContent.collapse.navbar-collapse.justify-content-between
         if page!='index'
