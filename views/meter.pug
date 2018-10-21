@@ -9,9 +9,9 @@ block scripts
   link(rel="stylesheet" href="/meter.css")
 
 block nav
-  form.form-inline.my-2.my-lg-0
-    div.form-group.row
-      label.navbar-text.pr-1(for='authIn')|Auth
+  form.form-inline.mt-2.mt-sm-0
+    div.d-flex.justify-content-start.w-100
+      label.navbar-text.pr-2(for='authIn')|Auth
       input#authIn.form-control.mr-sm-2(type="text" placeholder="Auth" aria-label="Auth" value=auth)
 
 block content
@@ -22,7 +22,8 @@ block content
     else
       button.btn.btn-success#startBtn|Start
 
-  div.card-deck
+  div.row
+    div.col-md-6.my-2.my-md-0
     div.card
       h4.card-header| Meters
       div.card-body.text-center.d-flex.flex-column
@@ -43,6 +44,7 @@ block content
             div.display.px-2.text-light.bg-dark| #{parseFloat(price).toFixed(2).padStart(6,'0')}
           span.unit.align-self-end| €/kWh
 
+    div.col-md-6.my-2.my-md-0
     div.card
       h4.card-header| Status
       div.card-body.text-center.align-middle
