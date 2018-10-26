@@ -18,21 +18,22 @@ block nav
 block content
   div.row
     each box in boxes
-      a.custom-card(href='/'+box.serial+'/meter')
-        div.card.col.col-sm-6.col-md-4.col-lg-3.mx-3.mx-sm-0.d-inline-block
-          img.card-img-top(src='/p20.png')
-          div.card-body
-            h5.card-title=box.name+' '
-              span.badge.badge-primary.float-right=box.product.split('-')[1]
-            div.card-text|Address #{box.address}
+      div.col.col-sm-6.col-md-4.col-lg-3
+        div.card.mx-3.mx-sm-0
+          a.text-dark(href='/'+box.serial+'/meter' style='text-decoration: none;')
+            div.card-body.pb-1
+              h5.card-title=box.name
+                span.badge.badge-primary.float-right=box.product.split('-')[1]
+            img.card-img-top(src='/p20.png')
+          
+          div.card-body.pt-2
             div.card-text
-              a.btn.btn-sm.btn-primary(href='/'+box.serial+'/meter')
-                i.fas.fa-tachometer-alt
-              a.btn.btn-sm.btn-primary(href='/'+box.serial+'/history')
-                i.fas.fa-history
-
-            div.card-text
-              small.text-muted|Serial No. #{box.serial}<br/>
+              small.text-muted|S/N: #{box.serial}
+              span.float-right
+                a.card-link(href='/'+box.serial+'/history' data-toggle="tooltip" data-placement="bottom" title="Meter")
+                  i.fas.fa-history
+                a.card-link(href='/'+box.serial+'/meter' data-toggle="tooltip" data-placement="bottom" title="History")
+                  i.fas.fa-tachometer-alt
     
 block footer
   include includes/addWallboxModal.pug
@@ -41,4 +42,7 @@ block footer
         $.post("/price", { price: $("#priceIn").val() }, (data) => {
           $("#priceIn").val(parseFloat(data));
         });
+      });
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
       });
