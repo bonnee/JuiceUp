@@ -39,7 +39,7 @@ block footer
   include includes/addWallboxModal.pug
   script.
       $("#setPrice").click(() => {
-        $.post("/price", { price: $("#priceIn").val() }, (data) => {
+        $.post("/api/price", { price: $("#priceIn").val() }, (data) => {
           $("#priceIn").val(parseFloat(data));
         });
       });
