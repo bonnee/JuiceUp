@@ -23,6 +23,9 @@ block content
           a.text-dark(href='/'+box.serial+'/meter' style='text-decoration: none;')
             div.card-body.pb-1
               h5.card-title=box.name
+                small
+                  a.text-muted.mx-1(href="#" data-toggle="modal" data-target="#editModal" data-serial=box.serial)
+                    i.fas.fa-pencil-alt
                 span.badge.badge-primary.float-right=box.product.split('-')[1]
             img.card-img-top(src='/p20.png')
           
@@ -37,6 +40,8 @@ block content
     
 block footer
   include includes/addWallboxModal.pug
+  include includes/editWallbox.pug
+
   script.
       $("#setPrice").click(() => {
         $.post("/api/price", { price: $("#priceIn").val() }, (data) => {

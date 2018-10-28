@@ -9,8 +9,11 @@ router.post('/wallbox', (req, res) => {
 	let tmpConn = new kc(req.body.address);
 
 	let del = () => {
-		tmpConn.close();
-		delete tmpConn;
+		if (tmpConn) {
+			tmpConn.close();
+			tmpConn = null;
+			delete tmpConn;
+		}
 	}
 
 	tmpConn.init((msg) => {
@@ -34,6 +37,13 @@ router.post('/wallbox', (req, res) => {
 		console.log('Connection closed');
 		del();
 	});
+});
+
+router.delete('/wallbox/:serial', (req, res) => {
+	console.log('deleting wallbox...')
+	const db = req.app.get('database');
+
+	res.send(db.removeWallbox(req.params.serial));
 });
 
 router.get('/wallboxes', (req, res) => {
