@@ -63,7 +63,7 @@ class KeContact {
 		console.log(address + ': Started.');
 
 		this._rxSocket.on('error', (err) => {
-			console.error(err);
+			console.error(this._address + ':' + err.stack);
 			process.exit(1);
 		});
 
@@ -74,7 +74,7 @@ class KeContact {
 
 				this._saveData(this._parseMessage(message));
 			} catch (e) {
-				console.log(this._address + ': Error handling message: ' + e);
+				console.log(this._address + ': Error handling message: ' + e.stack);
 			}
 		});
 

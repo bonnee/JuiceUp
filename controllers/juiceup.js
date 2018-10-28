@@ -4,20 +4,21 @@ const WEBPORT = 3000;
 const kecontact = require('./kecontact.js');
 const db = require('./db.js');
 const express = require('express');
-const Connections = require('../connections.js');
+const Connections = require('./connections.js');
 var bodyParser = require('body-parser');
 
 var dbase = new db('data.json');
 var app = express();
 var conns = new Connections();
 
+app.set('views', '../views');
 app.set('view engine', 'pug');
-app.use(express.static('public'));
+app.use(express.static('../public'));
 
-app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: true
-})); // support encoded bodies
+}));
 
 app.listen(WEBPORT, function () {
 	console.log('JuiceUp online on port ' + WEBPORT);
