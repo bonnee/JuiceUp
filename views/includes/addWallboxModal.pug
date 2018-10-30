@@ -49,7 +49,7 @@ script.
     addWallbox.one('hidden.bs.modal', () => {    
       let loadTime = setTimeout(() => { loading.modal('show'); }, 100);
 
-      var req = $.post("/api/wallbox",{ name: name, address: address }, (data) => {
+      var req = $.post("/api/wallboxes",{ name: name, address: address }, (data) => {
         clearTimeout(loadTime);
         loading.modal("hide");
 

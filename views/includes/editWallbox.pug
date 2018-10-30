@@ -64,7 +64,7 @@ script.
 
   $('#delete').click(() => {
     let serial=deleteModal.find('#deleteId').val()
-      $.ajax({url: '/wallbox/' + serial,
+      $.ajax({url: '/wallboxes/' + serial,
               type: 'DELETE',
               success: () => {
                 deleteModal.hide();

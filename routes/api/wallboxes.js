@@ -1,7 +1,12 @@
 var express = require('express'),
 	router = express.Router();
+const db = require(__basedir + '/controllers/db.js');
 
-router.post('/wallbox', (req, res) => {
+router.get('/', (req, res) => {
+	res.send(db.getWallboxes());
+});
+
+router.post('/', (req, res) => {
 	const kc = req.app.get('kecontact');
 	const db = req.app.get('database');
 	const conns = req.app.get('connections');
@@ -39,48 +44,28 @@ router.post('/wallbox', (req, res) => {
 	});
 });
 
-router.delete('/wallbox/:serial', (req, res) => {
+router.get('/:serial', (req, res) => {
+	res.send(db.getWallbox(req.params.serial));
+});
+
+router.delete('/:serial', (req, res) => {
 	console.log('deleting wallbox...')
-	const db = req.app.get('database');
 
 	res.send(db.removeWallbox(req.params.serial));
 });
 
-router.get('/wallboxes', (req, res) => {
-	const db = req.app.get('database');
-
-	res.send(db.getWallboxes());
-});
-
-router.get('/wallbox/:serial', (req, res) => {
-	const db = req.app.get('database');
-
-	res.send(db.getWallbox(req.params.serial));
-});
-
-router.post('/wallbox/:serial/start/:token', (req, res) => {
+router.post('/:serial/start/:token', (req, res) => {
 	const conns = req.app.get('connections');
 
 	conns.get()[req.params.serial].start(req.params.token);
 	res.send('Sent');
 });
 
-router.post('/wallbox/:serial/stop/:token', (req, res) => {
+router.post('/:serial/stop/:token', (req, res) => {
 	const conns = req.app.get('connections');
 
 	conns.get()[req.params.serial].stop(req.params.token);
 	res.send('Sent');
-});
-
-router.get('/price', (req, res) => {
-	res.send(req.app.get('database').getPrice().toString());
-});
-
-router.post('/price', (req, res) => {
-	const db = req.app.get('database');
-
-	if (db.setPrice(req.body.price))
-		res.send(req.body.price);
 });
 
 module.exports = router;

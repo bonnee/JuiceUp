@@ -95,11 +95,11 @@ block content
 block footer
   script.
       $("#startBtn").click(function(){
-        $.post("/api/wallbox/#{data.Serial}/start/#{auth}", (data) => {console.log("Start command sent")});
+        $.post("/api/wallboxes/#{data.Serial}/start/#{auth}", (data) => {console.log("Start command sent")});
       });
 
       $("#stopBtn").click(function(){
-        $.post("/api/wallbox/#{data.Serial}/stop/#{auth}", (data) => {console.log("Stop command sent")});
+        $.post("/api/wallboxes/#{data.Serial}/stop/#{auth}", (data) => {console.log("Stop command sent")});
       });
 
       $(function () {

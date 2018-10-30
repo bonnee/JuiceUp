@@ -1,11 +1,13 @@
+global.__basedir = __dirname;
+
 const WEBPORT = 3000;
 
-const kecontact = require('./kecontact/index.js');
-const db = require('./db.js');
 const express = require('express');
-const Connections = require('./connections.js');
-var bodyParser = require('body-parser');
 
+const kecontact = require(__basedir + '/controllers/kecontact.js');
+const Connections = require(__basedir + '/controllers/connections.js');
+
+var bodyParser = require('body-parser');
 var app = express();
 var conns = new Connections();
 
@@ -22,7 +24,7 @@ app.listen(WEBPORT, function () {
 	console.log('JuiceUp online on port ' + WEBPORT);
 });
 
-boxes = dbase.getWallboxes().forEach(box => {
+dbase.getWallboxes().forEach(box => {
 	conns.add(new kecontact(box.address), box.serial);
 	conns.get()[box.serial].init();
 });
