@@ -44,7 +44,9 @@ block footer
 
   script.
       $("#setPrice").click(() => {
+        console.log("Setting new price...")
         $.post("/api/price", { price: $("#priceIn").val() }, (data) => {
+          console.log("Success!")
           $("#priceIn").val(parseFloat(data));
         });
       });

@@ -1,5 +1,6 @@
-var express = require('express'),
-	router = express.Router();
+const express = require('express');
+var router = express.Router();
+
 const db = require(__basedir + '/controllers/db.js');
 
 router.get('/', (req, res) => {
@@ -7,40 +8,26 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-	const kc = req.app.get('kecontact');
-	const db = req.app.get('database');
 	const conns = req.app.get('connections');
-
-	let tmpConn = new kc(req.body.address);
-
-	let del = () => {
-		if (tmpConn) {
-			tmpConn.close();
-			tmpConn = null;
-			delete tmpConn;
-		}
-	}
-
-	tmpConn.init((msg) => {
-		let data = tmpConn.getData();
-
-		if (msg == 'ok') {
-			db.addWallbox({
-				serial: data.Serial,
-				name: req.body.name,
-				address: req.body.address,
-				product: data.Product
-			});
-			conns.add(tmpConn, data.Serial);
-		} else {
-			del();
-		}
-		res.send(msg);
-	});
 
 	req.on('close', (err) => {
 		console.log('Connection closed');
-		del();
+	});
+
+	conns.add(req.body.address).then(() => {
+		let data = tmpConn.getData();
+
+		db.addWallbox({
+			serial: data.Serial,
+			name: req.body.name,
+			address: req.body.address,
+			product: data.Product
+		});
+
+		res.send('Ok');
+	}).catch((err) => {
+		console.log('Error adding wallbox: ' + err);
+		res.send(err);
 	});
 });
 

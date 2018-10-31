@@ -1,5 +1,6 @@
-var express = require('express'),
-	router = express.Router();
+const express = require('express')
+var router = express.Router();
+
 const db = require(__basedir + '/controllers/db.js');
 
 router.use('/wallboxes', require('./wallboxes.js'));
