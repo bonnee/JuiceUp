@@ -1,5 +1,6 @@
 const express = require('express');
 var router = express.Router();
+const Kecontact = require(__basedir + '/controllers/kecontact/index.js');
 
 const db = require(__basedir + '/controllers/db.js');
 
@@ -8,26 +9,39 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+	console.log('Adding new wallbox...');
 	const conns = req.app.get('connections');
 
-	req.on('close', (err) => {
-		console.log('Connection closed');
-	});
+	closeConn = () => {
+		if (tmpConn) {
+			tmpConn.close();
+			tmpConn = null;
+			delete tmpConn
+		}
+	}
 
-	conns.add(req.body.address).then(() => {
+	let tmpConn = new Kecontact(req.body.address);
+
+	tmpConn.init().then((id) => {
 		let data = tmpConn.getData();
 
+		conns.add(tmpConn, id);
 		db.addWallbox({
 			serial: data.Serial,
 			name: req.body.name,
 			address: req.body.address,
 			product: data.Product
 		});
-
-		res.send('Ok');
 	}).catch((err) => {
-		console.log('Error adding wallbox: ' + err);
+		closeConn();
 		res.send(err);
+		console.log('Error adding wallbox: ' + err);
+
+	});
+
+	req.on('close', (err) => {
+		closeConn();
+		console.log('Connection closed');
 	});
 });
 
