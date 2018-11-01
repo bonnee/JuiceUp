@@ -1,6 +1,7 @@
 const db = require(__basedir + '/controllers/db.js');
 
 const express = require('express');
+
 var router = express.Router();
 
 router.get('/', (req, res) => {
@@ -12,6 +13,8 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:serial/meter', (req, res) => {
+	const conns = req.app.get('connections');
+
 	let data = conns.get()[req.params.serial].getData();
 
 	res.render('meter', {
@@ -23,8 +26,6 @@ router.get('/:serial/meter', (req, res) => {
 });
 
 router.get('/:serial/history', (req, res) => {
-	const conns = req.app.get('connections');
-
 	let data = conns.get()[req.params.serial].getData();
 	let history = conns.get()[req.params.serial].getHistory();
 
