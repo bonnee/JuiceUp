@@ -32,6 +32,8 @@ router.post('/', (req, res) => {
 			address: req.body.address,
 			product: data.Product
 		});
+
+		res.send('ok');
 	}).catch((err) => {
 		closeConn();
 		res.send(err);

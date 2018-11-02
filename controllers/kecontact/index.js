@@ -19,11 +19,11 @@ class KeContact {
 	}
 
 	getData() {
-		return this.__socket.getData();
+		return this._socket.getData();
 	}
 
 	getHistory() {
-		return this.__socket.getHistory();
+		return this._socket.getHistory();
 	}
 
 	start(token) {

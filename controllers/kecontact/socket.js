@@ -72,7 +72,7 @@ module.exports = class KC_Socket {
 						this._resetTimer();
 
 						console.log(this._address + ': device is right')
-						resolve(_data.Serial);
+						resolve(this._data.Serial);
 					} else {
 						reject('wrong data');
 					}
@@ -196,6 +196,14 @@ module.exports = class KC_Socket {
 		let id = newHistory.ID;
 
 		this._history[id] = newHistory;
+	}
+
+	getData() {
+		return this._data;
+	}
+
+	getHistory() {
+		return this._history;
 	}
 
 	close() {
