@@ -1,4 +1,5 @@
 const db = require(__basedir + '/controllers/db.js');
+const Kecontact = require(__basedir + '/controllers/kecontact/index.js');
 
 const express = require('express');
 
@@ -13,9 +14,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:serial/meter', (req, res) => {
-	const conns = req.app.get('connections');
-
-	let data = conns.get()[req.params.serial].getData();
+	let data = Kecontact.getData(req.params.serial);
 
 	res.render('meter', {
 		page: 'meter',
@@ -26,10 +25,9 @@ router.get('/:serial/meter', (req, res) => {
 });
 
 router.get('/:serial/history', (req, res) => {
-	const conns = req.app.get('connections');
 
-	let data = conns.get()[req.params.serial].getData();
-	let history = conns.get()[req.params.serial].getHistory();
+	let data = Kecontact.getData(req.params.serial);
+	let history = Kecontact.getHistory(req.params.serial);
 
 	res.render('history', {
 		page: 'history',

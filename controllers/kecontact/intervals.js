@@ -29,4 +29,8 @@ module.exports = class Intervals {
 			this.clear(interval);
 		}
 	}
+
+	get() {
+		return this._intervals;
+	}
 }

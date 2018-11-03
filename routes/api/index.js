@@ -2,11 +2,12 @@ var express = require('express')
 var router = express.Router();
 
 const db = require(__basedir + '/controllers/db.js');
+const Kecontact = require(__basedir + '/controllers/kecontact');
 
 router.use('/wallboxes', require('./wallboxes.js'));
 
 router.get('/price', (req, res) => {
-	res.send(req.app.get('database').getPrice().toString());
+	res.send(db.getPrice().toString());
 });
 
 router.post('/price', (req, res) => {
