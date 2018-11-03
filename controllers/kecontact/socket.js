@@ -28,7 +28,7 @@ module.exports = class KC_Socket {
 		this._brdSocket = dgram.createSocket('udp4');
 
 		this._rxSocket.on('error', (err) => {
-			console.error(this._address + ':' + err.stack);
+			console.error(this._address + ': ' + err);
 			process.exit(1);
 		});
 

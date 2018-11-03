@@ -22,6 +22,17 @@ class DB {
 		}).write();
 	}
 
+	editWallbox(serial, data) {
+		this._db.get('wallboxes').find({
+				serial: serial
+			})
+			.assign({
+				name: data.name,
+				address: data.address
+			})
+			.write()
+	}
+
 	setPrice(newPrice) {
 		this._db.set('price', parseFloat(newPrice)).write();
 		return true;

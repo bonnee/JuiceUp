@@ -1,52 +1,79 @@
-const express = require('express');
+var express = require('express');
 var router = express.Router();
-const Kecontact = require(__basedir + '/controllers/kecontact/index.js');
 
+const Kecontact = require(__basedir + '/controllers/kecontact/index.js');
 const db = require(__basedir + '/controllers/db.js');
 
 router.get('/', (req, res) => {
 	res.send(db.getWallboxes());
 });
 
-router.post('/', (req, res) => {
+router.put('/', (req, res) => {
 	console.log('Adding new wallbox...');
 	const conns = req.app.get('connections');
-	let success = false;
+	let closed = false;
 
-	closeConn = () => {
-		if (!success && tmpConn) {
-			tmpConn.close();
-			tmpConn = null;
-			delete tmpConn
+	checkBox(req.body.address).then(({
+		id,
+		connection
+	}) => {
+		if (!closed) {
+			let data = connection.getData();
+
+			conns.add(connection, id);
+			db.addWallbox({
+				serial: data.Serial,
+				name: req.body.name,
+				address: req.body.address,
+				product: data.Product
+			});
+			res.status(201);
+			res.send();
+		} else {
+			closeConnection(connection);
 		}
-	}
-
-	let tmpConn = new Kecontact(req.body.address);
-
-	tmpConn.init().then((id) => {
-		success = true
-		let data = tmpConn.getData();
-
-		conns.add(tmpConn, id);
-		db.addWallbox({
-			serial: data.Serial,
-			name: req.body.name,
-			address: req.body.address,
-			product: data.Product
-		});
-
-		res.status(201);
-		res.send();
 	}).catch((err) => {
-		console.log('Error adding wallbox: ' + err);
-		closeConn();
-		res.status(400);
-		res.send(err);
+		if (!closed) {
+			console.error('Error adding wallbox: ' + err);
+			res.status(400);
+			res.send(err);
+		}
 	});
 
 	req.on('close', (data) => {
-		closeConn();
+		closed = true;
 	});
+});
+
+router.post('/:serial', (req, res) => {
+	const conns = req.app.get('connections');
+	let serial = req.params.serial;
+
+	if (db.getWallbox(serial) == {}) {
+		console.error('Wallbox doesn\'t exist');
+	} else {
+		if (db.getWallbox(serial).address != req.body.address) {
+			checkBox(req.body.address).then(({
+				id,
+				connection
+			}) => {
+				if (serial == id) {
+					closeConnection(conns.get()[id]);
+					conns.add(connection, id);
+					res.send(db.editWallbox(serial, req.body));
+				} else {
+					console.error(Error('Serial number mismatch'));
+					res.status(400);
+					res.send('Serial number mismatch');
+				}
+			}).catch((err) => {
+				res.status(500);
+				res.send();
+			});
+		} else {
+			res.send(db.editWallbox(serial, req.body));
+		}
+	}
 });
 
 router.get('/:serial', (req, res) => {
@@ -73,5 +100,30 @@ router.post('/:serial/stop/:token', (req, res) => {
 	res.status(200);
 	res.send();
 });
+
+let checkBox = (address) => {
+	return new Promise((resolve, reject) => {
+		let tmpConn = new Kecontact(address);
+
+		tmpConn.init().then((id) => {
+			resolve({
+				id: id,
+				connection: tmpConn
+			});
+		}).catch((err) => {
+			closeConnection(tmpConn);
+			reject(err);
+		});
+	});
+}
+
+let closeConnection = (connection) => {
+	if (tmpConn) {
+		console.log('deleting')
+		tmpConn.close();
+		tmpConn = null;
+		delete tmpConn
+	}
+}
 
 module.exports = router;
