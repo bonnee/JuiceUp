@@ -51,9 +51,13 @@ script.
         loading.modal('show');
       }, 100);
 
-      var req = $.post("/api/wallboxes", {
-        name: name,
-        address: address
+      let req = $.ajax({
+        url: "/api/wallboxes",
+        type:"PUT",
+        data: {
+          name: name,
+          address: address
+        }
       }).done((data) => {
         clearTimeout(loadTime);
         loading.modal("hide");

@@ -49,7 +49,18 @@ script.
     let box = boxes.find((b) => { return b.serial == serial });
 
     editModal.find('#nameInput').val(box.name);
-    editModal.find('#addressInput').val(box.address);      
+    editModal.find('#addressInput').val(box.address); 
+
+    editModal.find('#edit').click(() => {
+      console.log('Editing...');
+      
+      $.post('/'+serial).done(() => {
+        alert('Modified.');
+      }).fail((xhr, status, error) => {
+        console.log(xhr,status,error);
+        alert(error);
+      });
+    });     
 
     $('#delWallbox').click(() => {
       deleteModal.find('#boxName').text(box.name);
@@ -65,8 +76,8 @@ script.
   $('#delete').click(() => {
     let serial=deleteModal.find('#deleteId').val()
       $.ajax({
-          url: '/wallboxes/' + serial,
-          type: 'DELETE'
+          url: "/wallboxes/" + serial,
+          type: "DELETE"
         }).done(()=>{
           deleteModal.hide();
       });
