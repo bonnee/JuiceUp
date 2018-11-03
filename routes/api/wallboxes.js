@@ -11,9 +11,10 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
 	console.log('Adding new wallbox...');
 	const conns = req.app.get('connections');
+	let success = false;
 
 	closeConn = () => {
-		if (tmpConn) {
+		if (!success && tmpConn) {
 			tmpConn.close();
 			tmpConn = null;
 			delete tmpConn
@@ -23,6 +24,7 @@ router.post('/', (req, res) => {
 	let tmpConn = new Kecontact(req.body.address);
 
 	tmpConn.init().then((id) => {
+		success = true
 		let data = tmpConn.getData();
 
 		conns.add(tmpConn, id);
@@ -33,17 +35,17 @@ router.post('/', (req, res) => {
 			product: data.Product
 		});
 
-		res.send('ok');
+		res.status(201);
+		res.send();
 	}).catch((err) => {
-		closeConn();
-		res.send(err);
 		console.log('Error adding wallbox: ' + err);
-
+		closeConn();
+		res.status(400);
+		res.send(err);
 	});
 
-	req.on('close', (err) => {
+	req.on('close', (data) => {
 		closeConn();
-		console.log('Connection closed');
 	});
 });
 
@@ -52,23 +54,24 @@ router.get('/:serial', (req, res) => {
 });
 
 router.delete('/:serial', (req, res) => {
-	console.log('deleting wallbox...')
-
 	res.send(db.removeWallbox(req.params.serial));
 });
 
+// TODO: review protocol
 router.post('/:serial/start/:token', (req, res) => {
 	const conns = req.app.get('connections');
 
 	conns.get()[req.params.serial].start(req.params.token);
-	res.send('Sent');
+	res.status(200);
+	res.send();
 });
 
 router.post('/:serial/stop/:token', (req, res) => {
 	const conns = req.app.get('connections');
 
 	conns.get()[req.params.serial].stop(req.params.token);
-	res.send('Sent');
+	res.status(200);
+	res.send();
 });
 
 module.exports = router;

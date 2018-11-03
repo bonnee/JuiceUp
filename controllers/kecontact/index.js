@@ -28,12 +28,10 @@ class KeContact {
 
 	start(token) {
 		this._socket.send('start ' + token);
-		this._updateHistory(true);
 	}
 
 	stop(token) {
 		this._socket.send('stop ' + token);
-		this._updateHistory(true);
 	}
 
 	close() {

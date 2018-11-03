@@ -38,28 +38,36 @@ div#alert.modal.fade
 
 script.
   $("#add").click(() => {
-    let addWallbox= $("#addWallbox");
+    let addWallbox = $("#addWallbox");
     let alert = $("#alert");
     let loading = $("#loading");
 
-    let name=$("#nameInput").val()
-    let address=$("#addressInput").val()
+    let name = $("#nameInput").val()
+    let address = $("#addressInput").val()
 
     addWallbox.modal('hide');
-    addWallbox.one('hidden.bs.modal', () => {    
-      let loadTime = setTimeout(() => { loading.modal('show'); }, 100);
+    addWallbox.one('hidden.bs.modal', () => {
+      let loadTime = setTimeout(() => {
+        loading.modal('show');
+      }, 100);
 
-      var req = $.post("/api/wallboxes",{ name: name, address: address }, (data) => {
+      var req = $.post("/api/wallboxes", {
+        name: name,
+        address: address
+      }).done((data) => {
         clearTimeout(loadTime);
         loading.modal("hide");
 
-        switch (data) {
-          case 'ok':
-            alert.find('#alertTitle').text('Success');
-            alert.find('#alertMessage').text('Wallbox has been successfully added.');
-            alert.modal();
-            addWallbox.modal('dispose');
-            break;
+        alert.find('#alertTitle').text('Success');
+        alert.find('#alertMessage').text('Wallbox has been successfully added.');
+        alert.modal();
+        addWallbox.modal('dispose');
+
+      }).fail((xhr, status, error) => {
+        clearTimeout(loadTime);
+        loading.modal("hide");
+        
+        switch (xhr.responseText) {
           case 'timeout':
             alert.find('#alertTitle').text('Timeout');
             alert.find('#alertMessage').text('Wallbox did not respond in time. Check the IP address');
@@ -67,8 +75,8 @@ script.
             alert.one('hidden.bs.modal', () => {
               addWallbox.modal('show');
             });
-            break; 
-          case 'wrong data': 
+            break;
+          case 'wrong data':
             alert.find('#alertTitle').text('Error');
             alert.find('#alertMessage').text('Server responded with wrong data. Check the IP address');
             alert.modal();
@@ -78,9 +86,9 @@ script.
             break;
           default:
             alert.find('#alertTitle').text('Error');
-            alert.find('#alertMessage').text('An error occurred: ' + data);
+            alert.find('#alertMessage').text('An error occurred: ' + JSON.stringify(xhr.responseText));
             alert.modal();
-          }
+        }
       });
     });
   });
