@@ -14,10 +14,11 @@ router.put('/', (req, res) => {
 
 	Kecontact.add(req.body.address).then((id) => {
 		if (!closed) {
+			db.addWallbox(Kecontact.getData(id))
 			res.status(201);
 			res.send(id);
 		} else {
-			closeConnection(connection);
+			Kecontact.close(id);
 		}
 	}).catch((err) => {
 		if (!closed) {
@@ -97,15 +98,6 @@ let checkBox = (address) => {
 			reject(err);
 		});
 	});
-}
-
-let closeConnection = (connection) => {
-	if (tmpConn) {
-		console.log('deleting')
-		tmpConn.close();
-		tmpConn = null;
-		delete tmpConn
-	}
 }
 
 module.exports = router;

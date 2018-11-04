@@ -38,16 +38,23 @@ class KeContact {
 		this._rxSocket.init(PORT);
 	}
 
-	add(host) {
+	add(address) {
 		return new Promise((resolve, reject) => {
 
-			dns.lookup(host, (err, address, family) => {
-				if (this._boxes[address]) {
-					let err = Error("Connection already existing")
+			dns.lookup(address, (err, host) => {
+				if (err) {
+					console.error("Error resolving hostname: " + err);
+					reject(err);
+				}
+
+				console.log("Address is: " + host);
+
+				if (this._boxes[host]) {
+					let err = Error("Connection already existing");
 					console.error(err);
 					reject(err);
 				} else {
-					let connection = new TX(address, PORT);
+					let connection = new TX(host, PORT);
 					connection.init();
 					let done = false;
 
@@ -66,7 +73,7 @@ class KeContact {
 					}
 					let timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
 
-					this._rxSocket.once(address, ({
+					this._rxSocket.once(host, ({
 						data
 					}) => {
 						console.log('received');
@@ -74,13 +81,13 @@ class KeContact {
 						//this._intervals.clear(timeout);
 
 						if (data && data.Firmware) {
-							this._boxes[address] = {};
-							this._boxes[address].socket = connection;
-							this._boxes[address].storage = new Storage();
+							this._boxes[host] = {};
+							this._boxes[host].socket = connection;
+							this._boxes[host].storage = new Storage();
 
-							this._boxes[address].socket.updateReports();
-							this._boxes[address].socket.updateHistory();
-							this._resetTimer(address);
+							this._boxes[host].socket.updateReports();
+							this._boxes[host].socket.updateHistory();
+							this._resetTimer(host);
 
 							resolve(data.serial);
 						} else {
@@ -102,52 +109,76 @@ class KeContact {
 		}, POLL_FREQ);
 	}
 
-	getData(address) {
+	_getAddress(serOrAddress) {
 		if (this._boxes[address]) {
-			return this._boxes[address].storage.getData();
+			return address;
 		} else {
-			let box;
-			for (let b in this._boxes) {
-				if (this._boxes[b].storage.getData().Serial == address) {
-					box = this._boxes[b];
+			for (let addr in this._boxes) {
+				if (this._boxes[addr].storage.getData().Serial == address) {
+					return addr;
 				}
 			}
-
-			if (box)
-				return box.storage.getData();
 		}
+		return;
+	}
+
+	getData(address) {
+		address = this._getAddress();
+
+		if (address)
+			return this._boxes[address].storage.getData();
+
 		console.error('Not found ' + address);
-		return false;
+		return;
 	}
 
 	getHistory(address) {
-		if (this._boxes[address]) {
-			return this._boxes[address].storage.getHistory();
-		} else {
-			let box;
-			for (let b in this._boxes) {
-				if (this._boxes[b].storage.getData().Serial == address) {
-					box = this._boxes[b];
-				}
-			}
+		address = this._getAddress();
 
-			if (box)
-				return box.storage.getHistory();
-		}
+		if (address)
+			return this._boxes[address].storage.getHistory();
+
 		console.error('Not found ' + address);
-		return false;
+		return;
 	}
 
 	start(address, token) {
-		this._boxes[address].socket.send('start ' + token);
+		address = this._getAddress();
+
+		if (address) {
+			this._boxes[address].socket.send('start ' + token);
+			return true;
+		}
+
+		return false;
 	}
 
 	stop(address, token) {
-		this._boxes[address].socket.send('stop ' + token);
+		address = this._getAddress();
+
+		if (address) {
+			this._boxes[address].socket.send('stop ' + token);
+			return true;
+		}
+
+		return false;
 	}
 
-	close() {
+	close(address) {
+		address = this._getAddress(address);
+
+		if (address) {
+			this._boxes[address].socket.close();
+			this._intervals.clear(this._boxes[address].timer);
+			delete this._boxes[address];
+			return true;
+		}
+		return false;
+	}
+
+	closeAll() {
 		this._intervals.clearAll();
+
 		for (box in this._boxes)
 			box.socket.close();
 	}
