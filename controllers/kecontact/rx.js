@@ -12,15 +12,17 @@ module.exports = class RX extends EventEmitter {
 		});
 
 		this._socket.on('message', (message, rinfo) => {
-			let parsedMessage = this._parseMessage(message);
+			this._parseMessage(message).then((parsedMessage) => {
+				this.emit('message', {
+					address: rinfo.address,
+					data: parsedMessage
+				});
 
-			this.emit('message', {
-				address: rinfo.address,
-				data: parsedMessage
-			})
-
-			this.emit(rinfo.address, {
-				data: parsedMessage
+				this.emit(rinfo.address, {
+					data: parsedMessage
+				});
+			}).catch((err) => {
+				this.emit('error', err);
 			});
 		});
 	}
@@ -34,23 +36,25 @@ module.exports = class RX extends EventEmitter {
 	}
 
 	_parseMessage(message) {
-		try {
-			let msg = message.toString().trim();
+		return new Promise((resolve, reject) => {
+			try {
+				let msg = message.toString().trim();
 
-			if (msg.length == 0)
-				return;
+				if (msg.length == 0)
+					return;
 
-			if (msg.startsWith('TCH')) {
-				msg = '{ "TCH-OK" }'
+				if (msg.startsWith('TCH')) {
+					msg = '{ "TCH-OK" }'
+				}
+
+				if (msg[0] == '"')
+					msg = '{' + msg + '}';
+
+				resolve(JSON.parse(msg));
+			} catch (err) {
+				console.error(err);
+				reject('wrong data');
 			}
-
-			if (msg[0] == '"')
-				msg = '{' + msg + '}';
-
-			return JSON.parse(msg);
-		} catch (err) {
-			console.error('Error checking message "' + message + '": ' + err);
-			return;
-		}
+		});
 	}
 }

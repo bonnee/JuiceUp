@@ -8,23 +8,30 @@ router.get('/', (req, res) => {
 	res.send(db.getWallboxes());
 });
 
+// Add new
 router.put('/', (req, res) => {
 	console.log('Adding new wallbox...');
 	let closed = false;
 
-	Kecontact.add(req.body.address).then((id) => {
+	Kecontact.add(req.body.address).then((data) => {
 		if (!closed) {
-			db.addWallbox(Kecontact.getData(id))
+			db.addWallbox({
+				serial: data.Serial,
+				name: req.body.name,
+				address: Kecontact.getAddress(data.Serial),
+				product: data.Product
+			});
+
 			res.status(201);
-			res.send(id);
+			res.send(data.Serial);
 		} else {
-			Kecontact.close(id);
+			Kecontact.close(data.Serial);
 		}
 	}).catch((err) => {
 		if (!closed) {
 			console.error('Error adding wallbox: ' + err);
 			res.status(400);
-			res.send(err);
+			res.send(err.toString());
 		}
 	});
 
@@ -33,7 +40,7 @@ router.put('/', (req, res) => {
 	});
 });
 
-router.post('/:serial', (req, res) => {
+router.route('/:serial').post((req, res) => {
 	let serial = req.params.serial;
 
 	if (db.getWallbox(serial) == {}) {
@@ -61,13 +68,10 @@ router.post('/:serial', (req, res) => {
 			res.send(db.editWallbox(serial, req.body));
 		}
 	}
-});
-
-router.get('/:serial', (req, res) => {
+}).get((req, res) => {
 	res.send(db.getWallbox(req.params.serial));
-});
-
-router.delete('/:serial', (req, res) => {
+}).delete((req, res) => {
+	Kecontact.close(req.params.serial);
 	res.send(db.removeWallbox(req.params.serial));
 });
 

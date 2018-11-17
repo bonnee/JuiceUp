@@ -1,61 +1,68 @@
 const dgram = require('dgram');
 const Intervals = require('./intervals.js');
 
-const REQ_FREQ = 10;
+const PORT = 7090;
+const REQ_FREQ = 500;
 
 module.exports = class RX {
-	constructor(address, port) {
-		this._address = address;
-		this._port = port;
+	constructor() {
 		this._sendQueue = [];
+		this._running = false;
 
 		this._intervals = new Intervals();
 		this._socket = dgram.createSocket('udp4');
 	}
 
-	init() {
-		this.send('report 1');
-	}
+	send(message, address, port) {
+		this._sendQueue.push({
+			message: message,
+			address: address,
+			port: port
+		});
 
-	send(message) {
-		this._sendQueue.push(message);
-
-		if (this._sendQueue.length == 1) {
+		if (!this._running) {
+			this._running = true;
 			this._handleQueue();
 		}
 	}
 
-	updateReports() {
-		this.send('report 2');
-		this.send('report 3');
+	updateReports(address) {
+		this.send('report 2', address);
+		this.send('report 3', address);
 	}
 
-	updateHistory(firstOnly = false) {
+	updateHistory(address, firstOnly = false) {
 		if (firstOnly) {
-			this.send('report 100');
+			this.send('report 100', address);
 		} else {
 			for (let i = 100; i < 131; i++) {
-				this.send('report ' + i)
+				this.send('report ' + i, address)
 			}
 		}
 	}
 
-	close() {
-		this._sendQueue = [];
-		this._intervals.clearAll();
-		this._socket.close();
+	delete(address) {
+		for (let msg in this._sendQueue) {
+			if (msg.address == address)
+				msg.splice(this._sendQueue.indexOf(msg), 1);
+		}
+
 	}
 
 	_handleQueue() {
 		if (this._sendQueue.length == 0) {
+			this._running = false;
 			return;
 		}
 
-		this._socket.send(Buffer.from(this._sendQueue[0]), this._port, this._address, (err) => {
-			if (err)
-				console.error(this._address + ': ' + err);
-			else
-				this._sendQueue.shift();
+		let first = this._sendQueue[0]
+
+		this._socket.send(Buffer.from(first.message), first.port || PORT, first.address, (err) => {
+			if (err) {
+				console.error(this._address, ': Error sending:', err);
+
+			}
+			this._sendQueue.shift();
 
 			this._intervals.addOnce(this._handleQueue.bind(this), REQ_FREQ);
 		});

@@ -2,7 +2,6 @@ const RX = require('./rx.js');
 const TX = require('./tx.js');
 const Intervals = require('./intervals.js');
 const Storage = require('./storage.js');
-const dns = require('dns');
 
 const PORT = 7090;
 const BRD_PORT = 7092;
@@ -12,9 +11,10 @@ const TIMEOUT = 5000;
 
 class KeContact {
 	constructor() {
-		// [ <address>: { <socket>, <timer>, <storage> } ]
-		this._boxes = [];
+		// { <serial>: { address: <address>, port: <port>, <timer>, <storage> } }
+		this._boxes = {};
 
+		this._txSocket = new TX();
 		this._rxSocket = new RX();
 		this._intervals = new Intervals();
 
@@ -22,17 +22,19 @@ class KeContact {
 			address,
 			data
 		}) => {
-			if (this._boxes[address]) {
+			let serial = this.getSerial(address);
+
+			if (this._boxes[serial]) {
 				if (data["TCH-OK"]) {
-					this._resetTimer(address);
-					this._boxes[address].socket._updateReports();
+					this._resetTimer(serial);
+					this._boxes[serial].socket._updateReports(address);
 					return;
 				}
 
 				if (data.ID >= 10)
-					this._boxes[address].storage.saveHistory(data);
+					this._boxes[serial].storage.saveHistory(data);
 				else
-					this._boxes[address].storage.saveData(data);
+					this._boxes[serial].storage.saveData(data);
 			}
 		});
 		this._rxSocket.init(PORT);
@@ -40,137 +42,127 @@ class KeContact {
 
 	add(address) {
 		return new Promise((resolve, reject) => {
+			if (this.getSerial(address)) {
+				console.error('Wallbox existing')
+				reject('Address is a duplicate');
+			}
 
-			dns.lookup(address, (err, host) => {
-				if (err) {
-					console.error("Error resolving hostname: " + err);
-					reject(err);
-				}
+			console.log("Address is: " + address);
 
-				console.log("Address is: " + host);
+			let done = false;
+			this._txSocket.send('report 1', address);
 
-				if (this._boxes[host]) {
-					let err = Error("Connection already existing");
-					console.error(err);
-					reject(err);
-				} else {
-					let connection = new TX(host, PORT);
-					connection.init();
-					let done = false;
-
-					let timeoutCount = 0;
-					let timeoutFunction = () => {
-						if (!done) {
-							if (timeoutCount >= 3) {
-								console.error('Error adding wallbox: timeout');
-								reject('timeout');
-							} else {
-								console.warn('Not responding. Retrying...');
-								timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
-								timeoutCount++;
-							}
-						}
+			let timeoutCount = 0;
+			let timeoutFunction = () => {
+				if (!done) {
+					if (timeoutCount >= 3) {
+						console.error('Error adding wallbox: timeout');
+						reject('timeout');
+					} else {
+						console.warn('Not responding. Retrying...');
+						timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
+						timeoutCount++;
 					}
-					let timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
-
-					this._rxSocket.once(host, ({
-						data
-					}) => {
-						console.log('received');
-						done = true; // WORKAROUND: code below should work but it doesn't
-						//this._intervals.clear(timeout);
-
-						if (data && data.Firmware) {
-							this._boxes[host] = {};
-							this._boxes[host].socket = connection;
-							this._boxes[host].storage = new Storage();
-
-							this._boxes[host].socket.updateReports();
-							this._boxes[host].socket.updateHistory();
-							this._resetTimer(host);
-
-							resolve(data.serial);
-						} else {
-							reject('wrong data');
-						}
-					});
 				}
+			}
+			let timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
+
+			this._rxSocket.once(address, ({
+				data
+			}) => {
+				done = true; // WORKAROUND: code below should work but it doesn't
+				//this._intervals.clear(timeout);
+
+				if (data) {
+					let serial = data.Serial.toString();
+					let newBox = {
+						address: address,
+						storage: new Storage()
+					}
+
+					this._boxes[serial] = newBox;
+
+					this._txSocket.updateReports(address);
+					this._txSocket.updateHistory(address);
+					this._resetTimer(serial);
+
+					resolve(data);
+				} else {
+					reject('wrong data');
+					connection.close();
+				}
+			});
+
+			this._rxSocket.once('error', err => {
+				done = true;
+				reject(err);
 			});
 		});
 	}
 
-	_resetTimer(address) {
-		this._intervals.clear(this._boxes[address].timer);
+	_resetTimer(serial) {
+		this._intervals.clear(this._boxes[serial].timer);
 
-		this._boxes[address].timer = this._intervals.add(() => {
-			console.log(address + ': Update data');
-			this._boxes[address].socket.updateReports();
-			this._boxes[address].socket.updateHistory();
+		this._boxes[serial].timer = this._intervals.add(() => {
+			console.log(serial + ': Update data');
+			this._txSocket.updateReports(this.getAddress(serial));
+			this._txSocket.updateHistory(this.getAddress(serial));
 		}, POLL_FREQ);
 	}
 
-	_getAddress(serOrAddress) {
-		if (this._boxes[address]) {
-			return address;
-		} else {
-			for (let addr in this._boxes) {
-				if (this._boxes[addr].storage.getData().Serial == address) {
-					return addr;
-				}
+	getAddress(serial) {
+		if (this._boxes[serial]) {
+			return this._boxes[serial].address;
+		}
+
+	}
+
+	getSerial(address) {
+		for (let box in this._boxes) {
+			if (this._boxes[box].address == address) {
+				return box;
 			}
-		}
+		};
+	}
+
+	getData(serial) {
+		if (this._boxes[serial])
+			return this._boxes[serial].storage.getData();
+
+		console.error('Not found ' + serial);
+	}
+
+	getHistory(serial) {
+		if (this._boxes[serial])
+			return this._boxes[serial].storage.getHistory();
+
+		console.error('Not found ' + serial);
 		return;
 	}
 
-	getData(address) {
-		address = this._getAddress();
-
-		if (address)
-			return this._boxes[address].storage.getData();
-
-		console.error('Not found ' + address);
-		return;
-	}
-
-	getHistory(address) {
-		address = this._getAddress();
-
-		if (address)
-			return this._boxes[address].storage.getHistory();
-
-		console.error('Not found ' + address);
-		return;
-	}
-
-	start(address, token) {
-		address = this._getAddress();
-
-		if (address) {
-			this._boxes[address].socket.send('start ' + token);
+	start(serial, token) {
+		if (this._boxes[serial]) {
+			this._txSocket.send('start ' + token, this.getAddress(serial));
 			return true;
 		}
 
 		return false;
 	}
 
-	stop(address, token) {
-		address = this._getAddress();
-
-		if (address) {
-			this._boxes[address].socket.send('stop ' + token);
+	stop(serial, token) {
+		if (this._boxes[serial]) {
+			this._txSocket.send('stop ' + token, this.getAddress(serial));
 			return true;
 		}
 
 		return false;
 	}
 
-	close(address) {
-		address = this._getAddress(address);
-
-		if (address) {
-			this._boxes[address].socket.close();
-			this._intervals.clear(this._boxes[address].timer);
-			delete this._boxes[address];
+	close(serial) {
+		if (this._boxes[serial]) {
+			this._txSocket.delete(this.getAddress(serial));
+			this._intervals.clear(this._boxes[serial].timer);
+			delete this._boxes[serial];
 			return true;
 		}
 		return false;
@@ -180,7 +172,7 @@ class KeContact {
 		this._intervals.clearAll();
 
 		for (box in this._boxes)
-			box.socket.close();
+			this.close(box.constructor.name);
 	}
 }
 
