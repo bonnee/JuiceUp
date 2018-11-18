@@ -54,7 +54,7 @@ script.
     editModal.find('#edit').click(() => {
       console.log('Editing...');
       
-      $.post('/'+serial).done(() => {
+      $.post('/api/wallboxes/'+serial).done(() => {
         alert('Modified.');
       }).fail((xhr, status, error) => {
         console.log(xhr,status,error);
@@ -76,9 +76,9 @@ script.
   $('#delete').click(() => {
     let serial=deleteModal.find('#deleteId').val()
       $.ajax({
-          url: "/wallboxes/" + serial,
+          url: "/api/wallboxes/" + serial,
           type: "DELETE"
         }).done(()=>{
-          deleteModal.hide();
+          deleteModal.modal('hide');
       });
   });

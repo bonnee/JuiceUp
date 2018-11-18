@@ -41,12 +41,17 @@ module.exports = class RX {
 		}
 	}
 
+	// TODO: figure out why loop is skipping items
 	delete(address) {
-		for (let msg in this._sendQueue) {
-			if (msg.address == address)
-				msg.splice(this._sendQueue.indexOf(msg), 1);
+		this._intervals.clearAll();
+
+		for (let key in this._sendQueue) {
+			if (this._sendQueue[key].address == address) {
+				this._sendQueue.splice(key, 1);
+			}
 		}
 
+		this._handleQueue();
 	}
 
 	_handleQueue() {

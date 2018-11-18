@@ -73,7 +73,8 @@ class KeContact {
 				done = true; // WORKAROUND: code below should work but it doesn't
 				//this._intervals.clear(timeout);
 
-				if (data) {
+				console.log(data);
+				if (data.ID == 1 && data.Serial && data.Product) {
 					let serial = data.Serial.toString();
 					let newBox = {
 						address: address,
@@ -114,7 +115,6 @@ class KeContact {
 		if (this._boxes[serial]) {
 			return this._boxes[serial].address;
 		}
-
 	}
 
 	getSerial(address) {
