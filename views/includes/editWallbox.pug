@@ -41,7 +41,7 @@ script.
   let deleteModal = $('#deleteModal');
   let boxes=!{JSON.stringify(boxes)};
 
-  editModal.on('show.bs.modal', (event) => {
+  editModal.one('show.bs.modal', (event) => {
     let button = $(event.relatedTarget);
     let serial = button.data('serial');
 
@@ -51,13 +51,15 @@ script.
     editModal.find('#addressInput').val(box.address); 
 
     editModal.find('#edit').click(() => {
-      console.log('Editing...');
+      console.log('Editing...', editModal.find('#addressInput').val());
+      let address = editModal.find('#addressInput').val();
+      let name = editModal.find('#nameInput').val();
       
-      $.post('/api/wallboxes/'+serial).done(() => {
+      $.post('/api/wallboxes/' + serial, { address: address, name: name} ).done(() => {
         alert('Modified.');
       }).fail((xhr, status, error) => {
         console.log(xhr,status,error);
-        alert(error);
+        alert(xhr.responseText);
       });
     });     
 

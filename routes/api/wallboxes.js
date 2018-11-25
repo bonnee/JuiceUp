@@ -36,8 +36,7 @@ router.put('/', (req, res) => {
 	}).catch((err) => {
 		if (!closed) {
 			console.error('Error adding wallbox: ' + err);
-			res.status(400);
-			res.send(err.toString());
+			res.status(400).send(err.toString());
 		}
 	});
 
@@ -50,35 +49,26 @@ let checkExists = (req, res, next) => {
 	if (db.getWallbox(req.params.serial))
 		next();
 	else {
-		res.status(404);
-		res.send();
+		res.status(404).send();
 	}
 }
 
 router.route('/:serial').all(checkExists)
 	.post((req, res) => {
+		console.log(req.body)
 		let serial = req.params.serial;
+		let address = req.body.address;
 
-		if (db.getWallbox(serial).address != req.body.address) {
-			checkBox(req.body.address).then(({
-				id,
-				connection
-			}) => {
-				if (serial == id) {
-					closeConnection(conns.get()[id]);
-					conns.add(connection, id);
-					res.send(db.editWallbox(serial, req.body));
-				} else {
-					console.error(Error('Serial number mismatch'));
-					res.status(400);
-					res.send('Serial number mismatch');
-				}
-			}).catch((err) => {
-				res.status(500);
-				res.send();
+		if (db.getWallbox(serial).address != address) { // If posted address has changed
+			Kecontact.add(address).then(data => {
+				db.editWallbox(serial, req.body); // TODO: Check body
+				res.status(201).send(data);
+			}).catch(err => {
+				res.status(400).send(err.toString());
 			});
 		} else {
-			res.send(db.editWallbox(serial, req.body));
+			db.editWallbox(serial, req.body); // TODO: Check body
+			res.status(201).send();
 		}
 
 	}).get((req, res) => {
@@ -111,20 +101,5 @@ router.route('/:serial/enable').all(checkExists)
 router.get('/:serial/plug', checkExists, (req, res) => {
 	res.send(Kecontact.getData(req.params.serial).Plug);
 });
-
-
-let checkBox = (address) => {
-	return new Promise((resolve, reject) => {
-		let tmpConn = Kecontact.add(address).then((id) => {
-			resolve({
-				id: id,
-				connection: tmpConn
-			});
-		}).catch((err) => {
-			closeConnection(tmpConn);
-			reject(err);
-		});
-	});
-}
 
 module.exports = router;

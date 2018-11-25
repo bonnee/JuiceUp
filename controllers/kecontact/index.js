@@ -37,8 +37,9 @@ class KeContact {
 	add(address) {
 		return new Promise((resolve, reject) => {
 			if (this.getSerial(address)) {
-				console.error('Wallbox existing')
-				reject('Address is a duplicate');
+				let err = new Error('Address is a duplicate');
+				console.error(err);
+				reject(err);
 			}
 
 			console.log("Address is: " + address);
@@ -50,8 +51,9 @@ class KeContact {
 			let timeoutFunction = () => {
 				if (!done) {
 					if (timeoutCount >= 3) {
-						console.error('Error adding wallbox: timeout');
-						reject('timeout');
+						let err = new Error('Error adding wallbox: timeout')
+						console.error(err.message);
+						reject(err);
 					} else {
 						console.warn('Not responding. Retrying...');
 						timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
@@ -83,7 +85,7 @@ class KeContact {
 
 					resolve(data);
 				} else {
-					reject('wrong data');
+					reject(new Error('Wallbox responded with invalid data'));
 					connection.close();
 				}
 			});

@@ -30,7 +30,7 @@ class DB {
 				name: data.name,
 				address: data.address
 			})
-			.write()
+			.write();
 	}
 
 	setPrice(newPrice) {
