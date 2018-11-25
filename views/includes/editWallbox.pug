@@ -1,40 +1,39 @@
 
-div#editModal.modal.fade(tabindex="-1" role="dialog")
-  div.modal-dialog(role="document")
-    div.modal-content
-      div.modal-header
-        h5.modal-title|Wallbox details
+#editModal.modal.fade(tabindex="-1" role="dialog")
+  .modal-dialog(role="document")
+    .modal-content
+      .modal-header
+        h5.modal-title Wallbox details
         button.close(data-dismiss="modal" aria-label="Close")
-          span(aria-hidden="true")|&times;
+          span(aria-hidden="true") &times;
       form(onsubmit="return false")
-        div.modal-body
-          div#editAlert.alert.alert-danger.d-none|
-          div.form-group
-            label(for="nameInput")|Name
+        .modal-body
+          #editAlert.alert.alert-danger.d-none
+          .form-group
+            label(for="nameInput") Name
             input#nameInput.form-control(name="name" type="text" placeholder="Name")
-          div.form-group
-            label(for="addressInput" name="address")|IP address
+          .form-group
+            label(for="addressInput" name="address") IP address
             input#addressInput.form-control(name="address" type="text" placeholder="xxx.xxx.xxx.xxx")
-        div.modal-footer
-          button#delWallbox.btn.btn-danger.mr-auto|Delete
-          button.btn.btn-secondary(data-dismiss="modal")|Cancel
+        .modal-footer
+          button#delWallbox.btn.btn-danger.mr-auto Delete
+          button.btn.btn-secondary(data-dismiss="modal") Cancel
           input#edit.btn.btn-primary(type="submit" value="Done")
 
-div#deleteModal.modal.fade(tabindex="-1" role="dialog")
-  div.modal-dialog.modal-dialog-centered(role="document")
-    div.modal-content
-      div.modal-header
-        h5.modal-title|Delete a wallbox
+#deleteModal.modal.fade(tabindex="-1" role="dialog")
+  .modal-dialog.modal-dialog-centered(role="document")
+    .modal-content
+      .modal-header
+        h5.modal-title Delete a wallbox
         button.close(data-dismiss="modal" aria-label="Close")
           span(aria-hidden="true")|&times;
       form(onsubmit="return false")
-        div.modal-body
-          p.modal-text|Are you sure you want to delete '
-            span#boxName
-            |'?
-        div.modal-footer
+        .modal-body
+          p.modal-text Are you sure you want to delete '
+            span#boxName '?
+        .modal-footer
           input#deleteId(hidden)
-          button.btn.btn-secondary(data-dismiss="modal")|Cancel
+          button.btn.btn-secondary(data-dismiss="modal") Cancel
           input#delete.btn.btn-danger(type="submit" value="Yes")
 
 script.

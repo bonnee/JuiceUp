@@ -1,40 +1,40 @@
 
-div#addWallbox.modal.fade(tabindex="-1" role="dialog")
-  div.modal-dialog(role="document")
-    div.modal-content
-      div.modal-header
-        h5.modal-title|Add new wallbox
+#addWallbox.modal.fade(tabindex="-1" role="dialog")
+  .modal-dialog(role="document")
+    .modal-content
+      .modal-header
+        h5.modal-title Add new wallbox
         button.close(data-dismiss="modal" aria-label="Close")
-          span(aria-hidden="true")|&times;
+          span(aria-hidden="true") &times;
       form(onsubmit="return false")
-        div.modal-body
-          div#addAlert.alert.alert-danger.d-none|
-          div.form-group
-            label(for="nameInput")|Name
+        .modal-body
+          #addAlert.alert.alert-danger.d-none|
+          .form-group
+            label(for="nameInput") Name
             input#nameInput.form-control(name="name" type="text" placeholder="Name")
-          div.form-group
-            label(for="addressInput" name="address")|IP address
+          .form-group
+            label(for="addressInput" name="address") IP address
             input#addressInput.form-control(name="address" type="text" placeholder="xxx.xxx.xxx.xxx")
-        div.modal-footer
-          button.btn.btn-secondary(data-dismiss="modal")|Cancel
+        .modal-footer
+          button.btn.btn-secondary(data-dismiss="modal") Cancel
           input#add.btn.btn-primary(type="submit" value="Add")
 
-div#loading.modal.fade(tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false")
-  div.modal-dialog.modal-sm.modal-dialog-centered.d-flex.justify-content-center
-    div.modal-content(style="width: 90px;")
-      div.modal-body.text-center
+#loading.modal.fade(tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false")
+  .modal-dialog.modal-sm.modal-dialog-centered.d-flex.justify-content-center
+    .modal-content(style="width: 90px;")
+      .modal-body.text-center
         h1.m-0
           i.fas.fa-sync.fa-spin
 
-div#alert.modal.fade
-  div.modal-dialog.modal-dialog-centered
-    div.modal-content
-      div.modal-header
-        h5#alertTitle.modal-title|Message
+#alert.modal.fade
+  .modal-dialog.modal-dialog-centered
+    .modal-content
+      .modal-header
+        h5#alertTitle.modal-title Message
         button.close(data-dismiss="modal" aria-label="Close")
-          span(aria-hidden="true")|&times;
-      div.modal-body
-        p#alertMessage.modal-text|Message body
+          span(aria-hidden="true") &times;
+      .modal-body
+        p#alertMessage.modal-text Message body
 
 script.
   $("#add").click(() => {

@@ -10,45 +10,45 @@ block scripts
 
 block nav
   form.form-inline.mt-2.mt-sm-0
-    div.d-flex.justify-content-start.w-100
-      label.navbar-text.pr-2(for='authIn')|Auth
+    .d-flex.justify-content-start.w-100
+      label.navbar-text.pr-2(for='authIn') Auth
       input#authIn.form-control.mr-sm-2(type="text" placeholder="Auth" aria-label="Auth" value=auth)
 
 block content
-  div.d-flex.justify-content-between.align-items-center
+  .d-flex.justify-content-between.align-items-center
     h1|#{box.name} meter
     if(data['Enable sys']==1)
-      button.btn.btn-danger#stopBtn|Stop
+      button.btn.btn-danger#stopBtn Stop
     else
-      button.btn.btn-success#startBtn|Start
+      button.btn.btn-success#startBtn Start
 
-  div.row
-    div.col-md-6.my-2.my-md-0
-      div.card
-        h4.card-header| Meters
-        div.card-body.text-center.d-flex.flex-column
-          div.d-flex.flex-row
+  .row
+    .col-md-6.my-2.my-md-0
+      .card
+        h4.card-header Meters
+        .card-body.text-center.d-flex.flex-column
+          .d-flex.flex-row
             div
-              h5.mb-0.text-right| Price
-              div.display.px-2.text-light.bg-dark| #{(kwh*price).toFixed(2).padStart(6,'0')}
+              h5.mb-0.text-right Price
+              .display.px-2.text-light.bg-dark| #{(kwh*price).toFixed(2).padStart(6,'0')}
             span.unit.align-self-end|€
-          div.d-flex.flex-row
+          .d-flex.flex-row
             div
-              h5.mb-0.mt-2.text-right| Energy
-              div.display.px-2.text-light.bg-dark| #{kwh.padStart(6,'0')}
-            span.unit.align-self-end| kWh
+              h5.mb-0.mt-2.text-right Energy
+              .display.px-2.text-light.bg-dark| #{kwh.padStart(6,'0')}
+            span.unit.align-self-end kWh
 
-          div.d-flex.flex-row
+          .d-flex.flex-row
             div
-              h5.mb-0.mt-2.text-right| Price per kWh
-              div.display.px-2.text-light.bg-dark| #{parseFloat(price).toFixed(2).padStart(6,'0')}
-            span.unit.align-self-end| €/kWh
+              h5.mb-0.mt-2.text-right Price per kWh
+              .display.px-2.text-light.bg-dark| #{parseFloat(price).toFixed(2).padStart(6,'0')}
+            span.unit.align-self-end €/kWh
 
-    div.col-md-6.my-2.my-md-0
-      div.card
-        h4.card-header| Status
-        div.card-body.text-center.align-middle
-          div.fa-3x
+    .col-md-6.my-2.my-md-0
+      .card
+        h4.card-header Status
+        .card-body.text-center.align-middle
+          .fa-3x
             - var boxMsg
             - var boxCss
 
@@ -87,22 +87,38 @@ block content
               i.fas.fa-long-arrow-alt-right.p-1
               i.fas.fa-car.p-1
 
-        div.card-footer.py-2.px-3
+        .card-footer.py-2.px-3
           p.card-text.text-muted.align-middle
             i.fas.fa-info-circle.mr-2.align-middle
-            small.align-middle|Hover the pictures to get info
+            small.align-middle Hover the pictures to get info
 
 block footer
   script.
-      $("#startBtn").click(function(){
-        $.post("/api/wallboxes/#{data.Serial}/start/#{auth}", (data) => {console.log("Start command sent")});
+    $("#startBtn").click(function(){
+      $.ajax({
+        url: '/api/wallboxes/#{data.Serial}/enable',
+        type: 'PUT',
+        data: { token: '#{auth}' }
+      }).then(()=>{
+        console.log("Start command sent");
+      }).catch(err =>{
+        console.error(err);
       });
+    });
 
-      $("#stopBtn").click(function(){
-        $.post("/api/wallboxes/#{data.Serial}/stop/#{auth}", (data) => {console.log("Stop command sent")});
+    $("#stopBtn").click(function(){
+      $.ajax({
+        url: '/api/wallboxes/#{data.Serial}/enable',
+        type: 'DELETE',
+        data: { token: '#{auth}' }
+      }).then(()=>{
+        console.log("Stop command sent");
+      }).catch(err =>{
+        console.error(err);
       });
+    });
 
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-      })       
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })       
 
