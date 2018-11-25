@@ -2,7 +2,7 @@ const dgram = require('dgram');
 const Intervals = require('./intervals.js');
 
 const PORT = 7090;
-const REQ_FREQ = 500;
+const REQ_FREQ = 100;
 
 module.exports = class RX {
 	constructor() {

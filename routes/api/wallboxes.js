@@ -98,12 +98,12 @@ router.route('/:serial/enable').all(checkExists)
 		res.send((Kecontact.getData(req.params.serial)['Enable sys']));
 	}).put((req, res) => {
 
-		Kecontact.start(req.params.serial, req.params.token);
+		Kecontact.start(req.params.serial, req.body.token);
 		res.status(204);
 		res.send();
 	}).delete((req, res) => {
 
-		Kecontact.stop(req.params.serial, req.params.token);
+		Kecontact.stop(req.params.serial, req.body.token);
 		res.status(204);
 		res.send();
 	});

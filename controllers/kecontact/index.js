@@ -25,12 +25,6 @@ class KeContact {
 			let serial = this.getSerial(address);
 
 			if (this._boxes[serial]) {
-				if (data["TCH-OK"]) {
-					this._resetTimer(serial);
-					this._boxes[serial].socket._updateReports(address);
-					return;
-				}
-
 				if (data.ID >= 10)
 					this._boxes[serial].storage.saveHistory(data);
 				else

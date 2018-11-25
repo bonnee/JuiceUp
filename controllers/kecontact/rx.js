@@ -44,7 +44,7 @@ module.exports = class RX extends EventEmitter {
 					return;
 
 				if (msg.startsWith('TCH')) {
-					msg = '{ "TCH-OK" }'
+					msg = '{ "' + msg.split(':')[0] + '":"' + msg.split(':')[1] + '" }';
 				}
 
 				if (msg[0] == '"')
