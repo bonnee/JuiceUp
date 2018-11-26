@@ -25,7 +25,7 @@ block content
                 a.text-muted.mx-1(href="#" data-toggle="modal" data-target="#editModal" data-serial=box.serial)
                   i.fas.fa-pencil-alt
               span.badge.badge-primary.float-right=box.product.split('-')[1]
-          a.text-dark(href='/'+box.serial+'/meter' style='text-decoration: none;')
+          a(href='/'+box.serial+'/meter')
             img.card-img-top(src='/p20.png')
 
           .card-body.pt-2
