@@ -39,6 +39,9 @@
 script.
   let editModal = $('#editModal');
   let deleteModal = $('#deleteModal');
+  let loading = $("#loading");
+  let alert = $("#alert");
+
   let boxes=!{JSON.stringify(boxes)};
 
   editModal.one('show.bs.modal', (event) => {
@@ -54,12 +57,26 @@ script.
       console.log('Editing...', editModal.find('#addressInput').val());
       let address = editModal.find('#addressInput').val();
       let name = editModal.find('#nameInput').val();
+
+      let loadTime = setTimeout(() => {
+        editModal.modal('hide');
+        loading.modal('show');
+      }, 100);
       
       $.post('/api/wallboxes/' + serial, { address: address, name: name} ).done(() => {
-        alert('Modified.');
+        clearTimeout(loadTime);
+        loading.modal("hide");
+        editModal.modal('hide');
       }).fail((xhr, status, error) => {
-        console.log(xhr,status,error);
-        alert(xhr.responseText);
+        loading.modal("hide");
+
+        alert.find('#alertTitle').text('Error');
+        alert.find('#alertMessage').text(xhr.responseText);
+        alert.modal();
+
+        alert.one('hidden.bs.modal', () => {
+              editModal.modal();
+        });
       });
     });     
 

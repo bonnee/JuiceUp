@@ -19,23 +19,6 @@
           button.btn.btn-secondary(data-dismiss="modal") Cancel
           input#add.btn.btn-primary(type="submit" value="Add")
 
-#loading.modal.fade(tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false")
-  .modal-dialog.modal-sm.modal-dialog-centered.d-flex.justify-content-center
-    .modal-content(style="width: 90px;")
-      .modal-body.text-center
-        h1.m-0
-          i.fas.fa-sync.fa-spin
-
-#alert.modal.fade
-  .modal-dialog.modal-dialog-centered
-    .modal-content
-      .modal-header
-        h5#alertTitle.modal-title Message
-        button.close(data-dismiss="modal" aria-label="Close")
-          span(aria-hidden="true") &times;
-      .modal-body
-        p#alertMessage.modal-text Message body
-
 script.
   $("#add").click(() => {
     let addWallbox = $("#addWallbox");
