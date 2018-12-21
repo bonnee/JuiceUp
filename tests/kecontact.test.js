@@ -4,10 +4,10 @@ const ADDRESS = '192.168.1.211';
 var serial = null;
 
 afterAll(() => {
-	Kecontact.closeAll();
-})
+	Kecontact.close();
+});
 
-describe('Add', () => {
+describe('add', () => {
 	test('Adding a wrong address should timeout', () => {
 		expect.assertions(1);
 
@@ -16,13 +16,13 @@ describe('Add', () => {
 		});
 	});
 
-	test('Adding a address responding with wrong data should throw', () => {
+	test('add with a wrong responding address should throw', () => {
 		expect.assertions(1);
 
 		return expect(Kecontact.add('localhost')).rejects.toThrow();
 	});
 
-	test('Adding a wallbox should return the wallbox info', () => {
+	test('add a wallbox should return the wallbox info', () => {
 		let expected = {
 			ID: expect.any(String),
 			Product: expect.any(String),
@@ -40,7 +40,7 @@ describe('Add', () => {
 		});
 	});
 
-	test('Adding a duplicate address should throw', () => {
+	test('add a duplicate address should throw', () => {
 		expect.assertions(1);
 
 		return expect(Kecontact.add(ADDRESS)).rejects.toThrow();
@@ -86,5 +86,36 @@ describe('getData', () => {
 		expect.assertions(1);
 
 		expect(Kecontact.getData('123456')).toBeUndefined();
+	});
+});
+
+describe('getHistory', () => {
+	test('getHistory should return an object', () => {
+		expect.assertions(1);
+
+		expect(Kecontact.getHistory(serial)).toBeInstanceOf(Object);
+	});
+
+	test('getHistory with wrong SN should return undefined', () => {
+		expect.assertions(1);
+
+		expect(Kecontact.getHistory('123456')).toBeUndefined();
+	});
+});
+
+describe('delete', () => {
+	test('delete should delete the wallbox', () => {
+		expect.assertions(3);
+
+		expect(Kecontact.delete(serial)).toBeTruthy();
+
+		expect(Kecontact.getAddress(serial)).toBeUndefined();
+		expect(Kecontact.getData(serial)).toBeUndefined();
+	});
+
+	test('delete with wrong serial should return false', () => {
+		expect.assertions(1);
+
+		expect(Kecontact.delete(serial)).toBeFalsy();
 	});
 });

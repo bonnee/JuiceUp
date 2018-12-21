@@ -48,10 +48,11 @@ class KeContact {
 			let timeoutFunction = () => {
 				if (!done) {
 					if (timeoutCount >= 3) {
-						let err = new Error('Error adding wallbox: timeout')
+						let err = new Error('Error adding wallbox: timeout');
 						reject(err);
 					} else {
 						console.warn('...');
+						this._txSocket.send('report 1', address);
 						timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
 						timeoutCount++;
 					}
@@ -144,7 +145,7 @@ class KeContact {
 		return false;
 	}
 
-	close(serial) {
+	delete(serial) {
 		if (this._boxes[serial]) {
 			this._txSocket.delete(this.getAddress(serial));
 			this._intervals.clear(this._boxes[serial].timer);
@@ -154,11 +155,18 @@ class KeContact {
 		return false;
 	}
 
-	closeAll() {
+	deleteAll() {
 		this._intervals.clearAll();
 
 		for (let box in this._boxes)
 			this.close(box.constructor.name);
+	}
+
+	close() {
+		this.deleteAll();
+
+		this._txSocket.close();
+		this._rxSocket.close();
 	}
 }
 

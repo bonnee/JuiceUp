@@ -54,6 +54,10 @@ module.exports = class RX {
 		this._handleQueue();
 	}
 
+	close() {
+		this._socket.close();
+	}
+
 	_handleQueue() {
 		if (this._sendQueue.length == 0) {
 			this._running = false;

@@ -31,7 +31,7 @@ router.put('/', (req, res) => {
 
 
 		} else {
-			Kecontact.close(data.Serial);
+			Kecontact.delete(data.Serial);
 		}
 	}).catch((err) => {
 		if (!closed) {
@@ -75,7 +75,7 @@ router.route('/:serial').all(checkExists)
 		res.send(db.getWallbox(req.params.serial));
 	}).delete((req, res) => {
 		console.log('Deleting wallbox');
-		Kecontact.close(req.params.serial);
+		Kecontact.delete(req.params.serial);
 		db.removeWallbox(req.params.serial);
 
 		res.status(204);
