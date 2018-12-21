@@ -7,7 +7,7 @@ const PORT = 7090;
 const BRD_PORT = 7092;
 
 const POLL_FREQ = 30000;
-const TIMEOUT = 5000;
+const TIMEOUT = 1000;
 
 class KeContact {
 	constructor() {
@@ -38,11 +38,8 @@ class KeContact {
 		return new Promise((resolve, reject) => {
 			if (this.getSerial(address)) {
 				let err = new Error('Address is a duplicate');
-				console.error(err);
 				reject(err);
 			}
-
-			console.log("Address is: " + address);
 
 			let done = false;
 			this._txSocket.send('report 1', address);
@@ -52,10 +49,9 @@ class KeContact {
 				if (!done) {
 					if (timeoutCount >= 3) {
 						let err = new Error('Error adding wallbox: timeout')
-						console.error(err.message);
 						reject(err);
 					} else {
-						console.warn('Not responding. Retrying...');
+						console.warn('...');
 						timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
 						timeoutCount++;
 					}
@@ -69,7 +65,6 @@ class KeContact {
 				done = true; // WORKAROUND: code below should work but it doesn't
 				//this._intervals.clear(timeout);
 
-				console.log(data);
 				if (data.ID == 1 && data.Serial && data.Product) {
 					let serial = data.Serial.toString();
 					let newBox = {
@@ -85,8 +80,8 @@ class KeContact {
 
 					resolve(data);
 				} else {
-					reject(new Error('Wallbox responded with invalid data'));
 					connection.close();
+					reject(new Error('Wallbox responded with invalid data'));
 				}
 			});
 
@@ -124,16 +119,11 @@ class KeContact {
 	getData(serial) {
 		if (this._boxes[serial])
 			return this._boxes[serial].storage.getData();
-
-		console.error('Not found ' + serial);
 	}
 
 	getHistory(serial) {
 		if (this._boxes[serial])
 			return this._boxes[serial].storage.getHistory();
-
-		console.error('Not found ' + serial);
-		return;
 	}
 
 	start(serial, token) {
@@ -167,7 +157,7 @@ class KeContact {
 	closeAll() {
 		this._intervals.clearAll();
 
-		for (box in this._boxes)
+		for (let box in this._boxes)
 			this.close(box.constructor.name);
 	}
 }

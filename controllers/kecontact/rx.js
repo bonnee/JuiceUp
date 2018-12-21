@@ -7,8 +7,7 @@ module.exports = class RX extends EventEmitter {
 		this._socket = dgram.createSocket('udp4');
 
 		this._socket.on('error', (err) => {
-			console.error(err);
-			process.exit(1);
+			return err;
 		});
 
 		this._socket.on('message', (message, rinfo) => {
@@ -52,8 +51,7 @@ module.exports = class RX extends EventEmitter {
 
 				resolve(JSON.parse(msg));
 			} catch (err) {
-				console.error(err);
-				reject('wrong data');
+				reject(new Error('wrong data'));
 			}
 		});
 	}
