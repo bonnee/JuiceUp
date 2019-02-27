@@ -2,6 +2,7 @@ extends layout.pug
 
 block head
   - var kwh=(Math.abs(parseInt(data['E pres'])/10000)).toFixed(2)
+  - var kw=(Math.abs(parseInt(data['P'])/10000)).toFixed(2)
   - var auth="bbbf74bd00000000"
   title= "KeContact"
 
@@ -27,20 +28,28 @@ block content
       .card
         h4.card-header Meters
         .card-body.text-center.d-flex.flex-column
+          
+          .d-flex.flex-row
+            div.mb-2
+              h5.mb-0.text-right Power
+              .display.px-2.text-light.bg-dark| #{kw.padStart(6,'0')}
+            span.unit.align-self-end kW
+
           .d-flex.flex-row
             div
-              h5.mb-0.text-right Price
-              .display.px-2.text-light.bg-dark| #{(kwh*price).toFixed(2).padStart(6,'0')}
-            span.unit.align-self-end|€
-          .d-flex.flex-row
-            div
-              h5.mb-0.mt-2.text-right Energy
+              h5.mb-0.text-right Energy
               .display.px-2.text-light.bg-dark| #{kwh.padStart(6,'0')}
             span.unit.align-self-end kWh
 
           .d-flex.flex-row
-            div
-              h5.mb-0.mt-2.text-right Price per kWh
+            div.mt-2
+              h5.mb-0.text-right Price
+              .display.px-2.text-light.bg-dark| #{(kwh*price).toFixed(2).padStart(6,'0')}
+            span.unit.align-self-end|€
+
+          .d-flex.flex-row
+            div.mt-2
+              h5.mb-0.text-right Price per kWh
               .display.px-2.text-light.bg-dark| #{parseFloat(price).toFixed(2).padStart(6,'0')}
             span.unit.align-self-end €/kWh
 

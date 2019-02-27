@@ -1,0 +1,43 @@
+extends layout.pug
+
+block head
+  - var kwh=(Math.abs(parseInt(data['E total'])/10000)).toFixed(2)
+  title="Charger Info"
+
+block content
+  //h1 Kecontact #{box.product.split('-')[1]}
+  .row.mb-3
+    .col-3
+      img(src='/p20.png').img-fluid
+    .col-9.d-flex.align-items-center
+      div.flex-column
+        .row.mb-2
+          div
+            .text-muted Product
+            | #{data.Product}
+        .row.mb-2
+          div
+            .text-muted Firmware
+            | #{data.Firmware}
+        .row.mb-2
+          div 
+            .text-muted Serial No.
+            | #{data.Serial}
+        .row.mb-2
+          div
+            .text-muted Total energy
+            | #{kwh} kWh
+
+  .row
+    .col-sm-6
+      .card
+        .card-body
+          h5.card-title Meter
+          p.card-text With supporting text below as a natural lead-in to additional content.
+          a.btn.btn-primary(href='meter') Meter
+    .col-sm-6
+      .card
+        .card-body
+          h5.card-title History
+          p.card-text With supporting text below as a natural lead-in to additional content.
+          a.btn.btn-primary(href='history') History

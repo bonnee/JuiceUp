@@ -27,6 +27,7 @@ module.exports = class RX {
 	}
 
 	updateReports(address) {
+		this.send('report 1', address);
 		this.send('report 2', address);
 		this.send('report 3', address);
 	}

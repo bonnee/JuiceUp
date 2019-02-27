@@ -19,12 +19,14 @@ html
         if page!='index'
           ul.navbar-nav
             li.nav-item
-              a.nav-link(href="/"+data.Serial+"/meter" class={'active': page === 'meter'})|Meter
+              a.nav-link(href="/"+data.Serial+"/info" class={'active': page === 'info'}) Info
             li.nav-item
-              a.nav-link(href="/"+data.Serial+"/history" class={'active': page === 'history'})|History
+              a.nav-link(href="/"+data.Serial+"/meter" class={'active': page === 'meter'}) Meter
+            li.nav-item
+              a.nav-link(href="/"+data.Serial+"/history" class={'active': page === 'history'}) History
         else
           div
         block nav
-    main.container.mt-2
+    main.container.my-2
       block content
     block footer

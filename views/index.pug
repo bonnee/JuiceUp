@@ -25,13 +25,14 @@ block content
                 a.text-muted.mx-1(href="#" data-toggle="modal" data-target="#editModal" data-serial=box.serial)
                   i.fas.fa-pencil-alt
               span.badge.badge-primary.float-right=box.product.split('-')[1]
-          a(href='/'+box.serial+'/meter')
+          a(href='/' + box.serial + '/info')
             img.card-img-top(src='/p20.png')
 
           .card-body.pt-2
-            .card-text
-              small.text-muted S/N: #{box.serial}
-              span.float-right
+            .d-flex.justify-content-between
+              .card-text
+                small.text-muted S/N: #{box.serial}
+              span.float-right.d-flex.align-items-center
                 a.card-link(href='/'+box.serial+'/meter' data-toggle="tooltip" data-placement="bottom" title="Meter")
                   i.fas.fa-tachometer-alt
                 a.card-link(href='/'+box.serial+'/history' data-toggle="tooltip" data-placement="bottom" title="History")
