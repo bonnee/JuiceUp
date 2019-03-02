@@ -73,7 +73,7 @@ script.
             break;
           default:
             alert.find('#alertTitle').text('Error');
-            alert.find('#alertMessage').text('An error occurred: ' + JSON.stringify(xhr.responseText));
+            alert.find('#alertMessage').text(JSON.stringify(xhr.responseText));
             alert.modal();
         }
       });

@@ -32,6 +32,8 @@ router.get('/:serial/history', (req, res) => {
 	let data = Kecontact.getData(req.params.serial);
 	let history = Kecontact.getHistory(req.params.serial);
 
+	//console.log(history);
+
 	res.render('history', {
 		page: 'history',
 		data: data,

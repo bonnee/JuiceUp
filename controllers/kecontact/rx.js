@@ -44,6 +44,13 @@ module.exports = class RX extends EventEmitter {
 
 				if (msg.startsWith('TCH')) {
 					msg = '{ "' + msg.split(':')[0] + '":"' + msg.split(':')[1] + '" }';
+					if (JSON.parse(msg)['TCH-OK '] == 'done') {
+						//console.log("TCH-OK: done")
+						resolve();
+					} else {
+						console.err("Error", msg)
+						reject(new Error("TCH Error"));
+					}
 				}
 
 				if (msg[0] == '"')

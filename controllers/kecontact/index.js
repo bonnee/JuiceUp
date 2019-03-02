@@ -77,7 +77,9 @@ class KeContact {
 
 					this._txSocket.updateReports(address);
 					this._txSocket.updateHistory(address);
+
 					this._resetTimer(serial);
+					this._updateDateTime(serial);
 
 					resolve(data);
 				} else {
@@ -101,6 +103,13 @@ class KeContact {
 			this._txSocket.updateReports(this.getAddress(serial));
 			this._txSocket.updateHistory(this.getAddress(serial));
 		}, POLL_FREQ);
+	}
+
+	_updateDateTime(serial) {
+		let epoch = parseInt(new Date() / 1000);
+
+		console.log("Updating DateTime", epoch, '(' + new Date() + ')');
+		this._txSocket.send("setdatetime " + epoch, this.getAddress(serial));
 	}
 
 	getAddress(serial) {
