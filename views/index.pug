@@ -2,6 +2,7 @@ extends layout.pug
 
 block head
   title= "KeContact"
+  
 
 block nav
   .d-flex.flex-row.mt-2.mt-sm-0
@@ -17,16 +18,18 @@ block nav
 block content
   .row
     each box in boxes
+      - var model=box.product.split('-')[1]
       .col.col-sm-6.col-md-4.col-lg-3
-        .card.mx-3.mx-sm-0
+        .card.mx-3.mx-sm-0.shadow(class={'border-danger':box.error==true,
+                                  'border-primary':box.error==false} style="border-width:2px")
           .card-body.pb-1
             h5.card-title=box.name
               small
                 a.text-muted.mx-1(href="#" data-toggle="modal" data-target="#editModal" data-serial=box.serial)
                   i.fas.fa-pencil-alt
-              span.badge.badge-primary.float-right=box.product.split('-')[1]
+              span.badge.badge-primary.float-right=model
           a(href='/' + box.serial + '/info')
-            img.card-img-top(src='/p20.png')
+            img.card-img-top(src='/'+model.toLowerCase()+'.png')
 
           .card-body.pt-2
             .d-flex.justify-content-between

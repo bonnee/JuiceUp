@@ -16,7 +16,7 @@
             label(for="addressInput" name="address") IP address
             input#addressInput.form-control(name="address" type="text" placeholder="xxx.xxx.xxx.xxx")
         .modal-footer
-          button.btn.btn-secondary(data-dismiss="modal") Cancel
+          button.btn.btn-outline-secondary(data-dismiss="modal") Cancel
           input#add.btn.btn-primary(type="submit" value="Add")
 
 script.
@@ -73,7 +73,7 @@ script.
             break;
           default:
             alert.find('#alertTitle').text('Error');
-            alert.find('#alertMessage').text('An error occurred: ' + JSON.stringify(xhr.responseText));
+            alert.find('#alertMessage').text(xhr.responseText);
             alert.modal();
         }
       });

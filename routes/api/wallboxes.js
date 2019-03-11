@@ -5,7 +5,7 @@ const Kecontact = require(__basedir + '/controllers/kecontact/index.js');
 const db = require(__basedir + '/controllers/db.js');
 
 router.get('/', (req, res) => {
-	res.send(db.getWallboxes());
+	res.send(db.getActiveWallboxes());
 });
 
 // Add new
@@ -62,6 +62,7 @@ router.route('/:serial').all(checkExists)
 		if (db.getWallbox(serial).address != address) { // If posted address has changed
 			Kecontact.add(address).then(data => {
 				db.editWallbox(serial, req.body); // TODO: Check body
+				db.setError(serial, false);
 				res.status(201).send(data);
 			}).catch(err => {
 				res.status(400).send(err.toString());

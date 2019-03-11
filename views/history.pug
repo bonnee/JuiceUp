@@ -5,7 +5,7 @@ block head
 
 block content
     h1|#{box.name} history
-    .table-responsive-md
+    .table-responsive-sm
       table.table.table-striped
         thead
           tr
@@ -13,6 +13,7 @@ block content
             th(scope="col") Duration
             th(scope="col") Energy
             th(scope="col") Cost
+            th(scope="col") ~Speed
             th(scope="col") Auth
         tbody
           - var totalSec=0
@@ -31,6 +32,7 @@ block content
                 td=kwh.toFixed(2)+" kWh"
                 //- TODO: Add per-session price
                 td="€ "+(price*kwh).toFixed(2)
+                td=(kwh / (duration / 3600)).toFixed(2) + " kW"
                 td=item['RFID tag']
 
           tr.table-info(scope="row")

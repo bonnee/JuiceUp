@@ -18,7 +18,8 @@ class DB {
 			serial: data.serial,
 			name: data.name,
 			address: data.address,
-			product: data.product
+			product: data.product,
+			error: false
 		}).write();
 	}
 
@@ -38,11 +39,26 @@ class DB {
 		return true;
 	}
 
+	setError(serial, err) {
+		this._db.get('wallboxes').find({
+			serial: serial
+		}).assign({
+			error: err
+		}).write();
+		return true;
+	}
+
 	getPrice() {
 		return this._db.get('price').value();
 	}
 
-	getWallboxes() {
+	getActiveWallboxes() {
+		return this._db.get('wallboxes').filter({
+			error: false
+		}).value();
+	}
+
+	getAllWallboxes() {
 		return this._db.get('wallboxes').value();
 	}
 

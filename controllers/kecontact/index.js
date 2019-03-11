@@ -48,7 +48,7 @@ class KeContact {
 			let timeoutFunction = () => {
 				if (!done) {
 					if (timeoutCount >= 3) {
-						let err = new Error('Error adding wallbox: timeout');
+						let err = new Error('timeout');
 						reject(err);
 					} else {
 						console.warn('...');
