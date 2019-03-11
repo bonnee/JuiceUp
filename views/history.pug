@@ -28,7 +28,10 @@ block content
 
               tr
                 th(scope="row")=item['Session ID']
-                td=duration +"s"
+                if item["timeQ"]==0
+                  td=duration+' s'
+                else
+                  td=item["started"]
                 td=kwh.toFixed(2)+" kWh"
                 //- TODO: Add per-session price
                 td="€ "+(price*kwh).toFixed(2)
