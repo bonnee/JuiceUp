@@ -57,43 +57,70 @@ block content
       .card
         h4.card-header Status
         .card-body.text-center.align-middle
-          .fa-3x
-            - var boxMsg
-            - var boxCss
+          
+          - var boxMsg='...'
+          - var boxCss
 
-            - var carMsg
-            - var carCss
-            case data.State
-              when 1
-                if data['Enable sys']==1
-                  - boxMsg='Wallbox is enabled'
-                  - boxCss='text-primary'
-                else
-                  - boxMsg='Wallbox is disabled'
-                  - boxCss='text-muted'
-              when 2
-              when 3
-                - boxMsg='Wallbox is charging'
-                - boxCss='text-success'
-              default
-                - boxMsg='Charging unauthorized or error'
-                - boxCss='text-danger'
+          - var cableMsg='...'
+          - var cableCss
 
-            case data.Plug
-              when 5
-                - carMsg='Cable plugged'
-                - carCss='text-warning'
-              when 7
-                - carMsg='Cable locked'
-                - carCss='text-success'
-              default
-                - carMsg='Cable unplugged'
-                - carCss='text-muted'
+          - var carMsg='...'
+          - var carCss
 
+          case data.Plug
+            when 0
+              - cableMsg='Cable unplugged'
+              - cableCss='text-muted'
+            when 1
+              - cableMsg='Cable plugged'
+              - cableCss='text-dark'
+            when 3
+            when 5
+            when 7
+              - cableMsg='Cable locked'
+              - cableCss='text-primary'
+          case data.Plug
+            when 0
+            when 1
+            when 3
+              - carMsg='Vehicle unplugged'
+              - carCss='text-muted'
+            when 5
+              - carMsg='Vehicle plugged in'
+              - carCss='text-primary'
+            when 7
+              - carMsg='Vehicle plugged and locked'
+              - carCss='text-primary'
+
+
+          case data.State
+            when 1
+              if data.Authreq == 1
+                - boxMsg='Charger is unauthorized'
+                - boxCss='text-dark'
+              else
+                - boxMsg='Charger is authorized'
+                - boxCss='text-primary'
+            when 2
+              - boxMsg='Ready to charge'
+              - boxCss='text-primary'
+            when 3
+              - boxMsg='Charging'
+              - boxCss='text-success'
+              - picCss='blink'
+            when 4
+              - boxMsg='Error'
+              - boxCss='text-danger'
+            when 5
+              - boxMsg='Charging is paused'
+              - boxCss='text-warning'
+
+          .fa-3x(class=picCss)
             i.fas.fa-charging-station.p-1(data-toggle="tooltip" title=boxMsg class=boxCss)
 
-            span(data-toggle="tooltip" title=carMsg class=carCss class={'blink': data.State == 3})
+            span(data-toggle="tooltip" title=cableMsg class=cableCss)
               i.fas.fa-long-arrow-alt-right.p-1
+            span(data-toggle="tooltip" title=carMsg class=carCss)
               i.fas.fa-car.p-1
 
         .card-footer.py-2.px-3

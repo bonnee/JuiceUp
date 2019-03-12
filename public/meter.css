@@ -21,11 +21,11 @@ a.custom-card:hover {
 }
 
 .blink {
-	animation: blinker 1.25s linear infinite;
+	animation: blinker 1s ease-out infinite;
 }
 
 @keyframes blinker {
 	50% {
-		opacity: .25;
+		opacity: .3;
 	}
 }
