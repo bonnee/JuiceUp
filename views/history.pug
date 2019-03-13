@@ -4,42 +4,45 @@ block head
     title= "KeContact"
 
 block content
-    h1|#{box.name} history
-    .table-responsive-sm
-      table.table.table-striped
-        thead
-          tr
-            th(scope="col") #
-            th(scope="col") Duration
-            th(scope="col") Energy
-            th(scope="col") Cost
-            th(scope="col") ~Speed
-            th(scope="col") Auth
-        tbody
-          - var totalSec=0
-          - var totalKwh=0
+  h1|#{box.name} history
+  .table-responsive-sm
+    table.table.table-striped
+      thead
+        tr
+          th(scope="col") #
+          th(scope="col") Duration
+          th(scope="col") Energy
+          th(scope="col") Cost
+          th(scope="col") ~Speed
+          th(scope="col") Info
+      tbody
+        - var totalSec=moment.duration()
+        - var totalKwh=0
 
-          each item in history
-            if item && item['Session ID']>0
-              - var kwh=item['E pres']/10000;
-              - var duration=item['ended[s]']-item['started[s]']
-              - totalSec+=duration
-              - totalKwh+=kwh
+        each item in history
+          if item && item['Session ID']>0
+            - var kwh=item['E pres']/10000;
+            - var duration = moment.duration(item['ended[s]']-item['started[s]'],'seconds')
+            - totalSec.add(duration)
+            - totalKwh+=kwh
 
-              tr
-                th(scope="row")=item['Session ID']
-                if item["timeQ"]==0
-                  td=duration+' s'
-                else
-                  td=item["started"]
-                td=kwh.toFixed(2)+" kWh"
-                //- TODO: Add per-session price
-                td="€ "+(price*kwh).toFixed(2)
-                td=(kwh / (duration / 3600)).toFixed(2) + " kW"
-                td=item['RFID tag']
+            tr
+              th(scope="row")=item['Session ID']
+              td=moment(duration.asMilliseconds()).format('hh:mm:ss')
+              td=kwh.toFixed(2)+" kWh"
+              //- TODO: Add per-session price
+              td="€ "+(price*kwh).toFixed(2)
+              td=(kwh / duration.asHours()).toFixed(2) + " kW"
+              td
+                a(href='#' data-toggle='modal' data-target='#historyDetails' data-id=item['Session ID'])
+                  i.fas.fa-info-circle
 
-          tr.table-info(scope="row")
-            th|Total
-            th=totalSec +"s"
-            th=totalKwh.toFixed(2)+" kWh"
-            th="€ "+(price*totalKwh).toFixed(2)
+        tr.table-info(scope="row")
+          th|Total
+          th=moment(totalSec.asMilliseconds()).format('D[d] hh:mm:ss')
+          th=totalKwh.toFixed(2)+" kWh"
+          th="€ "+(price*totalKwh).toFixed(2)
+
+block footer
+  include includes/historyDetails.pug
+

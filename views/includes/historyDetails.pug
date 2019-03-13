@@ -1,0 +1,88 @@
+
+#historyDetails.modal.fade(tabindex="-1" role="dialog")
+  .modal-dialog.modal-lg(role="document")
+    .modal-content
+      .modal-header
+        h5.modal-title Session #1
+        button.close(data-dismiss="modal" aria-label="Close")
+          span(aria-hidden="true") &times;
+      .modal-body
+        table.table
+          thead
+            tr
+              th Start time
+              th End time
+              th Energy
+              th Energy cost
+              th Total
+          tbody
+            tr
+              td 15:05
+              td 18:43
+              td 30.00 kWh
+              td 0.25 €/kWh
+              td € 7.50
+        
+      .modal-footer
+        button.btn.btn-primary(onclick='document.getElementById("historyDetails").print()') Print
+
+script.
+  $("#add").click(() => {
+    let addWallbox = $("#addWallbox");
+    let alert = $("#alert");
+    let loading = $("#loading");
+
+    let name = $("#nameInput").val()
+    let address = $("#addressInput").val()
+
+    addWallbox.modal('hide');
+    addWallbox.one('hidden.bs.modal', () => {
+      let loadTime = setTimeout(() => {
+        loading.modal('show');
+      }, 100);
+
+      let req = $.ajax({
+        url: "/api/wallboxes",
+        type:"PUT",
+        data: {
+          name: name,
+          address: address
+        }
+      }).done((data) => {
+        clearTimeout(loadTime);
+        loading.modal("hide");
+
+        alert.find('#alertTitle').text('Success');
+        alert.find('#alertMessage').text('Wallbox has been successfully added.');
+        alert.modal();
+        addWallbox.modal('dispose');
+
+      }).fail((xhr, status, error) => {
+        clearTimeout(loadTime);
+        loading.modal("hide");
+        
+        switch (xhr.responseText) {
+          case 'timeout':
+            alert.find('#alertTitle').text('Timeout');
+            alert.find('#alertMessage').text('Wallbox did not respond in time. Check the IP address');
+            alert.modal();
+            alert.one('hidden.bs.modal', () => {
+              addWallbox.modal('show');
+            });
+            break;
+          case 'wrong data':
+            alert.find('#alertTitle').text('Error');
+            alert.find('#alertMessage').text('Server responded with wrong data. Check the IP address');
+            alert.modal();
+            alert.one('hidden.bs.modal', () => {
+              addWallbox.modal('show');
+            });
+            break;
+          default:
+            alert.find('#alertTitle').text('Error');
+            alert.find('#alertMessage').text(xhr.responseText);
+            alert.modal();
+        }
+      });
+    });
+  });

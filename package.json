@@ -31,7 +31,7 @@
     "http-errors": "~1.6.2",
     "ip": "^1.1.5",
     "lowdb": "^1.0.0",
-    "moment": "^2.22.2",
+    "moment": "^2.24.0",
     "pug": "^2.0.3"
   },
   "devDependencies": {

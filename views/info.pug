@@ -10,29 +10,25 @@ block content
   .row.mb-3
     .col-12.col-md-4.col-lg-3
       img(src='/'+model.toLowerCase()+".png").img-fluid
-    .col-12.col-sm-8.col-lg-9.d-flex.align-items-center
-      div.flex-column
-        .row.mb-2
-          div
-            .text-muted Product
-            | #{data.Product}
-        .row.mb-2
-          div
-            .text-muted Firmware
-            | #{data.Firmware}
-        .row.mb-2
-          div 
-            .text-muted Serial No.
-            | #{data.Serial}
-        .row.mb-2
-          div
-            .text-muted Time
-            
-            if data.timeQ==0
-              span.badge.badge-danger Not Synced
-            else
-              span.badge(class={'badge-success' : data.timeQ=='X',
-                                'badge-warning' : data.timeQ==2}) Synced
+    .col-12.col-sm-8.col-lg-9.row
+      div.my-auto.mx-3
+        .mb-2
+          .text-muted Product
+          | #{data.Product}
+        .mb-2
+          .text-muted Firmware
+          | #{data.Firmware}
+        .mb-2
+          .text-muted Serial No.
+          | #{data.Serial}
+        div
+          .text-muted Time
+          data.timeQ
+          if data.timeQ==0
+            span.badge.badge-danger Not Synced
+          else
+            span.badge(class={'badge-success' : data.timeQ=='X',
+                              'badge-warning' : data.timeQ==2}) Synced
 
   .row
     .col-sm-4

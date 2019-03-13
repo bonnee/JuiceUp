@@ -7,8 +7,6 @@ var router = express.Router();
 router.get('/:serial/info', (req, res) => {
 	let data = Kecontact.getData(req.params.serial);
 
-	console.log(data);
-
 	res.render('info', {
 		page: 'info',
 		data: data,
@@ -31,8 +29,6 @@ router.get('/:serial/history', (req, res) => {
 
 	let data = Kecontact.getData(req.params.serial);
 	let history = Kecontact.getHistory(req.params.serial);
-
-	//console.log(history);
 
 	res.render('history', {
 		page: 'history',

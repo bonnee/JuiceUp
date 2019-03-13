@@ -17,6 +17,8 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 
+app.locals.moment = require('moment');
+
 var connect = (box, ttl) => {
 	return new Promise((resolve, reject) => {
 		Kecontact.add(box.address)
