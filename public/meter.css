@@ -24,6 +24,10 @@ a.custom-card:hover {
 	animation: blinker 1s ease-out infinite;
 }
 
+.no-conn {
+	background-color: rgba(33, 37, 41, 0.6)
+}
+
 @keyframes blinker {
 	50% {
 		opacity: .3;

@@ -3,6 +3,16 @@ extends layout.pug
 block head
     title= "KeContact"
 
+block nav
+  .d-flex.flex-row.mt-2.mt-sm-0
+    form.mr-0.mr-sm-2.w-100(onsubmit='return false')
+        .input-group
+          .input-group-prepend
+            span.input-group-text &euro;/kWh
+          input#priceIn.form-control(type='number', step='0.01', aria-label='Amount (to the nearest dollar)' value=price)
+          .input-group-append
+            input#setPrice.btn.btn-primary(type='submit', value='Set')
+
 block content
   h1|#{box.name} history
   .table-responsive-sm
@@ -44,5 +54,13 @@ block content
           th="€ "+(price*totalKwh).toFixed(2)
 
 block footer
+  script.
+    $("#setPrice").click(() => {
+      console.log("Setting new price...")
+      $.post("/api/price", { price: $("#priceIn").val() }, (data) => {
+        console.log("Success!")
+        $("#priceIn").val(parseFloat(data));
+      });
+    });
   include includes/historyDetails.pug
 

@@ -20,7 +20,8 @@ router.put('/', (req, res) => {
 					serial: data.Serial,
 					name: req.body.name,
 					address: Kecontact.getAddress(data.Serial),
-					product: data.Product
+					product: data.Product,
+					error: false
 				});
 				res.status(201);
 				res.send(data.Serial);
