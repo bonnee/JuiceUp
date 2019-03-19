@@ -36,9 +36,9 @@ module.exports = class RX extends EventEmitter {
 
 	_parseMessage(message) {
 		return new Promise((resolve, reject) => {
-			try {
-				let msg = message.toString().trim();
+			let msg = message.toString().trim();
 
+			try {
 				if (msg.length == 0)
 					return;
 
@@ -58,6 +58,7 @@ module.exports = class RX extends EventEmitter {
 
 				resolve(JSON.parse(msg));
 			} catch (err) {
+				console.log('here is the wrong data', msg);
 				reject(new Error('wrong data'));
 			}
 		});

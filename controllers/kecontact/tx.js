@@ -4,8 +4,9 @@ const Intervals = require('./intervals.js');
 const PORT = 7090;
 const REQ_FREQ = 100;
 
-module.exports = class RX {
+module.exports = class TX {
 	constructor() {
+
 		this._sendQueue = [];
 		this._running = false;
 
@@ -42,7 +43,6 @@ module.exports = class RX {
 		}
 	}
 
-	// TODO: figure out why loop is skipping items
 	delete(address) {
 		this._intervals.clearAll();
 
@@ -53,6 +53,10 @@ module.exports = class RX {
 		}
 
 		this._handleQueue();
+	}
+
+	getQueueLength() {
+		return this._sendQueue.length
 	}
 
 	close() {

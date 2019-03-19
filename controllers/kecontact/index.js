@@ -95,6 +95,31 @@ class KeContact {
 		});
 	}
 
+	_ping(address) {
+		console.log('ping address', address);
+		this._txSocket.send('i', address);
+
+		let recv = false;
+		this._intervals.addOnce(() => {
+			if (!recv) {
+				this._rxSocket.removeListener('message', checkmsg);
+				console.log('ping timeout'); // TODO: Set error flag in db
+			}
+		}, TIMEOUT + this._txSocket.getQueueLength() * 100) // TODO: Make alla consts global
+
+		let checkmsg = (msg) => {
+			if (msg.address == address) {
+				if ('Firmware' in msg.data && !('ID' in msg.data)) {
+					recv = true;
+					this._rxSocket.removeListener('message', checkmsg);
+				}
+			}
+		}
+
+		this._rxSocket.on('message', checkmsg);
+
+	}
+
 	_resetTimer(serial) {
 		this._intervals.clear(this._boxes[serial].timer);
 
@@ -103,6 +128,10 @@ class KeContact {
 			this._txSocket.updateReports(this.getAddress(serial));
 			this._txSocket.updateHistory(this.getAddress(serial));
 		}, POLL_FREQ);
+
+		this._intervals.add(() => {
+			this._ping(this.getAddress(serial));
+		}, POLL_FREQ - 1000);
 	}
 
 	_updateDateTime(serial) {
