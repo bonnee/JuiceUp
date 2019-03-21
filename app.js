@@ -24,7 +24,8 @@ var connect = (box, ttl) => {
 		Kecontact.add(box.address)
 			.then(() => {
 				resolve();
-			}).catch(e => {
+			})
+			.catch(e => {
 				if (Kecontact.getAddress(box.serial)) {
 					resolve();
 				} else {

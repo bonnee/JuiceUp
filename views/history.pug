@@ -14,31 +14,58 @@ block nav
             input#setPrice.btn.btn-primary(type='submit', value='Set')
 
 block content
-  h1|#{box.name} history
+  h2 Total
+
+  - var totalSec=moment.duration()
+  - var totalKwh=0
+
+  each item in history
+    if item && item['Session ID']>0 && item.ID>100
+      - var kwh=item['E pres']/10000;
+      - var duration = moment.duration(item['ended[s]']-item['started[s]'],'seconds')
+      - totalSec.add(duration)
+      - totalKwh+=kwh
+
+
+  .card-deck.mb-3
+    .card.shadow-sm
+      .card-body
+        h5.card-title Charging Time
+        h3.text-center.card-text=moment(totalSec.asMilliseconds()).format('D[d] hh:mm:ss')
+    .card.shadow-sm
+      .card-body
+        h5.card-title Energy
+        h3.text-center.card-text=totalKwh.toFixed(2)+' kWh'
+    .card.shadow-sm
+      .card-body
+        h5.card-title Cost
+        h3.text-center.card-text=(price*totalKwh).toFixed(2)+' €'
+
+  h2 History
   .table-responsive-sm
     table.table.table-striped
       thead
         tr
           th(scope="col") #
-          th(scope="col") Duration
+          th(scope="col") Start
+          th(scope="col") Stop
           th(scope="col") Energy
           th(scope="col") Cost
           th(scope="col") ~Speed
           th(scope="col") Info
       tbody
-        - var totalSec=moment.duration()
-        - var totalKwh=0
+
 
         each item in history
-          if item && item['Session ID']>0
+          if item && item['Session ID']>0 && item.ID>100
             - var kwh=item['E pres']/10000;
             - var duration = moment.duration(item['ended[s]']-item['started[s]'],'seconds')
-            - totalSec.add(duration)
-            - totalKwh+=kwh
 
             tr
               th(scope="row")=item['Session ID']
-              td=moment(duration.asMilliseconds()).format('hh:mm:ss')
+              td=moment(item['started'],'YYYY/MM/DD HH:mm:ss.SSS').format('DD/MM/YY HH:mm')
+                //moment(duration.asMilliseconds()).format('hh:mm:ss')
+              td=moment(item['ended'],'YYYY/MM/DD HH:mm:ss.SSS').format('DD/MM/YY HH:mm')
               td=kwh.toFixed(2)+" kWh"
               //- TODO: Add per-session price
               td="€ "+(price*kwh).toFixed(2)
@@ -46,12 +73,6 @@ block content
               td
                 a(href='#' data-toggle='modal' data-target='#historyDetails' data-id=item['Session ID'])
                   i.fas.fa-info-circle
-
-        tr.table-info(scope="row")
-          th|Total
-          th=moment(totalSec.asMilliseconds()).format('D[d] hh:mm:ss')
-          th=totalKwh.toFixed(2)+" kWh"
-          th="€ "+(price*totalKwh).toFixed(2)
 
 block footer
   script.

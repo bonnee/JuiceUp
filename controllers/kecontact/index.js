@@ -79,7 +79,9 @@ class KeContact {
 					this._txSocket.updateHistory(address);
 
 					this._resetTimer(serial);
-					this._updateDateTime(serial);
+					if (data.timeQ != 'X') {
+						this._updateDateTime(serial);
+					}
 
 					resolve(data);
 				} else {
@@ -95,29 +97,27 @@ class KeContact {
 		});
 	}
 
-	_ping(address) {
-		console.log('ping address', address);
-		this._txSocket.send('i', address);
+	_ping(serial) {
+		console.log('ping', serial);
+		this._txSocket.send('i', this.getAddress(serial));
 
-		let recv = false;
-		this._intervals.addOnce(() => {
-			if (!recv) {
-				this._rxSocket.removeListener('message', checkmsg);
-				console.log('ping timeout'); // TODO: Set error flag in db
-			}
+		let interval = this._intervals.addOnce(() => {
+
+			this._rxSocket.removeListener('message', checkmsg);
+			this._boxes[serial].storage.setError(true);
+
 		}, TIMEOUT + this._txSocket.getQueueLength() * 100) // TODO: Make alla consts global
 
 		let checkmsg = (msg) => {
-			if (msg.address == address) {
-				if ('Firmware' in msg.data && !('ID' in msg.data)) {
-					recv = true;
-					this._rxSocket.removeListener('message', checkmsg);
-				}
+			if ('Firmware' in msg.data && !('ID' in msg.data)) {
+				this._intervals.clear(interval);
+				this._rxSocket.removeListener('message', checkmsg);
+
+				this._boxes[serial].storage.setError(false);
 			}
 		}
 
-		this._rxSocket.on('message', checkmsg);
-
+		this._rxSocket.on(this.getAddress(serial), checkmsg);
 	}
 
 	_resetTimer(serial) {
@@ -129,9 +129,13 @@ class KeContact {
 			this._txSocket.updateHistory(this.getAddress(serial));
 		}, POLL_FREQ);
 
-		this._intervals.add(() => {
-			this._ping(this.getAddress(serial));
-		}, POLL_FREQ - 1000);
+		this._intervals.clear(this._boxes[serial].ping);
+
+		this._intervals.addOnce(() => {
+			this._boxes[serial].ping = this._intervals.add(() => {
+				this._ping(serial);
+			}, POLL_FREQ);
+		}, POLL_FREQ / 2)
 	}
 
 	_updateDateTime(serial) {

@@ -1,7 +1,7 @@
 extends layout.pug
 
 block head
-  - var kw=(Math.abs(parseInt(data['P'])/10000)).toFixed(2)
+  - var kw=(Math.abs(parseInt(data['P'])/1000000)).toFixed(2)
   - var kwh=(Math.abs(parseInt(data['E total'])/10000)).toFixed(2)
   title="Charger Info"
   - var model=box.product.split('-')[1]
@@ -32,13 +32,13 @@ block content
 
   .row
     .col-sm-4
-      .card
+      .card.shadow-sm
         .card-body
           h5.card-title Meter
           p.card-text Current Power: #{kw} kW
           a.btn.btn-primary(href='meter') Meter
     .col-sm-4
-      .card
+      .card.shadow-sm
         .card-body
           h5.card-title History
           p.card-text Total Energy: #{kwh} kWh

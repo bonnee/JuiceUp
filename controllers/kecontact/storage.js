@@ -1,7 +1,10 @@
+db = require('../db');
+
 module.exports = class Storage {
 	constructor() {
 		this._data = {};
 		this._history = [];
+		this._error = false
 	}
 
 	getData() {
@@ -10,6 +13,10 @@ module.exports = class Storage {
 
 	getHistory() {
 		return this._history;
+	}
+
+	setError(value) {
+		db.setError(this._data.Serial, value);
 	}
 
 	saveData(newData) {

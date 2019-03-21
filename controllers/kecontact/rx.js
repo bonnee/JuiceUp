@@ -12,14 +12,16 @@ module.exports = class RX extends EventEmitter {
 
 		this._socket.on('message', (message, rinfo) => {
 			this._parseMessage(message).then((parsedMessage) => {
-				this.emit('message', {
-					address: rinfo.address,
-					data: parsedMessage
-				});
+				if (parsedMessage) {
+					this.emit('message', {
+						address: rinfo.address,
+						data: parsedMessage
+					});
 
-				this.emit(rinfo.address, {
-					data: parsedMessage
-				});
+					this.emit(rinfo.address, {
+						data: parsedMessage
+					});
+				}
 			}).catch((err) => {
 				this.emit('error', err);
 			});
