@@ -4,7 +4,6 @@ module.exports = class Storage {
 	constructor() {
 		this._data = {};
 		this._history = [];
-		this._error = false
 	}
 
 	getData() {
@@ -17,6 +16,10 @@ module.exports = class Storage {
 
 	setError(value) {
 		db.setError(this._data.Serial, value);
+	}
+
+	getError() {
+		return db.getError(this._data.Serial);
 	}
 
 	saveData(newData) {

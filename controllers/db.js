@@ -39,13 +39,19 @@ class DB {
 		return true;
 	}
 
-	setError(serial, err) {
+	setError(serial, value) {
 		this._db.get('wallboxes').find({
 			serial: serial
 		}).assign({
-			error: err
+			error: value
 		}).write();
 		return true;
+	}
+
+	getError(serial) {
+		return this._db.get('wallboxes').find({
+			serial: serial
+		}).get('error').value()
 	}
 
 	getPrice() {
