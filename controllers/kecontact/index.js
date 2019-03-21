@@ -37,36 +37,18 @@ class KeContact {
 	add(address) {
 		return new Promise((resolve, reject) => {
 			if (this.getSerial(address)) {
-				let err = new Error('Address is a duplicate');
-				reject(err);
+				reject(new Error('Address is a duplicate'));
 			}
 
-			let done = false;
 			this._txSocket.send('report 1', address);
+			let timeout;
 
-			let timeoutCount = 0;
-			let timeoutFunction = () => {
-				if (!done) {
-					if (timeoutCount >= 3) {
-						let err = new Error('timeout');
-						reject(err);
-					} else {
-						console.warn('...');
-						this._txSocket.send('report 1', address);
-						timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
-						timeoutCount++;
-					}
-				}
-			}
-			let timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
-
-			this._rxSocket.once(address, ({
+			let recv = ({
 				data
 			}) => {
-				done = true; // WORKAROUND: code below should work but it doesn't
-				//this._intervals.clear(timeout);
-
 				if (data.ID == 1 && data.Serial && data.Product) {
+					this._intervals.clear(timeout);
+
 					let serial = data.Serial.toString();
 					let newBox = {
 						address: address,
@@ -78,17 +60,37 @@ class KeContact {
 					this._txSocket.updateReports(address);
 					this._txSocket.updateHistory(address);
 
-					this._resetTimer(serial);
 					if (data.timeQ != 'X') {
 						this._updateDateTime(serial);
 					}
+
+					this._resetTimer(serial);
 
 					resolve(data);
 				} else {
 					connection.close();
 					reject(new Error('Wallbox responded with invalid data'));
 				}
-			});
+			};
+
+			let timeoutCount = 0;
+			let timeoutFunction = () => {
+				if (timeoutCount >= 3) {
+
+					this._rxSocket.removeListener(address, recv);
+
+					reject(new Error('timeout'));
+				} else {
+					console.warn('...');
+					this._txSocket.send('report 1', address);
+					timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
+					timeoutCount++;
+				}
+			}
+
+			timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
+
+			this._rxSocket.once(address, recv);
 
 			this._rxSocket.once('error', err => {
 				done = true;
@@ -103,15 +105,15 @@ class KeContact {
 
 		let interval = this._intervals.addOnce(() => {
 
-			this._rxSocket.removeListener('message', checkmsg);
+			this._rxSocket.removeListener(this.getAddress(serial), checkmsg);
 			this._boxes[serial].storage.setError(true);
 
-		}, TIMEOUT + this._txSocket.getQueueLength() * 100) // TODO: Make alla consts global
+		}, TIMEOUT + this._txSocket.getQueueLength() * 100) // TODO: Make all consts global
 
 		let checkmsg = (msg) => {
 			if ('Firmware' in msg.data && !('ID' in msg.data)) {
 				this._intervals.clear(interval);
-				this._rxSocket.removeListener('message', checkmsg);
+				this._rxSocket.removeListener(this.getAddress(serial), checkmsg);
 
 				this._boxes[serial].storage.setError(false);
 			}

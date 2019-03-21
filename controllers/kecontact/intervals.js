@@ -16,9 +16,10 @@ module.exports = class Intervals {
 	}
 
 	clear(id) {
-		if (id && this._intervals[id]) {
+		if (id in this._intervals) {
 			clearInterval(this._intervals[id]);
 			delete this._intervals[id];
+
 			return true;
 		}
 		return false;
