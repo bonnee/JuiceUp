@@ -10,7 +10,7 @@ block nav
 
 block content
   .row
-    .col-4
+    .col-md-4.mb-3
       .d-flex.justify-content-between.align-items-center
         h3 Profiles
         .mb-2
@@ -20,7 +20,7 @@ block content
           a.list-group-item.list-group-item-action(class={'list-group-item-success':box.profile==i} href="#"+i data-toggle="list" onclick='profile('+i+')')
             h5.mb-1=profile.name
             small=profile.auth
-    .col-8
+    .col-md-8.mb-3
       h3 Details
       form(onsubmit='return false')
         .form-group

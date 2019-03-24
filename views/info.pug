@@ -34,22 +34,21 @@ block content
             span.badge(class={'badge-success' : data.timeQ=='X',
                               'badge-warning' : data.timeQ==2}) Synced
 
-  .row
-    .col-sm-4
-      .card.shadow-sm
-        .card-body
-          h5.card-title Meter
-          p.card-text Current Power: #{kw} kW
-          a.btn.btn-primary(href='meter') Meter
-    .col-sm-4
-      .card.shadow-sm
-        .card-body
-          h5.card-title History
-          p.card-text Total Energy: #{kwh} kWh
-          a.btn.btn-primary(href='history') History
-    .col-sm-4
-      .card.shadow-sm
-        .card-body
-          h5.card-title Profiles
-          p.card-text Active: #{box.profiles[box.profile].name}
-          a.btn.btn-primary(href='profiles') Profiles
+  .card-deck
+    .card.shadow-sm
+      .card-body
+        h5.card-title Meter
+        p.card-text Current Power: #{kw} kW
+        a.btn.btn-primary(href='meter') Meter
+
+    .card.shadow-sm
+      .card-body
+        h5.card-title History
+        p.card-text Total Energy: #{kwh} kWh
+        a.btn.btn-primary(href='history') History
+
+    .card.shadow-sm
+      .card-body
+        h5.card-title Profiles
+        p.card-text Active: #{box.profiles[box.profile].name}
+        a.btn.btn-primary(href='profiles') Profiles
