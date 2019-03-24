@@ -1,15 +1,19 @@
 extends layout.pug
 
 block head
+  title="Charger Info"
+
   - var kw=(Math.abs(parseInt(data['P'])/1000000)).toFixed(2)
   - var kwh=(Math.abs(parseInt(data['E total'])/10000)).toFixed(2)
-  title="Charger Info"
   - var model=box.product.split('-')[1]
+
+block nav
+  include includes/profileSelection.pug
 
 block content
   .row.mb-3
     .col-12.col-md-4.col-lg-3
-      img(src='/'+model.toLowerCase()+".png").img-fluid
+      img(src='/'+model.toLowerCase()+'.png').img-fluid
     .col-12.col-sm-8.col-lg-9.row
       div.my-auto.mx-3
         .mb-2
@@ -43,3 +47,9 @@ block content
           h5.card-title History
           p.card-text Total Energy: #{kwh} kWh
           a.btn.btn-primary(href='history') History
+    .col-sm-4
+      .card.shadow-sm
+        .card-body
+          h5.card-title Profiles
+          p.card-text Active: #{box.profiles[box.profile].name}
+          a.btn.btn-primary(href='profiles') Profiles

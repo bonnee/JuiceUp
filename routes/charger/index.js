@@ -30,12 +30,25 @@ router.get('/:serial/history', (req, res) => {
 	let data = Kecontact.getData(req.params.serial);
 	let history = Kecontact.getHistory(req.params.serial);
 
+	console.log(history)
+
 	res.render('history', {
 		page: 'history',
 		data: data,
 		box: db.getWallbox(req.params.serial),
 		history: history,
 		price: db.getPrice()
+	});
+});
+
+router.get('/:serial/profiles', (req, res) => {
+
+	let data = Kecontact.getData(req.params.serial);
+
+	res.render('profiles', {
+		page: 'profiles',
+		data: data,
+		box: db.getWallbox(req.params.serial)
 	});
 });
 

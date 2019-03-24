@@ -3,17 +3,14 @@ extends layout.pug
 block head
   - var kwh=(Math.abs(parseInt(data['E pres'])/10000)).toFixed(2)
   - var kw=(Math.abs(parseInt(data['P'])/1000000)).toFixed(2)
-  - var auth="bbbf74bd00000000"
+  - var auth=box.profiles[box.profile].auth
   title= "KeContact"
 
 block scripts
   link(rel="stylesheet" href="/meter.css")
 
 block nav
-  form.form-inline.mt-2.mt-sm-0
-    .d-flex.justify-content-start.w-100
-      label.navbar-text.pr-2(for='authIn') Auth
-      input#authIn.form-control.mr-sm-2(type="text" placeholder="Auth" aria-label="Auth" value=auth)
+  include includes/profileSelection.pug
 
 block content
   .d-flex.justify-content-between.align-items-center

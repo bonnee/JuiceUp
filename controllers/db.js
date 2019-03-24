@@ -13,20 +13,29 @@ class DB {
 		}).write();
 	}
 
+	retSerial(serial) {
+		return this._db.get('wallboxes').find({
+			serial: serial
+		});
+	}
+
 	addWallbox(data) {
 		this._db.get('wallboxes').push({
 			serial: data.serial,
 			name: data.name,
 			address: data.address,
 			product: data.product,
+			profile: 0,
+			profiles: [{
+				name: 'Default profile',
+				auth: '0000000000000000'
+			}],
 			error: false
 		}).write();
 	}
 
 	editWallbox(serial, data) {
-		this._db.get('wallboxes').find({
-				serial: serial
-			})
+		this.retSerial(serial)
 			.assign({
 				name: data.name,
 				address: data.address
@@ -40,16 +49,64 @@ class DB {
 	}
 
 	setError(serial, err) {
-		this._db.get('wallboxes').find({
-			serial: serial
-		}).assign({
-			error: err
-		}).write();
+		this.retSerial(serial)
+			.assign({
+				error: err
+			}).write();
 		return true;
 	}
 
 	getPrice() {
 		return this._db.get('price').value();
+	}
+
+	getProfiles(serial) {
+		return this.retSerial(serial)
+			.get('profiles').value();
+	}
+
+	addProfile(serial, name, auth) {
+		let profiles = this.getProfiles(serial);
+
+		profiles.push({
+			name: name,
+			auth: auth
+		});
+
+		this.retSerial(serial)
+			.set('profiles', profiles).write();
+	}
+
+	setProfile(serial, id, name, auth) {
+		this.retSerial(serial)
+			.get('profiles')
+			.nth(id)
+			.assign({
+				name: name,
+				auth: auth
+			}).write();
+	}
+
+	removeProfile(serial, id) {
+		this.retSerial(serial)
+			.get('profiles').pullAt(id).write();
+
+		if (id == this.getActiveProfile(serial)) {
+			setActiveProfile(serial, 0);
+		}
+	}
+
+	setActiveProfile(serial, id) {
+		this.retSerial(serial)
+			.set('profile', id).write();
+	}
+
+	getActiveProfile(serial) {
+		let id = this.retSerial(serial)
+			.get('profile').value();
+
+		return this.retSerial(serial)
+			.get('profiles').nth(id).value();
 	}
 
 	getActiveWallboxes() {
@@ -63,9 +120,8 @@ class DB {
 	}
 
 	getWallbox(serial) {
-		return this._db.get('wallboxes').find({
-			serial: serial
-		}).value()
+		return this.retSerial(serial)
+			.value()
 	}
 
 	removeWallbox(serial) {

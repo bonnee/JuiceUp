@@ -1,0 +1,110 @@
+extends layout.pug
+
+block head
+  title= "KeContact"
+
+block scripts
+  link(rel="stylesheet" href="/meter.css")
+
+block nav
+
+block content
+  .row
+    .col-4
+      .d-flex.justify-content-between.align-items-center
+        h3 Profiles
+        .mb-2
+          button.btn.btn-primary.btn-sm(onclick='newProfile()') New
+      #profileList.list-group.shadow-sm
+        each profile,i in box.profiles
+          a.list-group-item.list-group-item-action(class={'list-group-item-success':box.profile==i} href="#"+i data-toggle="list" onclick='profile('+i+')')
+            h5.mb-1=profile.name
+            small=profile.auth
+    .col-8
+      h3 Details
+      form(onsubmit='return false')
+        .form-group
+          label(for="nameInput") Name
+          input#nameInput.form-control(name="name" type="text" placeholder="Name")
+        .form-group
+          label(for="codeInput") Auth
+          input#authInput.form-control(name="auth" type="text" placeholder="Auth")
+        .float-right
+          button#deleteProfile.btn.btn-outline-danger.mr-1 Delete
+          button#submitProfile.btn.btn-primary.ml-1(type='submit') Save
+
+block footer
+  script.
+    var profileId=-1;
+
+    var deleteProfile=$('#deleteProfile');
+    var nameInput= $('#nameInput');
+    var authInput=$('#authInput');
+
+    deleteProfile.hide();
+
+    var newProfile=function(){
+      profileId=-1;
+
+      deleteProfile.hide();
+      nameInput.val('');
+      authInput.val('');
+
+      $('#profileList .active').removeClass("active");
+    }
+
+    var profile=function(id) {
+      profileId=id;
+
+      var profiles=!{JSON.stringify(box.profiles)}
+      var name=profiles[id].name;
+      var auth=profiles[id].auth;
+
+      deleteProfile.show();
+
+      nameInput.val(name);
+      authInput.val(auth);
+    }
+
+    $('#deleteProfile').click(function(){
+      $.ajax({
+        url:'/api/wallboxes/#{data.Serial}/profile',
+        type:'DELETE',
+        data:{
+          id:profileId
+          }
+        }).then(function(){
+          alert('Gone!');
+        }).catch(function(e){
+          alert(e);
+        });
+    })
+
+    $('#submitProfile').click(function(){
+      if(profileId==-1)
+      {
+        $.post('/api/wallboxes/#{data.Serial}/profile',{
+          name: nameInput.val(),
+          auth: authInput.val()
+        }).then(function(){
+          alert('Done!');
+        }).catch(function(e){
+          alert(e);
+        })
+      } else {
+        $.ajax({
+          url:'/api/wallboxes/#{data.Serial}/profile',
+          type:'PUT',
+          data:{
+            id: profileId,
+            name: nameInput.val(),
+            auth: authInput.val()
+          }
+        })
+        .then(()=>{
+          alert('Edit!');
+        }).catch((e)=>{
+          alert(e)
+        })
+      }
+    });

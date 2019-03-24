@@ -1,0 +1,19 @@
+ul.navbar-nav
+	li.nav-item.dropdown
+		a#profileSel.nav-link.dropdown-toggle(href='#' role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")=box.profiles[box.profile].name
+		.dropdown-menu.dropdown-menu-right(aria-labelledby="profileSel")
+			h6.dropdown-header Select profile
+
+			each prof,i in box.profiles
+				a.dropdown-item.pt-2(href='#' class={'active':i==box.profile} onclick='setProfile('+i+')')
+					h6.mb-0=prof.name
+					small=prof.auth
+
+script.
+	var setProfile=function(id){
+		$.post('/api/wallboxes/#{data.Serial}/profile/active',{id:id}).then(function(){
+			location.reload()
+		}).catch(function(e){
+			alert(JSON.stringify(e));
+		})
+	}
