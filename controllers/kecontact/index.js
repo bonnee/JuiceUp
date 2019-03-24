@@ -127,8 +127,11 @@ class KeContact {
 
 		this._boxes[serial].timer = this._intervals.add(() => {
 			console.log(serial + ': Update data');
-			this._txSocket.updateReports(this.getAddress(serial));
-			this._txSocket.updateHistory(this.getAddress(serial));
+
+			if (!this._boxes[serial].storage.getError()) {
+				this._txSocket.updateReports(this.getAddress(serial));
+				this._txSocket.updateHistory(this.getAddress(serial));
+			}
 		}, POLL_FREQ);
 
 		this._intervals.clear(this._boxes[serial].ping);

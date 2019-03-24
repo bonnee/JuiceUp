@@ -56,6 +56,12 @@ class DB {
 		return true;
 	}
 
+	getError(serial) {
+		return this._db.get('wallboxes').find({
+			serial: serial
+		}).get('error').value()
+	}
+
 	getPrice() {
 		return this._db.get('price').value();
 	}
