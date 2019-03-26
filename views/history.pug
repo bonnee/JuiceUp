@@ -1,7 +1,7 @@
 extends layout.pug
 
 block head
-    title= "KeContact"
+  title= "KeContact"
 
 block nav
   .d-flex.flex-row.mt-2.mt-sm-0
@@ -14,7 +14,7 @@ block nav
             input#setPrice.btn.btn-primary(type='submit', value='Set')
 
 block content
-  h2 Total
+  //h2 Total
 
   - var totalSec=moment.duration()
   - var totalKwh=0
@@ -27,7 +27,7 @@ block content
       - totalKwh+=kwh
 
 
-  .card-deck.mb-3
+  //.card-deck.mb-3
     .card.shadow-sm
       .card-body
         h5.card-title Charging Time
@@ -52,7 +52,8 @@ block content
           th(scope="col") Energy
           th(scope="col") Cost
           th(scope="col") ~Speed
-          th(scope="col") Info
+          th(scope="col") Profile
+          th(scope="col") Print
       tbody
 
 
@@ -60,6 +61,7 @@ block content
           if item && item['Session ID']>0 && item.ID>100
             - var kwh=item['E pres']/10000;
             - var duration = moment.duration(item['ended[s]']-item['started[s]'],'seconds')
+            - var profile=box.profiles[box.profiles.findIndex(i=>i.auth==item['RFID tag'])]
 
             tr
               th(scope="row")=item['Session ID']
@@ -71,10 +73,49 @@ block content
               td="€ "+(price*kwh).toFixed(2)
               td=(kwh / duration.asHours()).toFixed(2) + " kW"
               td
-                a(href='#' data-toggle='modal' data-target='#historyDetails' data-id=item['Session ID'])
-                  i.fas.fa-info-circle
+                a(href='#' data-toggle="tooltip" title=profile.auth)=profile.name
+              td
+                a(href='#' onclick='print('+item['Session ID']+')')
+                  i.fas.fa-print
 
 block footer
+  script(src='/jQuery.print.js')
+
+  #printable(style='margin: 0 150px;').d-none.d-print-block
+    .row
+      .col
+        h3 Charge #
+          span#printId 38
+      .col
+        h4.text-right
+          span#printProfile Card 1
+          |  (
+          span#printAuth 0000000000000
+          | )
+    .row.my-3
+      .col-3 Start
+        br
+        span#printStart 24/03 15:03
+      .col-3 Stop
+        br
+        span#printStop 24/03 18:42
+      .col.text-right Duration
+        br
+        span#printDuration 3:39 h
+    .row.my-3
+      .col Total energy
+        br
+        span#printEnergy 15.00 
+        |  kWh
+      .col.text-right Energy price
+        br
+        span#printEnergyCost 0.30
+        |  €/kWh
+    .row
+      .col
+        h2 Total Amount: € 
+          span#printCost 4.50
+
   script.
     $("#setPrice").click(() => {
       console.log("Setting new price...")
@@ -83,5 +124,40 @@ block footer
         $("#priceIn").val(parseFloat(data));
       });
     });
+
+    var print=function(id)
+    {
+      var history=!{JSON.stringify(history)}
+
+      var entry;
+      history.forEach((item,index) => {
+        if(item!=null){
+          if (item['Session ID']==id)
+            entry=history[index];
+        }
+      });
+
+      let box=!{JSON.stringify(box)}
+      let price=!{price};
+      let kwh=entry['E pres']/10000;
+      let cost=(price*kwh).toFixed(2);
+
+      let start=moment(entry['started'],'YYYY/MM/DD HH:mm:ss.SSS');
+      let stop=moment(entry['ended'],'YYYY/MM/DD HH:mm:ss.SSS');
+      let duration=moment.duration(entry['ended[s]']-entry['started[s]'],'seconds');
+
+      $('#printId').text(id);
+      $('#printProfile').text(box.profiles[box.profiles.findIndex(i=>i.auth==entry['RFID tag'])].name)
+      $('#printAuth').text(entry['RFID tag']);
+      $('#printStart').text(start.format('DD/MM/YY HH:mm'));
+      $('#printStop').text(stop.format('DD/MM/YY HH:mm'));
+      $('#printDuration').text(String(Math.round(duration.asHours())).padStart(2,'0')+' h '+String(duration.minutes()).padStart(2,'0')+' m');
+      $('#printEnergy').text(kwh.toFixed(2));
+      $('#printEnergyCost').text(price);
+      $('#printCost').text(cost);
+
+      $('#printable').print();
+    }
+
   include includes/historyDetails.pug
 
