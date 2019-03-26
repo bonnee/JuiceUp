@@ -15,10 +15,7 @@ block nav
 block content
   .d-flex.justify-content-between.align-items-center
     h1|#{box.name} meter
-    if(data['Enable sys']==1)
-      button.btn.btn-danger#stopBtn Stop
-    else
-      button.btn.btn-success#startBtn Start
+    
 
   .row
     .col-md-6.my-2.my-md-0
@@ -124,6 +121,14 @@ block content
           p.card-text.text-muted.align-middle
             i.fas.fa-info-circle.mr-2.align-middle
             small.align-middle Hover the pictures to get info
+      .card.shadow-sm.my-4
+        h4.card-header Actions
+        .card-body
+          .d-inline-block(data-toggle="tooltip" title="Equivalent to swiping a card on the wallbox")
+            if(data['Enable sys']==1)
+              button.btn.btn-danger#stopBtn Disable
+            else
+              button.btn.btn-success#startBtn Enable
 
 block footer
   script.

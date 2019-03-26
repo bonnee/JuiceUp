@@ -7,19 +7,28 @@ block scripts
   link(rel="stylesheet" href="/meter.css")
 
 block nav
+  include includes/profileSelection.pug
 
 block content
   .row
     .col-md-4.mb-3
       .d-flex.justify-content-between.align-items-center
-        h3 Profiles
+        div
+          h3 Profiles
+            small.mx-1
+              i.far.fa-question-circle(data-toggle="tooltip" title="Use the menu in the navbar to set a profile")
         .mb-2
           button.btn.btn-primary.btn-sm(onclick='newProfile()') New
       #profileList.list-group.shadow-sm
         each profile,i in box.profiles
-          a.list-group-item.list-group-item-action(class={'list-group-item-success':box.profile==i} href="#"+i data-toggle="list" onclick='profile('+i+')')
-            h5.mb-1=profile.name
-            small=profile.auth
+          a.list-group-item.list-group-item-action(href="#"+i data-toggle="list" onclick='profile('+i+')')
+            .d-flex.justify-content-between.align-items-center
+              div
+                h5.mb-1=profile.name
+                small.text-monospace=profile.auth
+              if i==box.profile
+                h4.m-0
+                  i.far.fa-check-circle(data-toggle="tooltip" title="Active")
     .col-md-8.mb-3
       h3 Details
       form(onsubmit='return false')
@@ -60,7 +69,8 @@ block footer
       var name=profiles[id].name;
       var auth=profiles[id].auth;
 
-      deleteProfile.show();
+      if (profiles.length > 1)
+        deleteProfile.show();
 
       nameInput.val(name);
       authInput.val(auth);

@@ -7,7 +7,7 @@ ul.navbar-nav
 			each prof,i in box.profiles
 				a.dropdown-item.pt-2(href='#' class={'active':i==box.profile} onclick='setProfile('+i+')')
 					h6.mb-0=prof.name
-					small=prof.auth
+					small.text-monospace=prof.auth
 
 script.
 	var setProfile=function(id){

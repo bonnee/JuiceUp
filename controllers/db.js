@@ -97,8 +97,8 @@ class DB {
 		this.retSerial(serial)
 			.get('profiles').pullAt(id).write();
 
-		if (id == this.getActiveProfile(serial)) {
-			setActiveProfile(serial, 0);
+		if (id == this.retSerial(serial).get('profile').value()) {
+			this.setActiveProfile(serial, 0);
 		}
 	}
 
