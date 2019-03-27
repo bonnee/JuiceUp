@@ -30,7 +30,10 @@ block content
           if item && item['Session ID']>0 && item.ID>100
             - var kwh=item['E pres']/10000;
             - var duration = moment.duration(item['ended[s]']-item['started[s]'],'seconds')
-            - var profile=box.profiles[box.profiles.findIndex(i=>i.auth==item['RFID tag'])]
+
+            - var profileIndex = box.profiles.findIndex(i=>i.auth==item['RFID tag'])
+            if profileIndex!=-1
+              - var profile=box.profiles[profileIndex];
 
             tr
               th(scope="row")=item['Session ID']
@@ -42,7 +45,10 @@ block content
               td="€ "+(price*kwh).toFixed(2)
               td=(kwh / duration.asHours()).toFixed(2) + " kW"
               td
-                a(href='#' data-toggle="tooltip" title=profile.auth)=profile.name
+                if profileIndex!=-1
+                  a(href='#' data-toggle="tooltip" title=box.profiles[profileIndex].auth)=box.profiles[profileIndex].name
+                else
+                  span=item['RFID tag']
               td
                 a(href='#' onclick='print('+item['Session ID']+')')
                   i.fas.fa-print
@@ -57,7 +63,7 @@ block footer
           span#printId 38
       .col
         h4.text-right
-          span#printProfile Card 1
+          span#printProfile
           |  (
           span#printAuth 0000000000000
           | )
@@ -107,9 +113,13 @@ block footer
       let start=moment(entry['started'],'YYYY/MM/DD HH:mm:ss.SSS');
       let stop=moment(entry['ended'],'YYYY/MM/DD HH:mm:ss.SSS');
       let duration=moment.duration(entry['ended[s]']-entry['started[s]'],'seconds');
+      let auth=entry['RFID tag'];
 
+      let prof=box.profiles.findIndex(i=>i.auth==auth)
       $('#printId').text(id);
-      $('#printProfile').text(box.profiles[box.profiles.findIndex(i=>i.auth==entry['RFID tag'])].name)
+      if(prof!=-1){
+        $('#printProfile').text(box.profiles[prof].name)
+      }
       $('#printAuth').text(entry['RFID tag']);
       $('#printStart').text(start.format('DD/MM/YYYY HH:mm'));
       $('#printStop').text(stop.format('DD/MM/YYYY HH:mm'));
