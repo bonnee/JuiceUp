@@ -6,7 +6,7 @@
         h5.modal-title Add new wallbox
         button.close(data-dismiss="modal" aria-label="Close")
           span(aria-hidden="true") &times;
-      form(onsubmit="return false")
+      form#addWallboxForm(onsubmit="return false")
         .modal-body
           #addAlert.alert.alert-danger.d-none|
           .form-group
@@ -14,13 +14,13 @@
             input#nameInput.form-control(name="name" type="text" placeholder="Name")
           .form-group
             label(for="addressInput" name="address") IP address
-            input#addressInput.form-control(name="address" type="text" placeholder="xxx.xxx.xxx.xxx")
+            input#addressInput.form-control(name="address" type="text" placeholder="000.000.000.000")
         .modal-footer
-          button.btn.btn-outline-secondary(data-dismiss="modal") Cancel
+          input.btn.btn-outline-secondary(type='button' data-dismiss="modal" value='Cancel')
           input#add.btn.btn-primary(type="submit" value="Add")
 
 script.
-  $("#add").click(() => {
+  $('#addWallboxForm').submit(function(){
     let addWallbox = $("#addWallbox");
     let alert = $("#alert");
     let loading = $("#loading");

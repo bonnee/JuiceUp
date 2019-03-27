@@ -7,8 +7,11 @@ block scripts
   link(rel="stylesheet" href="/meter.css")
 
 block nav
-  include includes/profileSelection.pug
-
+  .ml-auto
+    include includes/priceInput.pug
+  .mx-md-2
+    include includes/profileSelection.pug
+    
 block content
   .row
     .col-md-4.mb-3
@@ -39,8 +42,8 @@ block content
           label(for="codeInput") Auth
           input#authInput.form-control(name="auth" type="text" placeholder="Auth")
         .float-right
-          button#deleteProfile.btn.btn-outline-danger.mr-1 Delete
-          button#submitProfile.btn.btn-primary.ml-1(type='submit') Save
+          input#deleteProfile.btn.btn-outline-danger.mr-1(type='button' value='Delete')
+          input#submitProfile.btn.btn-primary.ml-1(type='submit' value='Save')
 
 block footer
   script.

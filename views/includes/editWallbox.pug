@@ -16,8 +16,8 @@
             label(for="addressInput" name="address") Address
             input#addressInput.form-control(name="address" type="text" placeholder="xxx.xxx.xxx.xxx")
         .modal-footer
-          button#delWallbox.btn.btn-danger.mr-auto Delete
-          button.btn.btn-outline-secondary(data-dismiss="modal") Cancel
+          input#delWallbox.btn.btn-danger.mr-auto(type='button' value='Delete')
+          input.btn.btn-outline-secondary(data-dismiss="modal" type='button' value='Cancel')
           input#edit.btn.btn-primary(type="submit" value="Done")
 
 #deleteModal.modal.fade(tabindex="-1" role="dialog")
@@ -34,7 +34,7 @@
             | " ?
         .modal-footer
           input#deleteId(hidden)
-          button.btn.btn-outline-secondary(data-dismiss="modal") Cancel
+          input.btn.btn-outline-secondary(data-dismiss="modal" type='button' value='Cancel')
           input#delete.btn.btn-danger(type="submit" value="Delete")
 
 script.

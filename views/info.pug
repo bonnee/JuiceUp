@@ -8,7 +8,10 @@ block head
   - var model=box.product.split('-')[1]
 
 block nav
-  include includes/profileSelection.pug
+  .ml-auto
+    include includes/priceInput.pug
+  .mx-md-2
+    include includes/profileSelection.pug
 
 block content
   .row.mb-3

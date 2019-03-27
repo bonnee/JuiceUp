@@ -1,0 +1,17 @@
+
+form.form-inline.my-2.my-md-0(onsubmit='return false')
+  .input-group
+    .input-group-prepend
+      span.input-group-text &euro;/kWh
+    input#priceIn.form-control(type='number', step='0.01', aria-label='Amount (to the nearest dollar)' value=price.toFixed(2))
+    .input-group-append
+      input#setPrice.btn.btn-primary(type='submit', value='Set')
+
+script.
+  $("#setPrice").click(() => {
+    console.log("Setting new price...")
+    $.post("/api/price", { price: $("#priceIn").val() }, (data) => {
+      console.log("Success!")
+      $("#priceIn").val(parseFloat(data).toFixed(2));
+    });
+  });

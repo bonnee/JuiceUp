@@ -4,43 +4,12 @@ block head
   title= "KeContact"
 
 block nav
-  .d-flex.flex-row.mt-2.mt-sm-0
-    form.mr-0.mr-sm-2.w-100(onsubmit='return false')
-        .input-group
-          .input-group-prepend
-            span.input-group-text &euro;/kWh
-          input#priceIn.form-control(type='number', step='0.01', aria-label='Amount (to the nearest dollar)' value=price)
-          .input-group-append
-            input#setPrice.btn.btn-primary(type='submit', value='Set')
+  .ml-auto
+    include includes/priceInput.pug
+  .mx-md-2
+    include includes/profileSelection.pug
 
 block content
-  //h2 Total
-
-  - var totalSec=moment.duration()
-  - var totalKwh=0
-
-  each item in history
-    if item && item['Session ID']>0 && item.ID>100
-      - var kwh=item['E pres']/10000;
-      - var duration = moment.duration(item['ended[s]']-item['started[s]'],'seconds')
-      - totalSec.add(duration)
-      - totalKwh+=kwh
-
-
-  //.card-deck.mb-3
-    .card.shadow-sm
-      .card-body
-        h5.card-title Charging Time
-        h3.text-center.card-text=moment(totalSec.asMilliseconds()).format('D[d] hh:mm:ss')
-    .card.shadow-sm
-      .card-body
-        h5.card-title Energy
-        h3.text-center.card-text=totalKwh.toFixed(2)+' kWh'
-    .card.shadow-sm
-      .card-body
-        h5.card-title Cost
-        h3.text-center.card-text=(price*totalKwh).toFixed(2)+' €'
-
   h2 History
   .table-responsive-sm
     table.table.table-striped
@@ -117,13 +86,6 @@ block footer
           span#printCost 4.50
 
   script.
-    $("#setPrice").click(() => {
-      console.log("Setting new price...")
-      $.post("/api/price", { price: $("#priceIn").val() }, (data) => {
-        console.log("Success!")
-        $("#priceIn").val(parseFloat(data));
-      });
-    });
 
     var print=function(id)
     {
@@ -158,6 +120,4 @@ block footer
 
       $('#printable').print();
     }
-
-  include includes/historyDetails.pug
 

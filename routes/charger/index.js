@@ -10,6 +10,7 @@ router.get('/:serial/info', (req, res) => {
 	res.render('info', {
 		page: 'info',
 		data: data,
+		price: db.getPrice(),
 		box: db.getWallbox(req.params.serial)
 	})
 });
@@ -46,7 +47,8 @@ router.get('/:serial/profiles', (req, res) => {
 	res.render('profiles', {
 		page: 'profiles',
 		data: data,
-		box: db.getWallbox(req.params.serial)
+		box: db.getWallbox(req.params.serial),
+		price: db.getPrice()
 	});
 });
 

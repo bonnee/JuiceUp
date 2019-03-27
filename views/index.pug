@@ -8,14 +8,9 @@ block scripts
 
 block nav
   .d-flex.flex-row.mt-2.mt-sm-0
-    form.mr-0.mr-sm-2.w-100(onsubmit='return false')
-      .input-group
-        .input-group-prepend
-          span.input-group-text &euro;/kWh
-        input#priceIn.form-control(type='number', step='0.01', aria-label='Amount (to the nearest dollar)' value=price)
-        .input-group-append
-          input#setPrice.btn.btn-primary(type='submit', value='Set')
-    button.btn.btn-primary.d-none.d-sm-block(data-toggle='modal', data-target='#addWallbox') New
+  .ml-auto
+    include includes/priceInput.pug
+  button.btn.btn-primary.d-none.d-md-block.ml-2(data-toggle='modal', data-target='#addWallbox') New
 
 block content
   .row

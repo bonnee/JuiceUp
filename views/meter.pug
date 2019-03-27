@@ -10,7 +10,10 @@ block scripts
   link(rel="stylesheet" href="/meter.css")
 
 block nav
-  include includes/profileSelection.pug
+  .ml-auto
+    include includes/priceInput.pug
+  .mx-md-2
+    include includes/profileSelection.pug
 
 block content
   .row
