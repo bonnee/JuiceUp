@@ -78,8 +78,8 @@ class KeContact {
 				if (timeoutCount >= 3) {
 
 					this._rxSocket.removeListener(address, recv);
-
 					reject(new Error('timeout'));
+
 				} else {
 					console.warn('...');
 					this._txSocket.send('report 1', address);
@@ -93,7 +93,7 @@ class KeContact {
 			this._rxSocket.once(address, recv);
 
 			this._rxSocket.once('error', err => {
-				done = true;
+				this._rxSocket.removeListener(address, recv);
 				reject(err);
 			});
 		});

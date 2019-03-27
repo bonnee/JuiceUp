@@ -118,6 +118,6 @@ block footer
       $('#printEnergyCost').text(price.toFixed(2));
       $('#printCost').text(cost);
 
-      $('#printable').print();
+      $('#printable').print({iframe: false});
     }
 
