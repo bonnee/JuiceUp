@@ -30,12 +30,22 @@ block content
           | #{data.Serial}
         div
           .text-muted Time
-          data.timeQ
+
           if data.timeQ==0
-            span.badge.badge-danger Not Synced
+            h5
+              span.badge.badge-danger Not Synced
           else
-            span.badge(class={'badge-success' : data.timeQ=='X',
-                              'badge-warning' : data.timeQ==2}) Synced
+            - var timeTip=''
+            - var timeClass=''
+            case data.timeQ
+              when 2
+                - timeTip='Manually set by JuiceUp'
+                - timeClass='badge-warning'
+              when 'X'
+                - timeTip='Time synced to a NTP server'
+                - timeClass='badge-success'
+            h5
+              span.badge(class=timeClass data-toggle="tooltip" title=timeTip) Synced
 
   .card-deck
     .card.shadow-sm
