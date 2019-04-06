@@ -27,7 +27,7 @@ class DB {
 			product: data.product,
 			profile: 0,
 			profiles: [{
-				name: 'Default profile',
+				name: 'Default',
 				auth: '0000000000000000'
 			}],
 			error: false
