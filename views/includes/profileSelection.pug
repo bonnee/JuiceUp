@@ -8,6 +8,8 @@ ul.navbar-nav
 				a.dropdown-item.pt-2(href='#' class={'active':i==box.profile} onclick='setProfile('+i+')')
 					h6.mb-0=prof.name
 					small.text-monospace=prof.auth
+			.dropdown-divider
+			a.dropdown-item(href='profiles') Profile Settings
 
 script.
 	var setProfile=function(id){

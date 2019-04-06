@@ -46,9 +46,9 @@ block content
               td=(kwh / duration.asHours()).toFixed(2) + " kW"
               td
                 if profileIndex!=-1
-                  a(href='#' data-toggle="tooltip" title=box.profiles[profileIndex].auth)=box.profiles[profileIndex].name
+                  a(href='#' data-toggle="tooltip" data-html="true" title="<span class='text-monospace'>"+box.profiles[profileIndex].auth+"</span>")=box.profiles[profileIndex].name
                 else
-                  span=item['RFID tag']
+                  span.text-monospace=item['RFID tag']
               td
                 a(href='#' onclick='print('+item['Session ID']+')')
                   i.fas.fa-print
