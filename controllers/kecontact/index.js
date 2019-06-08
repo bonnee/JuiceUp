@@ -1,17 +1,19 @@
 const RX = require('./rx.js');
 const TX = require('./tx.js');
+const EventEmitter = require('events');
 const Intervals = require('./intervals.js');
 const Storage = require('./storage.js');
 
 const PORT = 7090;
 const BRD_PORT = 7092;
 
-const POLL_FREQ = 30000;
+const POLL_FREQ = 120000;
 const TIMEOUT = 1000;
 
-class KeContact {
+class KeContact extends EventEmitter {
 	constructor() {
 		// { <serial>: { address: <address>, port: <port>, <timer>, <storage> } }
+		super();
 		this._boxes = {};
 
 		this._txSocket = new TX();
@@ -25,10 +27,16 @@ class KeContact {
 			let serial = this.getSerial(address);
 
 			if (this._boxes[serial]) {
-				if (data.ID >= 10)
+				if (data.ID >= 10) {
 					this._boxes[serial].storage.saveHistory(data);
-				else
+				} else {
 					this._boxes[serial].storage.saveData(data);
+
+					this.emit('message', {
+						serial: serial,
+						data: this.getData(serial)
+					});
+				}
 			}
 		});
 		this._rxSocket.init(PORT);
@@ -218,6 +226,6 @@ class KeContact {
 }
 
 const instance = new KeContact();
-Object.freeze(instance);
+//Object.freeze(instance);
 
 module.exports = instance;

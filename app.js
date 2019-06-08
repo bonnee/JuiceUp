@@ -3,10 +3,12 @@ global.__basedir = __dirname;
 const path = require('path');
 const Kecontact = require(__basedir + '/controllers/kecontact');
 const db = require(__basedir + '/controllers/db.js');
-var bodyParser = require('body-parser');
-var express = require('express');
+const bodyParser = require('body-parser');
+const express = require('express');
 
 var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 app.set('views', path.join(__basedir, '/views'));
 app.set('view engine', 'pug');
@@ -18,6 +20,19 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.locals.moment = require('moment');
+
+io.on('connection', socket => {
+	console.log('a user connected');
+
+	socket.on('meter', serial => {
+		let data = Kecontact.getData(serial);
+		socket.emit('meter', data);
+	});
+});
+
+Kecontact.on('message', data => {
+	io.emit(data.serial, data.data);
+})
 
 var connect = (box, ttl) => {
 	return new Promise((resolve, reject) => {
@@ -54,4 +69,6 @@ db.getAllWallboxes().forEach(box => {
 app.use('/', require(path.join(__basedir, '/routes/ui.js')));
 app.use('/api', require(path.join(__basedir, '/routes/api/index.js')));
 
-module.exports = app;
+http.listen(process.env.PORT || 3000, () => {
+	console.log('JuiceUp Started!');
+});

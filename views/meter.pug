@@ -1,8 +1,6 @@
 extends layout.pug
 
 block head
-  - var kwh=(Math.abs(parseInt(data['E pres'])/10000)).toFixed(2)
-  - var kw=(Math.abs(parseInt(data['P'])/1000000)).toFixed(2)
   - var auth=box.profiles[box.profile].auth
   title= "KeContact"
 
@@ -25,95 +23,37 @@ block content
           .d-flex.flex-row
             div.mb-2
               h5.mb-0.text-right Power
-              .display.px-2.text-light.bg-dark| #{kw.padStart(6,'0')}
+              #powerText.display.px-2.text-light.bg-dark 000.00
             span.unit.align-self-end kW
 
           .d-flex.flex-row
             div
               h5.mb-0.text-right Energy
-              .display.px-2.text-light.bg-dark| #{kwh.padStart(6,'0')}
+              #energyText.display.px-2.text-light.bg-dark 000.00
             span.unit.align-self-end kWh
 
           .d-flex.flex-row
             div.mt-2
               h5.mb-0.text-right Price
-              .display.px-2.text-light.bg-dark| #{(kwh*price).toFixed(2).padStart(6,'0')}
+              #priceText.display.px-2.text-light.bg-dark 0000.0
             span.unit.align-self-end|€
 
           .d-flex.flex-row
             div.mt-2
               h5.mb-0.text-right Price per kWh
-              .display.px-2.text-light.bg-dark| #{parseFloat(price).toFixed(2).padStart(6,'0')}
+              #pricePerKwhText.display.px-2.text-light.bg-dark 000.00
             span.unit.align-self-end €/kWh
 
     .col-md-6.my-2.my-md-0
       .card.shadow-sm
         h4.card-header Status
         .card-body.text-center.align-middle
-          
-          - var boxMsg='...'
-          - var boxCss
+          #statusPic.fa-3x
+            i#chgPic.fas.fa-charging-station.p-1.text-secondary(data-toggle="tooltip" title="...")
 
-          - var cableMsg='...'
-          - var cableCss
-
-          - var carMsg='...'
-          - var carCss
-
-          case data.Plug
-            when 0
-              - cableMsg='Cable unplugged'
-              - cableCss='text-muted'
-            when 1
-              - cableMsg='Cable plugged'
-              - cableCss='text-dark'
-            when 3
-            when 5
-            when 7
-              - cableMsg='Cable locked'
-              - cableCss='text-primary'
-          case data.Plug
-            when 0
-            when 1
-            when 3
-              - carMsg='Vehicle unplugged'
-              - carCss='text-muted'
-            when 5
-              - carMsg='Vehicle plugged in'
-              - carCss='text-primary'
-            when 7
-              - carMsg='Vehicle plugged and locked'
-              - carCss='text-primary'
-
-
-          case data.State
-            when 1
-              if data.Authreq == 1
-                - boxMsg='Charger is unauthorized'
-                - boxCss='text-dark'
-              else
-                - boxMsg='Charger is authorized'
-                - boxCss='text-primary'
-            when 2
-              - boxMsg='Ready to charge'
-              - boxCss='text-primary'
-            when 3
-              - boxMsg='Charging'
-              - boxCss='text-success'
-              - picCss='blink'
-            when 4
-              - boxMsg='Error'
-              - boxCss='text-danger'
-            when 5
-              - boxMsg='Charging is paused'
-              - boxCss='text-warning'
-
-          .fa-3x(class=picCss)
-            i.fas.fa-charging-station.p-1(data-toggle="tooltip" title=boxMsg class=boxCss)
-
-            span(data-toggle="tooltip" title=cableMsg class=cableCss)
+            span#cablePic.text-secondary(data-toggle="tooltip" title="...")
               i.fas.fa-long-arrow-alt-right.p-1
-            span(data-toggle="tooltip" title=carMsg class=carCss)
+            span#carPic.text-secondary(data-toggle="tooltip" title="...")
               i.fas.fa-car.p-1
 
         .card-footer.py-2.px-3
@@ -131,6 +71,138 @@ block content
 
 block footer
   script.
+    socket.emit('meter', #{data.Serial});
+
+    socket.on('meter', function(data){
+      setDisplays(data);
+      setStatus(data);
+    });
+
+    socket.on('#{data.Serial}', function(data){
+      setDisplays(data);
+      setStatus(data);
+    });
+
+    function getPower(data)
+    {
+      return (Math.abs(parseInt(data['P'])/1000000)).toFixed(2);
+    }
+
+    function getEnergy(data){
+      return (Math.abs(parseInt(data['E pres'])/10000)).toFixed(2);
+    }
+
+    function setDisplays(data){
+      let energy = getEnergy(data);
+
+      $("#powerText").html(getPower(data).padStart(6,'0'));
+      $("#energyText").html(energy.padStart(6,'0'));
+      $("#priceText").html((#{price}*energy).toFixed(2).padStart(6,'0'));
+      $("#pricePerKwhText").html(#{price}.toFixed(2).padStart(6,'0'));
+    }
+
+    function setStatus(data)
+    {
+      let cableMsg, cableCss;
+      let carMsg,   carCss;
+      let chgMsg,   chgCss;
+      let picCss;
+
+      switch (data.Plug){
+        case 0:
+          cableMsg='Cable unplugged'
+          cableCss='text-muted'
+          break;
+        case 1:
+          cableMsg='Cable plugged'
+          cableCss='text-dark'
+          break;
+        case 3:
+        case 5:
+        case 7:
+          cableMsg='Cable locked'
+          cableCss='text-primary'
+          break;
+      }
+
+      switch (data.Plug)
+      {
+        case 0:
+        case 1:
+        case 3:
+          carMsg='Vehicle unplugged'
+          carCss='text-muted'
+          break;
+        case 5:
+          carMsg='Vehicle plugged in'
+          carCss='text-primary'
+          break;
+        case 7:
+          carMsg='Vehicle plugged and locked'
+          carCss='text-primary'
+          break;
+      }
+
+      switch (data.State){
+        case 1:
+          if (data.Authreq == 1){
+            chgMsg='Charger is unauthorized'
+            chgCss='text-dark'
+          } else {
+            chgMsg='Charger is authorized'
+            chgCss='text-primary'
+          }
+          break;
+        case 2:
+          chgMsg='Ready to charge'
+          chgCss='text-primary'
+          break;
+        case 3:
+          chgMsg='Charging'
+          chgCss='text-success'
+          picCss='blink'
+          break;
+        case 4:
+          chgMsg='Error'
+          chgCss='text-danger'
+          break;
+        case 5:
+          chgMsg='Charging is paused'
+          chgCss='text-warning'
+          break;
+      }
+
+      $("#statusPic").removeClass('blink')
+      $("#statusPic").addClass(picCss);
+
+      $("#chgPic").attr('data-original-title', chgMsg);
+      $("#chgPic").removeClass('text-primary');
+      $("#chgPic").removeClass('text-secondary');
+      $("#chgPic").removeClass('text-succes');
+      $("#chgPic").removeClass('text-warning');
+      $("#chgPic").removeClass('text-danger');
+      $("#chgPic").removeClass('text-dark');
+      $("#chgPic").addClass(chgCss);
+
+      $("#cablePic").attr('data-original-title', cableMsg);
+      $("#cablePic").removeClass('text-primary');
+      $("#cablePic").removeClass('text-secondary');
+      $("#cablePic").removeClass('text-succes');
+      $("#cablePic").removeClass('text-warning');
+      $("#cablePic").removeClass('text-danger');
+      $("#cablePic").removeClass('text-dark');
+      $("#cablePic").addClass(cableCss);
+
+      $("#carPic").attr('data-original-title', carMsg);
+      $("#carPic").removeClass('text-primary');
+      $("#carPic").removeClass('text-secondary');
+      $("#carPic").removeClass('text-succes');
+      $("#carPic").removeClass('text-warning');
+      $("#carPic").removeClass('text-danger');
+      $("#carPic").removeClass('text-dark');
+      $("#carPic").addClass(carCss);
+    }
+
     $("#startBtn").click(function(){
       $.ajax({
         url: '/api/wallboxes/#{data.Serial}/enable',
