@@ -175,32 +175,21 @@ block footer
       $("#statusPic").removeClass('blink')
       $("#statusPic").addClass(picCss);
 
-      $("#chgPic").attr('data-original-title', chgMsg);
-      $("#chgPic").removeClass('text-primary');
-      $("#chgPic").removeClass('text-secondary');
-      $("#chgPic").removeClass('text-succes');
-      $("#chgPic").removeClass('text-warning');
-      $("#chgPic").removeClass('text-danger');
-      $("#chgPic").removeClass('text-dark');
-      $("#chgPic").addClass(chgCss);
+      setStatusIcon($("#chgPic"), chgMsg, chgCss)
+      setStatusIcon($("#cablePic"), cableMsg, cableCss)
+      setStatusIcon($("#carPic"), carMsg, carCss)
+    }
 
-      $("#cablePic").attr('data-original-title', cableMsg);
-      $("#cablePic").removeClass('text-primary');
-      $("#cablePic").removeClass('text-secondary');
-      $("#cablePic").removeClass('text-succes');
-      $("#cablePic").removeClass('text-warning');
-      $("#cablePic").removeClass('text-danger');
-      $("#cablePic").removeClass('text-dark');
-      $("#cablePic").addClass(cableCss);
-
-      $("#carPic").attr('data-original-title', carMsg);
-      $("#carPic").removeClass('text-primary');
-      $("#carPic").removeClass('text-secondary');
-      $("#carPic").removeClass('text-succes');
-      $("#carPic").removeClass('text-warning');
-      $("#carPic").removeClass('text-danger');
-      $("#carPic").removeClass('text-dark');
-      $("#carPic").addClass(carCss);
+    function setStatusIcon(icon, title, iconClass){
+      icon.attr('title', title);
+      icon.attr('data-original-title', title);
+      icon.removeClass('text-primary');
+      icon.removeClass('text-secondary');
+      icon.removeClass('text-success');
+      icon.removeClass('text-warning');
+      icon.removeClass('text-danger');
+      icon.removeClass('text-dark');
+      icon.addClass(iconClass);
     }
 
     $("#startBtn").click(function(){
