@@ -7,10 +7,8 @@ block scripts
   link(rel="stylesheet" href="/meter.css")
 
 block nav
-  .d-flex.flex-row.mt-2.mt-sm-0
-  .ml-auto
-    include includes/priceInput.pug
-  button.btn.btn-primary.d-none.d-md-block.ml-2(data-toggle='modal', data-target='#addWallbox') New
+  //.d-flex.flex-row.mt-2.mt-sm-0
+  button.btn.btn-primary.d-none.d-md-block.ml-auto(data-toggle='modal', data-target='#addWallbox') New
 
 block content
   .row
@@ -40,8 +38,6 @@ block content
                   i.fas.fa-tachometer-alt
                 a.card-link(href='/'+box.serial+'/history' data-toggle="tooltip" data-placement="bottom" title="History")
                   i.fas.fa-history
-                a.card-link(href='/'+box.serial+'/profiles' data-toggle="tooltip" data-placement="bottom" title="Profiles")
-                  i.fas.fa-users
 
 block footer
   include includes/commons.pug

@@ -1,7 +1,7 @@
 extends layout.pug
 
 block head
-  - var auth=box.profiles[box.profile].auth
+  - var auth=profiles[box.profile].auth
   title= "KeContact"
 
 block scripts
@@ -9,8 +9,6 @@ block scripts
 
 block nav
   .ml-auto
-    include includes/priceInput.pug
-  .ml-md-2
     include includes/profileSelection.pug
 
 block content

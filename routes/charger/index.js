@@ -10,7 +10,7 @@ router.get('/:serial/info', (req, res) => {
 	res.render('info', {
 		page: 'info',
 		data: data,
-		price: db.getPrice(),
+		profiles: db.getProfiles(),
 		box: db.getWallbox(req.params.serial)
 	})
 });
@@ -21,8 +21,9 @@ router.get('/:serial/meter', (req, res) => {
 	res.render('meter', {
 		page: 'meter',
 		data: data,
+		profiles: db.getProfiles(),
 		box: db.getWallbox(req.params.serial),
-		price: db.getPrice()
+		price: db.getActiveProfile(req.params.serial).price
 	});
 });
 
@@ -35,20 +36,15 @@ router.get('/:serial/history', (req, res) => {
 		page: 'history',
 		data: data,
 		box: db.getWallbox(req.params.serial),
+		profiles: db.getProfiles(),
 		history: history,
-		price: db.getPrice()
 	});
 });
 
-router.get('/:serial/profiles', (req, res) => {
-
-	let data = Kecontact.getData(req.params.serial);
-
+router.get('/profiles', (req, res) => {
 	res.render('profiles', {
 		page: 'profiles',
-		data: data,
-		box: db.getWallbox(req.params.serial),
-		price: db.getPrice()
+		profiles: db.getProfiles()
 	});
 });
 

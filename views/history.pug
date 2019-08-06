@@ -5,8 +5,6 @@ block head
 
 block nav
   .ml-auto
-    include includes/priceInput.pug
-  .ml-md-2
     include includes/profileSelection.pug
 
 block content
@@ -31,22 +29,23 @@ block content
             - var kwh=item['E pres']/10000;
             - var duration = moment.duration(item['ended[s]']-item['started[s]'],'seconds')
 
-            - var profileIndex = box.profiles.findIndex(i=>i.auth==item['RFID tag'])
+            - var profileIndex = profiles.findIndex(i=>i.auth==item['RFID tag'])
+            - var price = 0
             if profileIndex!=-1
-              - var profile=box.profiles[profileIndex];
+              - var profile=profiles[profileIndex];
+              - price = profile.price
 
             tr
               th(scope="row")=item['Session ID']
-              td=moment(item['started'],'YYYY/MM/DD HH:mm:ss.SSS').format('DD/MM/YY HH:mm')
+              td=moment(item['started'],'YYYY/MM/DD HH:mm:ss.SSS').add(2, 'hours').format('DD/MM/YY HH:mm')
                 //moment(duration.asMilliseconds()).format('hh:mm:ss')
-              td=moment(item['ended'],'YYYY/MM/DD HH:mm:ss.SSS').format('DD/MM/YY HH:mm')
+              td=moment(item['ended'],'YYYY/MM/DD HH:mm:ss.SSS').add(2, 'hours').format('DD/MM/YY HH:mm')
               td=kwh.toFixed(2)+" kWh"
-              //- TODO: Add per-session price
               td="€ "+(price*kwh).toFixed(2)
               td=(kwh / duration.asHours()).toFixed(2) + " kW"
               td
                 if profileIndex!=-1
-                  a(href='#' data-toggle="tooltip" data-html="true" title="<span class='text-monospace'>"+box.profiles[profileIndex].auth+"</span>")=box.profiles[profileIndex].name
+                  a(href='#' data-toggle="tooltip" data-html="true" title=profiles[profileIndex].price+' €/kWh')=profiles[profileIndex].name
                 else
                   span.text-monospace=item['RFID tag']
               td
@@ -60,7 +59,7 @@ block footer
     .row
       .col
         h3 Charge #
-          span#printId 38
+          span#printId --
       .col
         h4.text-right
           span#printProfile
@@ -70,26 +69,26 @@ block footer
     .row.my-3
       .col-3 Start
         br
-        span#printStart 24/03 15:03
+        span#printStart --/-- --:--
       .col-3 Stop
         br
-        span#printStop 24/03 18:42
+        span#printStop --/-- --:--
       .col.text-right Duration
         br
-        span#printDuration 3:39 h
+        span#printDuration --:-- h
     .row.my-3
       .col Total energy
         br
-        span#printEnergy 15.00 
+        span#printEnergy --.-- 
         |  kWh
       .col.text-right Energy price
         br
-        span#printEnergyCost 0.30
+        span#printEnergyCost -.--
         |  €/kWh
     .row
       .col
         h2 Total Amount: € 
-          span#printCost 4.50
+          span#printCost --.--
 
   script.
 
@@ -106,26 +105,34 @@ block footer
       });
 
       let box=!{JSON.stringify(box)}
-      let price=!{price};
+      
       let kwh=entry['E pres']/10000;
-      let cost=(price*kwh).toFixed(2);
 
-      let start=moment(entry['started'],'YYYY/MM/DD HH:mm:ss.SSS');
-      let stop=moment(entry['ended'],'YYYY/MM/DD HH:mm:ss.SSS');
+      let start=moment(entry['started'],'YYYY/MM/DD HH:mm:ss.SSS').add(2, 'hours');
+      let stop=moment(entry['ended'],'YYYY/MM/DD HH:mm:ss.SSS').add(2, 'hours');
       let duration=moment.duration(entry['ended[s]']-entry['started[s]'],'seconds');
       let auth=entry['RFID tag'];
 
-      let prof=box.profiles.findIndex(i=>i.auth==auth)
+      let profiles=!{JSON.stringify(profiles)}
+      let prof=profiles.findIndex(i=>i.auth==auth)
+
+      let price = 0;
+      if(prof >= 0){
+        price = profiles[prof].price;
+      }
+
+      let cost=(price*kwh).toFixed(2);
+
       $('#printId').text(id);
       if(prof!=-1){
-        $('#printProfile').text(box.profiles[prof].name)
+        $('#printProfile').text(profiles[prof].name)
       }
       $('#printAuth').text(entry['RFID tag']);
       $('#printStart').text(start.format('DD/MM/YYYY HH:mm'));
       $('#printStop').text(stop.format('DD/MM/YYYY HH:mm'));
       $('#printDuration').text(String(Math.round(duration.asHours())).padStart(2,'0')+' h '+String(duration.minutes()).padStart(2,'0')+' m');
       $('#printEnergy').text(kwh.toFixed(2));
-      $('#printEnergyCost').text(price.toFixed(2));
+      $('#printEnergyCost').text(parseFloat(price).toFixed(2));
       $('#printCost').text(cost);
 
       $('#printable').print({iframe: false});

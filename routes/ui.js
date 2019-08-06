@@ -8,8 +8,7 @@ router.get('/', (req, res) => {
 
 	res.render('index', {
 		page: 'index',
-		boxes: db.getAllWallboxes(),
-		price: db.getPrice()
+		boxes: db.getAllWallboxes()
 	});
 });
 

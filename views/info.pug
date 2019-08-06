@@ -9,8 +9,6 @@ block head
 
 block nav
   .ml-auto
-    include includes/priceInput.pug
-  .ml-md-2
     include includes/profileSelection.pug
 
 block content
@@ -59,9 +57,3 @@ block content
         h5.card-title History
         p.card-text Total Energy: #{kwh} kWh
         a.btn.btn-primary(href='history') History
-
-    .card.shadow-sm
-      .card-body
-        h5.card-title Profiles
-        p.card-text Active: #{box.profiles[box.profile].name}
-        a.btn.btn-primary(href='profiles') Profiles

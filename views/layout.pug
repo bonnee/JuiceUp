@@ -6,7 +6,7 @@ html
     include includes/scripts.pug
     block scripts
   body.pr-0
-    nav.navbar.navbar-dark.bg-dark.navbar-expand-md.justify-content-between
+    nav.navbar.navbar-dark.bg-dark.navbar-expand-md.justify-content-between.shadow
       div
         button.navbar-toggler.mr-2(type="button" data-toggle="collapse" data-target="#navContent" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation")
           span.navbar-toggler-icon
@@ -16,20 +16,18 @@ html
         button.btn.btn-primary.d-block.d-md-none(data-toggle="modal" data-target="#addWallbox") New
       
       div#navContent.collapse.navbar-collapse
-        if page!='index'
-          ul.navbar-nav
-            li.nav-item
-              a.nav-link(href="/"+data.Serial+"/info" class={'active': page === 'info'}) Info
-            li.nav-item
-              a.nav-link(href="/"+data.Serial+"/meter" class={'active': page === 'meter'}) Meter
-            li.nav-item
-              a.nav-link(href="/"+data.Serial+"/history" class={'active': page === 'history'}) History
-            li.nav-item
-              a.nav-link(href="/"+data.Serial+"/profiles" class={'active': page === 'profiles'}) Profiles
-        else
-          div
+        ul.navbar-nav
+          if page!='index' && page!='profiles'
+            li.nav-item.dropdown
+              a.nav-link.dropdown-toggle(href='#' id="wallboxDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")=box.name
+              .dropdown-menu(aria-labelledby="wallboxDropdown")
+                a.dropdown-item(href="/"+data.Serial+"/info" class={'active': page === 'info'}) Info
+                a.dropdown-item(href="/"+data.Serial+"/meter" class={'active': page === 'meter'}) Meter
+                a.dropdown-item(href="/"+data.Serial+"/history" class={'active': page === 'history'}) History
+          a.nav-link(href="/profiles" class={'active': page === 'profiles'}) Profiles
+
         block nav
-    main.container.my-2
+    main.container.my-3
       block content
     block footer
     

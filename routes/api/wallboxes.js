@@ -102,33 +102,7 @@ router.route('/:serial/enable').all(checkExists)
 		res.send();
 	});
 
-router.route('/:serial/profile').all(checkExists)
-	.get((req, res) => {
-		res.send((db.getProfiles(req.params.serial)));
-	})
-	.post((req, res) => {
-		let name = req.body.name;
-		let auth = req.body.auth;
-
-		db.addProfile(req.params.serial, name, auth);
-
-		res.status(200).send();
-	}).put((req, res) => {
-
-		let id = req.body.id;
-		let name = req.body.name;
-		let auth = req.body.auth;
-
-		db.setProfile(req.params.serial, id, name, auth);
-
-		res.status(204).send();
-	}).delete((req, res) => {
-		db.removeProfile(req.params.serial, req.body.id);
-
-		res.status(200).send();
-	});
-
-router.post('/:serial/profile/active', checkExists, (req, res) => {
+router.post('/:serial/profile', checkExists, (req, res) => {
 	db.setActiveProfile(req.params.serial, req.body.id);
 
 	res.status(200).send();

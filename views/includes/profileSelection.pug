@@ -1,19 +1,19 @@
 ul.navbar-nav
 	li.nav-item.dropdown
-		a#profileSel.nav-link.dropdown-toggle(href='#' role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")=box.profiles[box.profile].name
+		a#profileSel.nav-link.dropdown-toggle(href='#' role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")=profiles[box.profile].name
 		.dropdown-menu.dropdown-menu-right(aria-labelledby="profileSel")
 			h6.dropdown-header Select profile
 
-			each prof,i in box.profiles
+			each prof,i in profiles
 				a.dropdown-item.pt-2(href='#' class={'active':i==box.profile} onclick='setProfile('+i+')')
 					h6.mb-0=prof.name
-					small.text-monospace=prof.auth
+					small=prof.price +' €/kWh'
 			.dropdown-divider
-			a.dropdown-item(href='profiles') Profile Settings
+			a.dropdown-item(href='/profiles') Profile Settings
 
 script.
 	var setProfile=function(id){
-		$.post('/api/wallboxes/#{data.Serial}/profile/active',{id:id}).then(function(){
+		$.post('/api/wallboxes/#{data.Serial}/profile',{id:id}).then(function(){
 			location.reload()
 		}).catch(function(e){
 			alert(JSON.stringify(e));

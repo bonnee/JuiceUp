@@ -9,7 +9,11 @@ class DB {
 
 		this._db.defaults({
 			wallboxes: [],
-			price: 0
+			profiles: [{
+				name: 'Default',
+				auth: '0000000000000000',
+				price: 0.3
+			}]
 		}).write();
 	}
 
@@ -26,10 +30,6 @@ class DB {
 			address: data.address,
 			product: data.product,
 			profile: 0,
-			profiles: [{
-				name: 'Default',
-				auth: '0000000000000000'
-			}],
 			error: false
 		}).write();
 	}
@@ -41,11 +41,6 @@ class DB {
 				address: data.address
 			})
 			.write();
-	}
-
-	setPrice(newPrice) {
-		this._db.set('price', parseFloat(newPrice)).write();
-		return true;
 	}
 
 	setError(serial, err) {
@@ -62,43 +57,40 @@ class DB {
 		}).get('error').value()
 	}
 
-	getPrice() {
-		return this._db.get('price').value();
+	getProfiles() {
+		return this._db.get('profiles').value();
 	}
 
-	getProfiles(serial) {
-		return this.retSerial(serial)
-			.get('profiles').value();
-	}
-
-	addProfile(serial, name, auth) {
-		let profiles = this.getProfiles(serial);
+	addProfile(name, auth, price) {
+		let profiles = this.getProfiles();
 
 		profiles.push({
 			name: name,
-			auth: auth
+			auth: auth,
+			price: price
 		});
 
-		this.retSerial(serial)
-			.set('profiles', profiles).write();
+		this._db.set('profiles', profiles).write();
+		return profiles.length;
 	}
 
-	setProfile(serial, id, name, auth) {
-		this.retSerial(serial)
-			.get('profiles')
+	setProfile(id, name, auth, price) {
+		this._db.get('profiles')
 			.nth(id)
 			.assign({
 				name: name,
-				auth: auth
+				auth: auth,
+				price: price
 			}).write();
 	}
 
-	removeProfile(serial, id) {
-		this.retSerial(serial)
-			.get('profiles').pullAt(id).write();
+	removeProfile(id) {
+		this._db.get('profiles').pullAt(id).write();
 
-		if (id == this.retSerial(serial).get('profile').value()) {
-			this.setActiveProfile(serial, 0);
+		for (let box of this.getAllWallboxes()) {
+			if (id == box.profile) {
+				this.setActiveProfile(box.serial, 0);
+			}
 		}
 	}
 
@@ -111,8 +103,7 @@ class DB {
 		let id = this.retSerial(serial)
 			.get('profile').value();
 
-		return this.retSerial(serial)
-			.get('profiles').nth(id).value();
+		return this._db.get('profiles').nth(id).value();
 	}
 
 	getActiveWallboxes() {
