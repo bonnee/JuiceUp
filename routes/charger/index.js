@@ -20,7 +20,7 @@ router.get('/:serial/meter', (req, res) => {
 	let history = Kecontact.getHistory(req.params.serial);
 
 	let prof = db.getProfiles().find(i => i.auth == history[100]['RFID tag']) || {
-		name: "No profile",
+		name: history[100]['RFID tag'],
 		price: 0
 	};
 
@@ -29,7 +29,8 @@ router.get('/:serial/meter', (req, res) => {
 		data: data,
 		profiles: db.getProfiles(),
 		box: db.getWallbox(req.params.serial),
-		profile: prof
+		profile: prof,
+		auth: history[100]['RFID tag']
 	});
 });
 
