@@ -18,8 +18,6 @@ block content
       .d-flex.justify-content-between.align-items-center
         div
           h3 Profiles
-            small.mx-1
-              i.far.fa-question-circle(data-toggle="tooltip" title="Use the menu in the navbar to set a profile")
         .mb-2
           button.btn.btn-primary.btn-sm(onclick='newProfile()') New
       #profileList.list-group.shadow-sm
@@ -28,6 +26,7 @@ block content
             .d-flex.justify-content-between.align-items-center
               div
                 h5.mb-1=profile.name
+                  small.text-monospace=' '+parseFloat(profile.price).toFixed(2)+' €/kWh'
                 small.text-monospace=profile.auth
               //if i==box.profile
                 h4.m-0
@@ -43,7 +42,7 @@ block content
           input#authInput.form-control(name="auth" type="text" placeholder="Auth")
         .form-group
           label(for="priceInput") Energy price [€/kWh]
-          input#priceInput.form-control(name="auth" type="number" placeholder="Price")
+          input#priceInput.form-control(name="auth" type="number" step='0.01' placeholder="Price")
         .float-right
           input#deleteProfile.btn.btn-outline-danger.mr-1(type='button' value='Delete')
           input#submitProfile.btn.btn-primary.ml-1(type='submit' value='Save')
@@ -83,7 +82,7 @@ block footer
 
       nameInput.val(name);
       authInput.val(auth);
-      priceInput.val(price);
+      priceInput.val(parseFloat(price).toFixed(2));
     }
 
     $('#deleteProfile').click(function(){
@@ -94,7 +93,7 @@ block footer
           id: profileId
           }
         }).then(function(){
-          alert('Gone!');
+          location.reload();
         }).catch(function(e){
           alert(e);
         });
@@ -109,7 +108,7 @@ block footer
           auth: authInput.val(),
           price: priceInput.val()
         }).then(function(){
-          alert('Done!');
+          location.reload();
         }).catch(function(e){
           alert(e);
         })
@@ -126,7 +125,7 @@ block footer
           }
         })
         .then(()=>{
-          alert('Edit!');
+          location.reload();
         }).catch((e)=>{
           alert(e)
         })

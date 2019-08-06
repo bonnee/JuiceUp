@@ -29,7 +29,6 @@ class DB {
 			name: data.name,
 			address: data.address,
 			product: data.product,
-			profile: 0,
 			error: false
 		}).write();
 	}
@@ -86,24 +85,6 @@ class DB {
 
 	removeProfile(id) {
 		this._db.get('profiles').pullAt(id).write();
-
-		for (let box of this.getAllWallboxes()) {
-			if (id == box.profile) {
-				this.setActiveProfile(box.serial, 0);
-			}
-		}
-	}
-
-	setActiveProfile(serial, id) {
-		this.retSerial(serial)
-			.set('profile', id).write();
-	}
-
-	getActiveProfile(serial) {
-		let id = this.retSerial(serial)
-			.get('profile').value();
-
-		return this._db.get('profiles').nth(id).value();
 	}
 
 	getActiveWallboxes() {

@@ -7,10 +7,6 @@ block head
   - var kwh=(Math.abs(parseInt(data['E total'])/10000)).toFixed(2)
   - var model=box.product.split('-')[1]
 
-block nav
-  .ml-auto
-    include includes/profileSelection.pug
-
 block content
   .row.mb-3
     .col-12.col-md-4.col-lg-3

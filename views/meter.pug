@@ -7,39 +7,36 @@ block head
 block scripts
   link(rel="stylesheet" href="/meter.css")
 
-block nav
-  .ml-auto
-    include includes/profileSelection.pug
-
 block content
   .row
     .col-md-6.my-2.my-md-0
       .card.shadow-sm
         h4.card-header Meters
+          .float-right.badge.badge-primary=profile.name
         .card-body.text-center.d-flex.flex-column
           
           .d-flex.flex-row
-            div.mb-2
+            .mb-2
               h5.mb-0.text-right Power
               #powerText.display.px-2.text-light.bg-dark 000.00
             span.unit.align-self-end kW
 
           .d-flex.flex-row
-            div
+            .mt-2
               h5.mb-0.text-right Energy
               #energyText.display.px-2.text-light.bg-dark 000.00
             span.unit.align-self-end kWh
 
           .d-flex.flex-row
-            div.mt-2
+            .mt-2
               h5.mb-0.text-right Price
               #priceText.display.px-2.text-light.bg-dark 0000.0
             span.unit.align-self-end|€
 
           .d-flex.flex-row
-            div.mt-2
-              h5.mb-0.text-right Price per kWh
-              #pricePerKwhText.display.px-2.text-light.bg-dark 000.00
+            .mt-2
+                h5.mb-0.text-right Energy price
+                #pricePerKwhText.display.px-2.text-light.bg-dark=parseFloat(profile.price).toFixed(2).padStart(6,'0')
             span.unit.align-self-end €/kWh
 
     .col-md-6.my-2.my-md-0
@@ -95,8 +92,8 @@ block footer
 
       $("#powerText").html(getPower(data).padStart(6,'0'));
       $("#energyText").html(energy.padStart(6,'0'));
-      $("#priceText").html((#{price}*energy).toFixed(2).padStart(6,'0'));
-      $("#pricePerKwhText").html(#{price}.toFixed(2).padStart(6,'0'));
+      $("#priceText").html((#{profile.price}*energy).toFixed(2).padStart(6,'0'));
+      $("#pricePerKwhText").html(parseFloat(#{profile.price}).toFixed(2).padStart(6,'0'));
     }
 
     function setStatus(data)

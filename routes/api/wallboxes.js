@@ -102,12 +102,6 @@ router.route('/:serial/enable').all(checkExists)
 		res.send();
 	});
 
-router.post('/:serial/profile', checkExists, (req, res) => {
-	db.setActiveProfile(req.params.serial, req.body.id);
-
-	res.status(200).send();
-});
-
 router.get('/:serial/plug', checkExists, (req, res) => {
 	res.send(Kecontact.getData(req.params.serial).Plug);
 });

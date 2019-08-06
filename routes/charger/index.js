@@ -17,13 +17,19 @@ router.get('/:serial/info', (req, res) => {
 
 router.get('/:serial/meter', (req, res) => {
 	let data = Kecontact.getData(req.params.serial);
+	let history = Kecontact.getHistory(req.params.serial);
+
+	let prof = db.getProfiles().find(i => i.auth == history[100]['RFID tag']) || {
+		name: "No profile",
+		price: 0
+	};
 
 	res.render('meter', {
 		page: 'meter',
 		data: data,
 		profiles: db.getProfiles(),
 		box: db.getWallbox(req.params.serial),
-		price: db.getActiveProfile(req.params.serial).price
+		profile: prof
 	});
 });
 
