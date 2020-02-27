@@ -1,0 +1,86 @@
+{
+	"navbar": {
+		"New": "Neu",
+		"Profiles": "Abrechnungsprofile",
+		"Info": "Infos",
+		"Meter": "Zähler",
+		"History": "Verlauf",
+		"Language": "Sprache"
+	},
+	"addwallboxmodal": {
+		"title": "Wallbox hinzufügen",
+		"name": "Name",
+		"ipaddress": "IP Addresse",
+		"cancel": "Abbrechen",
+		"add": "Hinzufügen"
+	},
+	"index": {
+		"no_connection": "Keine Verbindung"
+	},
+	"profiles": {
+		"title": "Abrechnungsprofile",
+		"New": "Neu",
+		"details": "Details",
+		"name": "Name",
+		"auth": "Auth",
+		"energy_price": "Strompreis",
+		"delete": "Löschen",
+		"save": "Speichern"
+	},
+	"meter": {
+		"meters": "Zähler",
+		"power": "Leistung",
+		"energy": "Geladen",
+		"price": "Kosten",
+		"energy_price": "Strompreis",
+		"status": "Status",
+		"actions": "Aktionen",
+		"enable": "Aktivieren",
+		"disable": "Deaktivieren",
+		"tooltip": "Statusinformationen erscheinen beim zeigen auf die Icons",
+		"cable_plugged": "Kabel eingesteckt",
+		"cable_locked": "Kabel verriegelt",
+		"cable_unplugged": "Kabel nicht verbunden",
+		"vehicle_unplugged": "Fahrzeug nicht verbunden",
+		"vehicle_plugged": "Fahrzeug verbunden",
+		"vehicle_locked": "Fahrzeug verbunden und verriegelt",
+		"charger_unauthorized": "Ladestation ist nicht autorisiert",
+		"charger_authorized": "Ladestation ist autorisiert",
+		"charger_ready": "Ladestation is bereit",
+		"charger_charging": "Lädt auf",
+		"charger_error": "Fehler",
+		"charger_paused": "Ladestation pausiert"
+	},
+	"history": {
+		"title": "Verlauf Ladevorgänge",
+		"table": {
+			"start": "Start",
+			"stop": "Stop",
+			"energy": "Geladen",
+			"cost": "Kosten",
+			"avgspeed": "~Stromstärke",
+			"profile": "Abrechnungsprofil",
+			"print": "Drucken"
+		},
+		"print": {
+			"charge": "Ladevorgang",
+			"start": "Start",
+			"stop": "Stop",
+			"duration": "Dauer",
+			"totalenergy": "Aufgeladen:",
+			"energyprice": "Stromkosten",
+			"totalamount": "Summe"
+		}
+	},
+	"info": {
+		"product": "Produkt",
+		"firmware": "Firmware Version",
+		"serial_no": "Seriennummer",
+		"time": "Uhrzeit",
+		"synced": "synchronisiert",
+		"time_ntp": "Zeit von einem NTP Server bezogen",
+		"time_manual": "Zeit Manuel gesetzt von JuiceUp",
+		"meter": "Zähler",
+		"history": "Verlauf"
+	}
+}
