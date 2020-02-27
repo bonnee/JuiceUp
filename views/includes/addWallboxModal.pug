@@ -3,21 +3,21 @@
   .modal-dialog(role="document")
     .modal-content
       .modal-header
-        h5.modal-title Add new wallbox
+        h5.modal-title #{__("addwallboxmodal.title")}
         button.close(data-dismiss="modal" aria-label="Close")
           span(aria-hidden="true") &times;
       form#addWallboxForm(onsubmit="return false")
         .modal-body
           #addAlert.alert.alert-danger.d-none|
           .form-group
-            label(for="nameInput") Name
-            input#nameInput.form-control(name="name" type="text" placeholder="Name")
+            label(for="nameInput") #{__("addwallboxmodal.name")}
+            input#nameInput.form-control(name="name" type="text" placeholder="Garage")
           .form-group
-            label(for="addressInput" name="address") IP address
+            label(for="addressInput" name="address") #{__("addwallboxmodal.ipaddress")}
             input#addressInput.form-control(name="address" type="text" placeholder="000.000.000.000")
         .modal-footer
-          input.btn.btn-outline-secondary(type='button' data-dismiss="modal" value='Cancel')
-          input#add.btn.btn-primary(type="submit" value="Add")
+          button.btn.btn-outline-secondary(type='button' data-dismiss="modal") #{__("addwallboxmodal.cancel")}
+          button#add.btn.btn-primary(type="submit") #{__('addwallboxmodal.add')}
 
 script.
   $('#addWallboxForm').submit(function(){

@@ -10,37 +10,37 @@ block content
   .row
     .col-md-6.my-2.my-md-0
       .card.shadow-sm
-        h4.card-header Meters
+        h4.card-header #{__("meter.meters")}
           .float-right.badge.badge-primary=profile.name
         .card-body.text-center.d-flex.flex-column
           
           .d-flex.flex-row
             .mb-2
-              h5.mb-0.text-right Power
+              h5.mb-0.text-right #{__("meter.power")}
               #powerText.display.px-2.text-light.bg-dark 000.00
             span.unit.align-self-end kW
 
           .d-flex.flex-row
             .mt-2
-              h5.mb-0.text-right Energy
+              h5.mb-0.text-right #{__("meter.energy")}
               #energyText.display.px-2.text-light.bg-dark 000.00
             span.unit.align-self-end kWh
 
           .d-flex.flex-row
             .mt-2
-              h5.mb-0.text-right Price
+              h5.mb-0.text-right #{__("meter.price")}
               #priceText.display.px-2.text-light.bg-dark 0000.0
             span.unit.align-self-end|€
 
           .d-flex.flex-row
             .mt-2
-                h5.mb-0.text-right Energy price
+                h5.mb-0.text-right #{__("meter.energy_price")}
                 #pricePerKwhText.display.px-2.text-light.bg-dark=parseFloat(profile.price).toFixed(2).padStart(6,'0')
             span.unit.align-self-end €/kWh
 
     .col-md-6.my-2.my-md-0
       .card.shadow-sm
-        h4.card-header Status
+        h4.card-header #{__("meter.status")}
         .card-body.text-center.align-middle
           #statusPic.fa-3x
             i#chgPic.fas.fa-charging-station.p-1.text-secondary(data-toggle="tooltip" title="...")
@@ -53,15 +53,15 @@ block content
         .card-footer.py-2.px-3
           p.card-text.text-muted.align-middle
             i.fas.fa-info-circle.mr-2.align-middle
-            small.align-middle Hover the pictures to get info
+            small.align-middle #{__("meter.tooltip")}
       .card.shadow-sm.my-4
-        h4.card-header Actions
+        h4.card-header #{__("meter.actions")}
         .card-body
-          .d-inline-block(data-toggle="tooltip" title="Equivalent to swiping a card on the wallbox")
+          .d-inline-block(data-toggle="tooltip" title='Equivalent to swiping a card on the wallbox')
             if(data['Enable sys']==1)
-              button.btn.btn-danger#stopBtn Disable
+              button.btn.btn-danger#stopBtn #{__("meter.disable")}
             else
-              button.btn.btn-success#startBtn Enable
+              button.btn.btn-success#startBtn #{__("meter.enable")}
 
 block footer
   script.
@@ -104,17 +104,17 @@ block footer
 
       switch (data.Plug){
         case 0:
-          cableMsg='Cable unplugged'
+          cableMsg='#{__("meter.cable_unplugged")}'
           cableCss='text-muted'
           break;
         case 1:
-          cableMsg='Cable plugged'
+          cableMsg='#{__("meter.cable_plugged")}'
           cableCss='text-dark'
           break;
         case 3:
         case 5:
         case 7:
-          cableMsg='Cable locked'
+          cableMsg='#{__("meter.cable_locked")}'
           cableCss='text-primary'
           break;
       }
@@ -124,15 +124,15 @@ block footer
         case 0:
         case 1:
         case 3:
-          carMsg='Vehicle unplugged'
+          carMsg='#{__("meter.vehicle_unplugged")}'
           carCss='text-muted'
           break;
         case 5:
-          carMsg='Vehicle plugged in'
+          carMsg='#{__("meter.vehicle_plugged")}'
           carCss='text-primary'
           break;
         case 7:
-          carMsg='Vehicle plugged and locked'
+          carMsg='#{__("meter.vehicle_locked")}'
           carCss='text-primary'
           break;
       }
@@ -140,28 +140,28 @@ block footer
       switch (data.State){
         case 1:
           if (data.Authreq == 1){
-            chgMsg='Charger is unauthorized'
+            chgMsg='#{__("meter.charger_unauthorized")}'
             chgCss='text-dark'
           } else {
-            chgMsg='Charger is authorized'
+            chgMsg='#{__("meter.charger_authorized")}'
             chgCss='text-primary'
           }
           break;
         case 2:
-          chgMsg='Ready to charge'
+          chgMsg='#{__("meter.charger_ready")}'
           chgCss='text-primary'
           break;
         case 3:
-          chgMsg='Charging'
+          chgMsg='#{__("meter.charger_charging")}'
           chgCss='text-success'
           picCss='blink'
           break;
         case 4:
-          chgMsg='Error'
+          chgMsg='#{__("meter.charger_error")}'
           chgCss='text-danger'
           break;
         case 5:
-          chgMsg='Charging is paused'
+          chgMsg='#{__("meter.charger_paused")}'
           chgCss='text-warning'
           break;
       }

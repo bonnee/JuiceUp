@@ -4,19 +4,19 @@ block head
   title= "KeContact"
 
 block content
-  h2 History
+  h2 #{__("history.title")}
   .table-responsive-sm
     table.table.table-striped
       thead
         tr
           th(scope="col") #
-          th(scope="col") Start
-          th(scope="col") Stop
-          th(scope="col") Energy
-          th(scope="col") Cost
-          th(scope="col") ~Speed
-          th(scope="col") Profile
-          th(scope="col") Print
+          th(scope="col") #{__("history.table.start")}
+          th(scope="col") #{__("history.table.stop")}
+          th(scope="col") #{__("history.table.energy")}
+          th(scope="col") #{__("history.table.cost")}
+          th(scope="col") #{__("history.table.avgspeed")}
+          th(scope="col") #{__("history.table.profile")}
+          th(scope="col") #{__("history.table.print")}
       tbody
 
 
@@ -54,7 +54,7 @@ block footer
   #printable(style='margin: 0 150px;').d-none.d-print-block
     .row
       .col
-        h3 Charge #
+        h3 #{__("history.print.charge")} #
           span#printId --
       .col
         h4.text-right
@@ -63,27 +63,27 @@ block footer
           span#printAuth 0000000000000
           | )
     .row.my-3
-      .col-3 Start
+      .col-3 #{__("history.print.start")}
         br
         span#printStart --/-- --:--
-      .col-3 Stop
+      .col-3 #{__("history.print.stop")}
         br
         span#printStop --/-- --:--
-      .col.text-right Duration
+      .col.text-right #{__("history.print.duration")}
         br
         span#printDuration --:-- h
     .row.my-3
-      .col Total energy
+      .col #{__("history.print.totalenergy")}
         br
         span#printEnergy --.-- 
         |  kWh
-      .col.text-right Energy price
+      .col.text-right #{__("history.print.energyprice")}
         br
         span#printEnergyCost -.--
         |  €/kWh
     .row
       .col
-        h2 Total Amount: € 
+        h2 #{__("history.print.totalamount")}: €
           span#printCost --.--
 
   script.

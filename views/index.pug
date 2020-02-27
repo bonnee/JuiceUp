@@ -8,7 +8,7 @@ block scripts
 
 block nav
   //.d-flex.flex-row.mt-2.mt-sm-0
-  button.btn.btn-primary.d-none.d-md-block.ml-auto(data-toggle='modal', data-target='#addWallbox') New
+  button.btn.btn-primary.d-none.d-md-block(data-toggle='modal', data-target='#addWallbox') #{__("navbar.New")}
 
 block content
   .row
@@ -19,7 +19,7 @@ block content
                                           'border-primary':box.error==false} style="border-width:2px")
           .card-img-overlay.no-conn(class={'d-none':box.error==false})
             .d-flex.w-100.h-100
-              h5.text-light.m-auto No connection
+              h5.text-light.m-auto #{__("index.no_connection")}
           .card-body.card-img.pb-1
             h5.card-title=box.name
               small
