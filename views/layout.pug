@@ -13,7 +13,7 @@ html
         a.navbar-brand(href="/") KeContact
 
       if page=='index'
-        button.btn.btn-primary.d-block.d-md-none(data-toggle="modal" data-target="#addWallbox") New
+        button.btn.btn-primary.d-block.d-md-none(data-toggle="modal" data-target="#addWallbox") #{__("navbar.New")}
       
       div#navContent.collapse.navbar-collapse
         ul.navbar-nav
@@ -21,11 +21,16 @@ html
             li.nav-item.dropdown
               a.nav-link.dropdown-toggle(href='#' id="wallboxDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")=box.name
               .dropdown-menu(aria-labelledby="wallboxDropdown")
-                a.dropdown-item(href="/"+data.Serial+"/info" class={'active': page === 'info'}) Info
-                a.dropdown-item(href="/"+data.Serial+"/meter" class={'active': page === 'meter'}) Meter
-                a.dropdown-item(href="/"+data.Serial+"/history" class={'active': page === 'history'}) History
-          a.nav-link(href="/profiles" class={'active': page === 'profiles'}) Profiles
-
+                a.dropdown-item(href="/"+data.Serial+"/info" class={'active': page === 'info'}) #{__("navbar.Info")}
+                a.dropdown-item(href="/"+data.Serial+"/meter" class={'active': page === 'meter'}) #{__("navbar.Meter")}
+                a.dropdown-item(href="/"+data.Serial+"/history" class={'active': page === 'history'}) #{__("navbar.History")}
+          a.nav-link(href="/profiles" class={'active': page === 'profiles'}) #{__("navbar.Profiles")}
+        ul.navbar-nav.ml-auto
+          li.nav-item.dropdown
+            a.nav-link.dropdown-toggle(href='#' id="languageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false") #{__("navbar.Language")}
+            .dropdown-menu(aria-labelledby="wallboxDropdown")
+              a.dropdown-item(href="", data-value="de", class="js-language-change" ) Deutsch
+              a.dropdown-item(href="", data-value="en", class="js-language-change" ) English
         block nav
     main.container.my-3
       block content
@@ -34,4 +39,15 @@ html
     script.
       $(function () {
         $('[data-toggle="tooltip"]').tooltip()
+      })
+
+      /**
+      * This is the language switcher.
+      */
+      $(document).ready(function () {
+        $('.js-language-change').click(function () {
+          var language = $(this).data('value');
+          document.cookie = "language="+language;
+          location.reload();
+        });
       })

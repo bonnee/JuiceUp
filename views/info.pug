@@ -14,42 +14,42 @@ block content
     .col-12.col-sm-8.col-lg-9.row
       div.my-auto.mx-3
         .mb-2
-          .text-muted Product
+          .text-muted #{__("info.product")}
           | #{data.Product}
         .mb-2
-          .text-muted Firmware
+          .text-muted #{__("info.firmware")}
           | #{data.Firmware}
         .mb-2
-          .text-muted Serial No.
+          .text-muted #{__("info.serial_no")}
           | #{data.Serial}
         div
-          .text-muted Time
+          .text-muted #{__("info.time")}
 
           if data.timeQ==0
             h5
-              span.badge.badge-danger Not Synced
+              span.badge.badge-danger #{__("info.not_synced")}
           else
             - var timeTip=''
             - var timeClass=''
             case data.timeQ
               when 2
-                - timeTip='Manually set by JuiceUp'
+                - timeTip=__("info.time_manual")
                 - timeClass='badge-warning'
               when 'X'
-                - timeTip='Time synced to a NTP server'
+                - timeTip=__("info.time_ntp")
                 - timeClass='badge-success'
             h5
-              span.badge(class=timeClass data-toggle="tooltip" title=timeTip) Synced
+              span.badge(class=timeClass data-toggle="tooltip" title=timeTip) #{__("info.synced")}
 
   .card-deck
     .card.shadow-sm
       .card-body
-        h5.card-title Meter
+        h5.card-title #{__("info.meter")}
         p.card-text Current Power: #{kw} kW
-        a.btn.btn-primary(href='meter') Meter
+        a.btn.btn-primary(href='meter') #{__("info.meter")}
 
     .card.shadow-sm
       .card-body
-        h5.card-title History
+        h5.card-title #{__("info.meter")}
         p.card-text Total Energy: #{kwh} kWh
-        a.btn.btn-primary(href='history') History
+        a.btn.btn-primary(href='history') #{__("info.history")}

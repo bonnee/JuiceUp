@@ -5,21 +5,15 @@ block head
 
 block scripts
   link(rel="stylesheet" href="/meter.css")
-
-block nav
-  .ml-auto
-    //include includes/priceInput.pug
-  .ml-md-2
-    //include includes/profileSelection.pug
     
 block content
   .row
     .col-md-4.mb-3
       .d-flex.justify-content-between.align-items-center
         div
-          h3 Profiles
+          h3 #{__("profiles.title")}
         .mb-2
-          button.btn.btn-primary.btn-sm(onclick='newProfile()') New
+          button.btn.btn-primary.btn-sm(onclick='newProfile()') #{__("profiles.New")}
       #profileList.list-group.shadow-sm
         each profile,i in profiles
           a.list-group-item.list-group-item-action(href="#"+i data-toggle="list" onclick='profile('+i+')')
@@ -32,20 +26,20 @@ block content
                 h4.m-0
                   i.far.fa-check-circle(data-toggle="tooltip" title="Active")
     .col-md-8.mb-3
-      h3 Details
+      h3 #{__("profiles.details")}
       form(onsubmit='return false')
         .form-group
-          label(for="nameInput") Name
+          label(for="nameInput") #{__("profiles.name")}
           input#nameInput.form-control(name="name" type="text" placeholder="Name")
         .form-group
-          label(for="authInput") Auth
+          label(for="authInput") #{__("profiles.auth")}
           input#authInput.form-control(name="auth" type="text" placeholder="Auth")
         .form-group
-          label(for="priceInput") Energy price [€/kWh]
+          label(for="priceInput") #{__("profiles.energy_price")} [€/kWh]
           input#priceInput.form-control(name="auth" type="number" step='0.01' placeholder="Price")
         .float-right
-          input#deleteProfile.btn.btn-outline-danger.mr-1(type='button' value='Delete')
-          input#submitProfile.btn.btn-primary.ml-1(type='submit' value='Save')
+          button#deleteProfile.btn.btn-outline-danger.mr-1(type='button') #{__("profiles.delete")}
+          button#submitProfile.btn.btn-primary.ml-1(type='submit') #{__("profiles.save")}
 
 block footer
   script.

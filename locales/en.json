@@ -1,0 +1,86 @@
+{
+	"navbar": {
+		"New": "New",
+		"Profiles": "Profiles",
+		"Info": "Info",
+		"Meter": "Meter",
+		"History": "History",
+        "Language": "Language"
+	},
+	"addwallboxmodal": {
+		"title": "Add a new Wallbox",
+		"name": "Name",
+		"ipaddress": "IP Address",
+		"cancel": "Cancel",
+		"add": "Add"
+	},
+	"index": {
+		"no_connection": "No Connection"
+	},
+	"profiles": {
+		"title": "Profiles",
+		"New": "New",
+		"details": "Details",
+		"name": "Name",
+		"auth": "Auth",
+		"energy_price": "Energy Price",
+		"delete": "Delete",
+		"save": "Save"
+	},
+	"meter": {
+		"meters": "Meters",
+		"power": "Power",
+		"energy": "Energy",
+		"price": "Price",
+		"energy_price": "Energy Price",
+		"status": "Status",
+		"actions": "Actions",
+		"enable": "Enable",
+		"disable": "Disable",
+		"tooltip": "Hover the pictures to get info",
+		"cable_plugged": "Cable plugged",
+		"cable_locked": "Cable locked",
+		"cable_unplugged": "Cable unlocked",
+		"vehicle_unplugged": "Vehicle unplugged",
+		"vehicle_plugged": "Vehicle plugged in",
+		"vehicle_locked": "Vehicle plugged in and locked",
+		"charger_unauthorized": "Charger is unauthorized",
+		"charger_authorized": "Charger is authorized",
+		"charger_ready": "Ready to charge",
+		"charger_charging": "Charging",
+		"charger_error": "Error",
+		"charger_paused": "Charger Paused"
+	},
+	"history": {
+		"title": "Title",
+		"table": {
+			"start": "Start",
+			"stop": "Stop",
+			"energy": "Energy",
+			"cost": "Cost",
+			"avgspeed": "~Speed",
+			"profile": "Profile",
+			"print": "Print"
+		},
+		"print": {
+			"charge": "Charge",
+			"start": "Start",
+			"stop": "Stop",
+			"duration": "Duration",
+			"totalenergy": "Total Energy",
+			"energyprice": "Energy price",
+			"totalamount": "Totalamount"
+		}
+	},
+	"info": {
+		"product": "Product",
+		"firmware": "Firmware",
+		"serial_no": "Serial No.",
+		"time": "Time",
+		"synced": "synced",
+		"time_ntp": "Time synced to a NTP server",
+		"time_manual": "Manually set by JuiceUp",
+		"meter": "Meter",
+		"history": "History"
+	}
+}
