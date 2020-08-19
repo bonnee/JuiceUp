@@ -1,6 +1,6 @@
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
-const dataDir = '../data.json';
+const dataDir = './data/data.json';
 
 class DB {
 	constructor() {

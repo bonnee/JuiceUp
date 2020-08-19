@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+        juiceup:
+                restart: always
+                build:
+                        context: ./
+                        dockerfile: Dockerfile
+
+                ports:
+                        - "8888:80/tcp"
+                        - "7090:7090/udp"
+                volumes:
+                        - "/opt/juiceup:/usr/src/app/data"
+
