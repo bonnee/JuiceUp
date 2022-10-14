@@ -13,7 +13,7 @@ router.put('/', (req, res) => {
 	console.log('Adding new wallbox...');
 	let closed = false;
 
-	Kecontact.add(req.body.address).then((data) => {
+	Kecontact.add(req.body.address, 3).then((data) => {
 		if (!closed) {
 			if (data.Product) {
 				db.addWallbox({
@@ -61,7 +61,7 @@ router.route('/:serial').all(checkExists)
 		let address = req.body.address;
 
 		if (db.getWallbox(serial).address != address) { // If posted address has changed
-			Kecontact.add(address).then(data => {
+			Kecontact.add(address, 3).then(data => {
 				db.editWallbox(serial, req.body); // TODO: Check body
 				db.setError(serial, false);
 				res.status(201).send(data);

@@ -42,20 +42,20 @@ class KeContact extends EventEmitter {
 		this._rxSocket.init(PORT);
 	}
 
-	add(address) {
+	add(address, timeout) {
 		return new Promise((resolve, reject) => {
 			if (this.getSerial(address)) {
 				reject(new Error('Address is a duplicate'));
 			}
 
 			this._txSocket.send('report 1', address);
-			let timeout;
+			let tout;
 
 			let recv = ({
 				data
 			}) => {
 				if (data.ID == 1 && data.Serial && data.Product) {
-					this._intervals.clear(timeout);
+					this._intervals.clear(tout);
 
 					let serial = data.Serial.toString();
 					let newBox = {
@@ -83,7 +83,7 @@ class KeContact extends EventEmitter {
 
 			let timeoutCount = 0;
 			let timeoutFunction = () => {
-				if (timeoutCount >= 3) {
+				if (timeout && timeoutCount >= timeout) {
 
 					this._rxSocket.removeListener(address, recv);
 					reject(new Error('timeout'));
@@ -91,12 +91,12 @@ class KeContact extends EventEmitter {
 				} else {
 					console.warn('...');
 					this._txSocket.send('report 1', address);
-					timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
+					tout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
 					timeoutCount++;
 				}
 			}
 
-			timeout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
+			tout = this._intervals.addOnce(timeoutFunction, TIMEOUT);
 
 			this._rxSocket.once(address, recv);
 

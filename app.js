@@ -48,9 +48,9 @@ Kecontact.on('message', data => {
 	io.emit(data.serial, data.data);
 });
 
-var connect = (box, ttl) => {
+var connect = (box) => {
 	return new Promise((resolve, reject) => {
-		Kecontact.add(box.address)
+		Kecontact.add(box.address, 0)
 			.then(() => {
 				resolve();
 			})
@@ -59,11 +59,6 @@ var connect = (box, ttl) => {
 					resolve();
 				} else {
 					db.setError(box.serial, true);
-
-					if (ttl === 1) return reject(e);
-					setTimeout(() => {
-						connect(box, ttl - 1).then(resolve).catch(reject);
-					}, 10000);
 				}
 			});
 	});
@@ -71,7 +66,7 @@ var connect = (box, ttl) => {
 
 db.getAllWallboxes().forEach(box => {
 
-	connect(box, 5).then(() => {
+	connect(box).then(() => {
 		console.log(box.serial, "added.");
 		db.setError(box.serial, false);
 	}).catch(e => {
